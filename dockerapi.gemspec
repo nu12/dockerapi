@@ -6,8 +6,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Alysson A. Costa"]
   spec.email         = ["alysson.avila.costa@gmail.com"]
 
-  spec.summary       = "Interact with Docker API with ruby."
-  spec.description   = "Interact with Docker API with ruby."
+  spec.summary       = "Interact directly with Docker API from Ruby code."
+  spec.description   = "Interact directly with Docker API from Ruby code."
   spec.homepage      = "https://github.com/nu12/dockerapi"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
