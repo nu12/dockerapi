@@ -1,22 +1,17 @@
 module Docker
     module API
-        class Image
+        class Image < Docker::API::Base
 
-            @@base_path = "/images"
-
-            def self.create query_params = {}
-                Docker::API::Connection.instance.post(self.build_path(["create"], query_params))
+            def self.base_path
+                "/images"
             end
 
-            def self.remove name, query_params = {}
-                Docker::API::Connection.instance.delete(self.build_path([name],  query_params))
+            def self.create params = {}
+                connection.post(build_path(["create"], params))
             end
 
-            private
-
-            def self.build_path path, params = {}
-                p = ([@@base_path] << path).join("/")
-                params.size > 0 ? [p, params.map {|k,v| "#{k}=#{v}"}.join("&")].join("?") : p
+            def self.remove name, params = {}
+                connection.delete(build_path([name], params))
             end
         end
 
