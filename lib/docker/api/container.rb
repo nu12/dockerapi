@@ -98,7 +98,7 @@ module Docker
 
             def self.attach name, params = {}
                 self.validate Docker::API::InvalidParameter, [:detachKeys, :logs, :stream, :stdin, :stdout, :stderr], params
-                Docker::API::Connection.instance.connection.request(method: :post, path: self.build_path([name, "attach"], params) , response_block: lambda { |chunk, remaining_bytes, total_bytes| puts chunk.inspect })
+                Docker::API::Connection.instance.request(method: :post, path: self.build_path([name, "attach"], params) , response_block: lambda { |chunk, remaining_bytes, total_bytes| puts chunk.inspect })
             end
 
             def self.create params = {}, body = {}
@@ -128,7 +128,7 @@ module Docker
                     streamer = lambda do |chunk, remaining_bytes, total_bytes|
                         file.write(chunk)
                     end
-                    response = Docker::API::Connection.instance.connection.get(path: self.build_path([name, "export"]) , response_block: streamer)
+                    response = Docker::API::Connection.instance.request(method: :get, path: self.build_path([name, "export"]) , response_block: streamer)
                     file.close
                 end
                 response
@@ -139,13 +139,13 @@ module Docker
 
                 begin # File exists on disk, send it to container
                     file = File.open( File.expand_path( file ) , "r")
-                    response = Docker::API::Connection.instance.connection.put(path: self.build_path([name, "archive"], params) , request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
+                    response = Docker::API::Connection.instance.request(method: :put, path: self.build_path([name, "archive"], params) , request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
                     file.close
                 rescue Errno::ENOENT # File doesnt exist, get it from container
                     response = Docker::API::Connection.instance.head(self.build_path([name, "archive"], params))
                     if response.status == 200 # file exists in container
                         file = File.open( File.expand_path( file ) , "wb")
-                        response = Docker::API::Connection.instance.connection.get(path: self.build_path([name, "archive"], params) , response_block: lambda { |chunk, remaining_bytes, total_bytes| file.write(chunk) })
+                        response = Docker::API::Connection.instance.request(method: :get, path: self.build_path([name, "archive"], params) , response_block: lambda { |chunk, remaining_bytes, total_bytes| file.write(chunk) })
                         file.close
                     end
                 end

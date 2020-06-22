@@ -6,30 +6,16 @@ module Docker
         class Connection
             include Singleton
 
-            attr_reader(:connection)
-
-            def get path
-                r = @connection.get(path: path)
-                #p r
-                r
+            [:get, :post, :head, :delete, :put].each do | method |
+                define_method(method) { | path | self.request(method: method, path: path) }
             end
 
             def post(path, body = nil)
-                if body
-                    r = @connection.post(path: path, headers: { "Content-Type" => "application/json" }, body: body.to_json)
-                else
-                    r = @connection.post(path: path)
-                end
-                #p r
-                r
+                self.request(method: :post, path: path, headers: { "Content-Type" => "application/json" }, body: body.to_json)
             end
 
-            def head(path)
-                @connection.head(path: path)
-            end
-
-            def delete path
-                @connection.delete(path: path)
+            def request params
+                @connection.request(params)
             end
             
             private
