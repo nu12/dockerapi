@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     dockerapi (0.1.0)
-      excon
+      excon (~> 0.74.0)
 
 GEM
   remote: https://rubygems.org/
