@@ -105,8 +105,8 @@ WIP: Work In Progress
 
 | Class | Tests | Implementation | Refactoring |
 |---|---|---|---|
-| Container | WIP | WIP | NS |
-| Image | NS | NS | NS |
+| Container | Ok | Ok | NS |
+| Image | WIP | WIP | NS |
 | Volume | NS | NS | NS |
 | Network | NS | NS | NS |
 | System | NS | NS | NS |
