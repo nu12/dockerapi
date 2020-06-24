@@ -7,6 +7,31 @@ module Docker
                 "/images"
             end
 
+            [{name: "inspect", path: "json"},
+             {name: "history", path: "history"}].each do | method |
+                define_singleton_method(method[:name]) { | name | connection.get(build_path([name, method[:path]])) }
+            end
+
+            def self.list params = {}
+                validate Docker::API::InvalidParameter, [:all, :filters, :digests], params
+                connection.get(build_path(["json"], params))
+            end
+
+            def self.remove name, params = {}
+                validate Docker::API::InvalidParameter, [:force, :noprune], params
+                connection.delete(build_path([name], params))
+            end
+
+            def self.tag name, params = {}
+                validate Docker::API::InvalidParameter, [:repo, :tag], params
+                connection.post(build_path([name, "tag"], params))
+            end
+
+            def self.prune params = {}
+                validate Docker::API::InvalidParameter, [:filters], params
+                connection.post(build_path(["prune"], params))
+            end
+
             def self.create params = {}, authentication = {}
                 validate Docker::API::InvalidParameter, [:fromImage, :fromSrc, :repo, :tag, :message, :platform], params
                 
@@ -29,9 +54,6 @@ module Docker
                 end
             end
 
-            def self.remove name, params = {}
-                connection.delete(build_path([name], params))
-            end
         end
 
     end
