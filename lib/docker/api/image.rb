@@ -22,6 +22,18 @@ module Docker
                 end
             end
 
+            def self.push name, params = {}, authentication = {}
+                validate Docker::API::InvalidParameter, [:tag], params
+
+                if authentication.keys.size > 0
+                    auth = Docker::API::System.auth(authentication)
+                    return auth unless [200, 204].include? auth.status
+                    connection.request(method: :post, path: build_path([name, "push"], params), headers: { "X-Registry-Auth" => Base64.encode64(authentication.to_json.to_s).chomp } )
+                else
+                    connection.post(build_path([name, "push"], params))
+                end
+            end
+
             def self.commit params = {}, body = {}
                 validate Docker::API::InvalidParameter, [:container, :repo, :tag, :comment, :author, :pause, :changes], params
                 validate Docker::API::InvalidRequestBody, Docker::API::CommitBody, body

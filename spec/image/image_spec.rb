@@ -149,7 +149,57 @@ RSpec.describe Docker::API::Image do
                     expect{described_class.tag(image, invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
                 end
             end
-        
+        end
+
+        describe "::push" do
+            before(:all) do
+                described_class.create(fromImage: "registry:2.7.1")
+                Docker::API::Container.create(
+                    {name: "registry"}, 
+                    {Image: "registry:2.7.1",
+                    HostConfig: {
+                        Memory: 6000000,
+                        PortBindings: {
+                            "5000/tcp": [ {HostIp: "0.0.0.0", HostPort: "5000"} ]
+                        }
+                    }}
+                )
+                Docker::API::Container.start("registry")
+                described_class.tag(image, repo: "localhost:5000/push:1")
+            end
+
+            after(:all) do
+                Docker::API::Container.stop("registry")
+                Docker::API::Container.remove("registry")
+                described_class.remove("registry:2.7.1")
+            end
+
+            describe "with invalid params" do
+                it Docker::API::InvalidParameter do
+                    expect{described_class.push("localhost:5000/push:1", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
+                end
+            end
+
+            context "without authentication" do
+                it "returns status 200" do
+                    expect(described_class.push("localhost:5000/push:1").status).to be(200)
+                    expect(described_class.push("localhost:5000/push", tag: "1").status).to be(200)
+                end
+                it "returns status 200 with error message" do
+                    response = described_class.push("localhost:5000/doesn-exist")
+                    expect(response.status).to be(200)
+                    expect(response.body).to match(/(An image does not exist locally with the tag)/)
+                end
+
+            end
+
+            context "with authentication" do
+                it "returns status 401" do
+                    expect(described_class.push("localhost:5000/push:1", {}, {username: "joedoe", password: "joedoe"}).status).to be(401)
+                    expect(described_class.push("localhost:5000/push", {tag: "1"}, {username: "joedoe", password: "joedoe"}).status).to be(401)
+                end
+            end
+    
         end
 
         describe "::commit" do
@@ -194,7 +244,7 @@ RSpec.describe Docker::API::Image do
             end
         
         end
-        #describe "::push";end
+        
         #describe "::export(one/several)";end
         #describe "::import";end
     end
