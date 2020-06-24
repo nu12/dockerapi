@@ -1,7 +1,9 @@
+require "base64"
+require "json"
 module Docker
     module API
+        CommitBody = [:Hostname, :Domainname, :User, :AttachStdin, :AttachStdout, :AttachStderr, :ExposedPorts, :Tty, :OpenStdin, :StdinOnce, :Env, :Cmd, :HealthCheck, :ArgsEscaped, :Image, :Volumes, :WorkingDir, :Entrypoint, :NetworkDisabled, :MacAddress, :OnBuild, :Labels, :StopSignal, :StopTimeout, :Shell]
         class Image < Docker::API::Base
-            require "base64"
 
             def self.base_path
                 "/images"
@@ -12,9 +14,21 @@ module Docker
                 define_singleton_method(method[:name]) { | name | connection.get(build_path([name, method[:path]])) }
             end
 
-            def self.list params = {}
-                validate Docker::API::InvalidParameter, [:all, :filters, :digests], params
-                connection.get(build_path(["json"], params))
+            [{name: "list",     path: "json",   params: [:all, :filters, :digests]},
+             {name: "search",   path: "search", params: [:term, :limit, :filters]}].each do | method |
+                define_singleton_method(method[:name]) do | params = {} | 
+                    validate Docker::API::InvalidParameter, method[:params], params
+                    connection.get(build_path([method[:path]], params)) 
+                end
+            end
+
+            def self.commit params = {}, body = {}
+                validate Docker::API::InvalidParameter, [:container, :repo, :tag, :comment, :author, :pause, :changes], params
+                validate Docker::API::InvalidRequestBody, Docker::API::CommitBody, body
+                container = Docker::API::Container.inspect(params[:container])
+                return container if [404, 301].include? container.status
+                body = JSON.parse(container.body)["Config"].merge(body)
+                connection.request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: body.to_json)
             end
 
             def self.remove name, params = {}

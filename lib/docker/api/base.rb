@@ -27,7 +27,7 @@ module Docker
             end
 
             def self.build_path path, params = {}
-                p = ([base_path] << path).join("/")
+                p = path.is_a?(Array) ? ([base_path] << path).join("/") : path
                 params.size > 0 ? [p, hash_to_params(params)].join("?") : p
             end
 

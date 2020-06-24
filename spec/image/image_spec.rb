@@ -71,7 +71,6 @@ RSpec.describe Docker::API::Image do
 
     context "after ::create" do 
         before(:all) { described_class.create(fromImage: image) }
-        after(:all) { described_class.prune(filters: {dangling: {"false": true}}) }
 
         describe "::list" do
             describe "with no params" do
@@ -152,22 +151,88 @@ RSpec.describe Docker::API::Image do
             end
         
         end
+
+        describe "::commit" do
+            container = "rspec-test"
+            before(:all) { Docker::API::Container.create({name: container}, {Image: image}) }
+            
+            after(:all) { Docker::API::Container.remove(container) }
+    
+            describe "with no params" do
+                it "returns status 301" do 
+                    expect(described_class.commit.status).to eq(301)
+                end
+            end
+    
+            describe "with valid params" do
+    
+                it "returns status 201" do 
+                    expect(described_class.commit(container: container).status).to eq(201)
+                    expect(described_class.commit(container: container, repo: "dockerapi/#{container}:1" ).status).to eq(201)
+                    expect(described_class.commit(container: container, repo: "dockerapi/#{container}", tag: "2" ).status).to eq(201)
+                    expect(described_class.commit(container: container, repo: "dockerapi/#{container}", tag: "3", comment: "Comment from commit" ).status).to eq(201)
+                    expect(described_class.commit(container: container, repo: "dockerapi/#{container}", tag: "4", author: "dockerapi" ).status).to eq(201)
+                    expect(described_class.commit(container: container, repo: "dockerapi/#{container}", tag: "5", pause: false ).status).to eq(201)
+    
+                    expect(described_class.commit({container: container, repo: "dockerapi/#{container}:6"}, {OpenStdin: false, Cmd: "echo dockerapi", Entrypoint: [""]} ).status).to eq(201)
+                end
+    
+                it "returns status 404" do 
+                    expect(described_class.commit(container: "doesn-exist").status).to eq(404)
+                end
+            end
+    
+            describe "with invalid params" do
+                it Docker::API::InvalidParameter do
+                    expect{described_class.commit(invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
+                    expect{described_class.commit({invalid: "invalid"}, {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter)
+                end
+                it Docker::API::InvalidRequestBody do
+                    expect{described_class.commit({}, {invalid: "invalid"})}.to raise_error(Docker::API::InvalidRequestBody)
+                end
+    
+            end
+        
+        end
         #describe "::push";end
         #describe "::export(one/several)";end
         #describe "::import";end
     end
     
     
-    #describe "::search";end
-    #describe "::commit";end
+    describe "::search" do
+        describe "with no params" do
+            it "returns status 200" do
+                expect(described_class.search.status).to eq(200)
+            end
+        end
+
+        describe "with valid params" do
+            it "returns status 200" do
+                expect(described_class.search(term: "busybox").status).to eq(200)
+                expect(described_class.search(term: "busybox", limit: 2).status).to eq(200)
+                expect(described_class.search(term: "busybox", filters: {"is-automated": {"true": true}}).status).to eq(200)
+                expect(described_class.search(term: "busybox", filters: {"is-official": {"true": true}}).status).to eq(200)
+                expect(described_class.search(term: "busybox", filters: {stars: {"20": true}}).status).to eq(200)
+            end
+
+        end
+        describe "with invalid params" do
+            it Docker::API::InvalidParameter do
+                expect{described_class.search(invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
+            end
+        end
+    
+    end
+    
     describe "::remove" do
+        before(:all)  { described_class.prune(filters: {dangling: {"false": true}}) }
         before(:each) { described_class.create(fromImage: image) }
-        after(:all) { Docker::API::Container.prune }
+        after(:all)   { Docker::API::Container.prune }
         
         describe "with no params" do
             after(:all) do 
                 Docker::API::Container.prune
-                described_class.prune
             end
             it "returns status 200" do
                 expect(described_class.remove(image).status).to eq(200)
