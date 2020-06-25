@@ -169,14 +169,6 @@ RSpec.describe Docker::API::Image do
                 end
 
             end
-
-            context "with authentication" do
-                it "returns status 401" do
-                    expect(described_class.push("localhost:5000/push:1", {}, {username: "joedoe", password: "joedoe"}).status).to be(401)
-                    expect(described_class.push("localhost:5000/push", {tag: "1"}, {username: "joedoe", password: "joedoe"}).status).to be(401)
-                end
-            end
-    
         end
 
         describe "::commit" do
