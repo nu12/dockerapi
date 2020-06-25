@@ -1,5 +1,5 @@
 RSpec.describe Docker::API::Image do
-    image = "busybox:1.31.1-glibc"
+    image = "busybox:1.31.1-uclibc"
 
     after(:all) { described_class.prune(filters: {dangling: {"false": true}}) }
     describe "::create" do
@@ -263,7 +263,7 @@ RSpec.describe Docker::API::Image do
                 expect(described_class.export("doesn-exist", "~/exported_image2.tar").status).to eq(404)
                 expect{File.open(File.expand_path("~/exported_image2.tar"))}.to raise_error(Errno::ENOENT)
             end
-            
+
             context "having the exported image" do
                 describe "::import" do
                     describe "with no params" do
@@ -395,7 +395,38 @@ RSpec.describe Docker::API::Image do
         end
     
     end
-    #describe "::build";end
+    describe "::build" do
+        describe "with no params" do
+            it "returns status 200" do
+                expect(described_class.build("resources/build.tar.xz").status).to eq(200)
+            end
+        end
+
+        describe "with valid params" do
+            it "returns status 200 using local tar file" do
+                expect(described_class.build("resources/build.tar.xz", q: true).status).to eq(200)
+                expect(described_class.build("resources/build.tar.xz", q: true, rm: false).status).to eq(200)
+                expect(described_class.build("resources/build.tar.xz", memory: 4000000, rm: true, forcerm:true).status).to eq(200)
+                expect(described_class.build("resources/build.tar.xz", memory: 4000000, rm: true, forcerm:true, pull:true).status).to eq(200)
+            end
+
+            it "returns status 200 using remote tar file" do
+                expect(described_class.build(nil, remote: "https://github.com/nu12/dockerapi/blob/master/resources/build.tar.xz?raw=true").status).to eq(200)
+            end
+        end
+
+        describe "with invalid params" do
+            it Docker::API::InvalidParameter do
+                expect{described_class.build("resources/build.tar.xz", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
+                expect{described_class.build(nil, remote: "https://github.com/nu12/dockerapi/blob/master/resources/build.tar.xz?raw=true", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
+                
+            end
+            it Docker::API::InvalidRequestBody do
+                expect{described_class.build(nil, invalid: "invalid")}.to raise_error(Docker::API::InvalidRequestBody)
+            end
+        end
+
+    end
     #describe "::delete cache";end
     
 end

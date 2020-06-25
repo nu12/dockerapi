@@ -4,6 +4,7 @@ require 'fileutils'
 module Docker
     module API
         CommitBody = [:Hostname, :Domainname, :User, :AttachStdin, :AttachStdout, :AttachStderr, :ExposedPorts, :Tty, :OpenStdin, :StdinOnce, :Env, :Cmd, :HealthCheck, :ArgsEscaped, :Image, :Volumes, :WorkingDir, :Entrypoint, :NetworkDisabled, :MacAddress, :OnBuild, :Labels, :StopSignal, :StopTimeout, :Shell]
+        BuildParams = [:dockerfile, :t, :extrahosts, :remote, :q, :nocache, :cachefrom, :pull, :rm, :forcerm, :memory, :memswap, :cpushares, :cpusetcpus, :cpuperiod, :cpuquota, :buildargs, :shmsize, :squash, :labels, :networkmode, :platform, :target, :outputs]
         class Image < Docker::API::Base
 
             def self.base_path
@@ -98,6 +99,29 @@ module Docker
                 else
                     connection.post(build_path(["create"], params))
                 end
+            end
+
+            def self.build path, params = {}, authentication = {}
+                raise Docker::API::InvalidRequestBody unless path || params[:remote] 
+                validate Docker::API::InvalidParameter, Docker::API::BuildParams, params
+
+                header = {"Content-type": "application/x-tar"}
+                if authentication.keys.size > 0
+                    authentication.each_key do |server|
+                        auth = Docker::API::System.auth({username: authentication[server][:username] ,password:authentication[server][:password], serveraddress: server})
+                        return auth unless [200, 204].include? auth.status
+                    end
+                    header.merge({"X-Registry-Config": Base64.encode64(authentication.to_json.to_s).chomp})
+                end
+
+                begin
+                    file = File.open( File.expand_path( path ) , "r")
+                    response = connection.request(method: :post, path: build_path("/build", params), headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s})
+                    file.close
+                rescue
+                    response = connection.request(method: :post, path: build_path("/build", params), headers: header)
+                end
+                response
             end
 
         end
