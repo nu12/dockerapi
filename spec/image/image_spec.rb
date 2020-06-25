@@ -44,29 +44,6 @@ RSpec.describe Docker::API::Image do
             end
 
         end
-
-        context "with authentication" do
-            describe "with valid credentials" do
-                describe "pulls from repository" do
-                    after(:each) { described_class.remove(image) }
-                    it "returns status 200" do
-                        expect(described_class.create({fromImage: image}, {username: ENV['DOCKER_USERNAME'], password: ENV['DOCKER_PASSWORD']}).status).to eq(200)
-                    end
-        
-                    it "returns status 404" do
-                        expect(described_class.create({fromImage: "doesn-exist"}, {username: ENV['DOCKER_USERNAME'], password: ENV['DOCKER_PASSWORD']}).status).to eq(404)
-                    end
-                end
-            end
-
-            describe "with invalid credentials" do
-                describe "pulls from repository" do
-                    it "returns status 401" do
-                        #expect(described_class.create({fromImage: image}, {username: "incorrect", password: "incorrect"}).status).to eq(401)
-                    end
-                end
-            end
-        end
     end
 
     context "after ::create" do 
