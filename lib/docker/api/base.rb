@@ -13,7 +13,7 @@ module Docker
             end
 
             def self.validate error, permitted_keys, params
-                not_permitted = params.keys - permitted_keys
+                not_permitted = params.keys.map(&:to_s) - permitted_keys.map(&:to_s)
                 raise error if not_permitted.size > 0
             end
 

@@ -413,13 +413,16 @@ RSpec.describe Docker::API::Image do
             it "returns status 200 using remote tar file" do
                 expect(described_class.build(nil, remote: "https://github.com/nu12/dockerapi/blob/master/resources/build.tar.xz?raw=true").status).to eq(200)
             end
+
+            it "returns status 200 using remote Dockerfile" do
+                expect(described_class.build(nil, remote: "https://raw.githubusercontent.com/nu12/dockerapi/master/resources/Dockerfile").status).to eq(200)
+            end
         end
 
         describe "with invalid params" do
             it Docker::API::InvalidParameter do
                 expect{described_class.build("resources/build.tar.xz", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
                 expect{described_class.build(nil, remote: "https://github.com/nu12/dockerapi/blob/master/resources/build.tar.xz?raw=true", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
-                
             end
             it Docker::API::InvalidRequestBody do
                 expect{described_class.build(nil, invalid: "invalid")}.to raise_error(Docker::API::InvalidRequestBody)
@@ -427,7 +430,27 @@ RSpec.describe Docker::API::Image do
         end
 
     end
-    #describe "::delete cache";end
+    describe "::delete_cache" do
+        describe "with no params" do
+            it "returns status 200" do
+                expect(described_class.delete_cache.status).to eq(200)
+            end
+        end
+
+        describe "with valid params" do
+            it "returns status 200" do
+                expect(described_class.delete_cache(all:true, "keep-storage": 100000, filters: {until: {"24h": true}, inuse: {"true": true}, shared: {"true": true}}).status).to eq(200)
+            end
+        end
+
+        describe "with invalid params" do
+            it Docker::API::InvalidParameter do
+                expect{described_class.delete_cache(invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
+            end
+
+        end
+    
+    end
     
 end
 

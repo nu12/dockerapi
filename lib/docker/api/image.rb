@@ -111,7 +111,7 @@ module Docker
                         auth = Docker::API::System.auth({username: authentication[server][:username] ,password:authentication[server][:password], serveraddress: server})
                         return auth unless [200, 204].include? auth.status
                     end
-                    header.merge({"X-Registry-Config": Base64.encode64(authentication.to_json.to_s).chomp})
+                    header.merge!({"X-Registry-Config": Base64.urlsafe_encode64(authentication.to_json.to_s).chomp})
                 end
 
                 begin
@@ -122,6 +122,11 @@ module Docker
                     response = connection.request(method: :post, path: build_path("/build", params), headers: header)
                 end
                 response
+            end
+
+            def self.delete_cache params = {}
+                validate Docker::API::InvalidParameter, [:all, "keep-storage", :filters], params
+                connection.post(build_path("/build/prune", params))
             end
 
         end
