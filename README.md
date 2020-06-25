@@ -20,6 +20,76 @@ Or install it yourself as:
 
 ## Usage
 
+### Images
+
+```ruby
+# Pull from a public repository
+Docker::API::Image.create( fromImage: "nginx:latest" )
+
+# Pull from a private repository
+Docker::API::Image.create( {fromImage: "private/repo:tag"}, {username: "janedoe", password: "password"} )
+
+# Create image from local tar file
+Docker::API::Image.create( fromSrc: "/path/to/file.tar", repo: "repo:tag" )
+
+# Create image from remote tar file
+Docker::API::Image.create( fromSrc: "https://url.to/file.tar", repo: "repo:tag" )
+
+# List images
+Docker::API::Image.list
+Docker::API::Image.list( all:true )
+
+# Inspect image
+Docker::API::Image.inspect("image")
+
+# History
+Docker::API::Image.history("image")
+
+# Search image
+Docker::API::Image.search(term: "busybox", limit: 2)
+Docker::API::Image.search(term: "busybox", filters: {"is-automated": {"true": true}})
+Docker::API::Image.search(term: "busybox", filters: {"is-official": {"true": true}})
+
+# Tag image
+Docker::API::Image.tag("current:tag", repo: "new:tag") # or
+Docker::API::Image.tag("current:tag", repo: "new", tag: "tag")
+
+# Push image
+Docker::API::Image.push("repo:tag") # to dockerhub
+Docker::API::Image.push("localhost:5000/repo:tag") # to local registry
+Docker::API::Image.push("private/repo", {tag: "tag"}, {username: "janedoe", password: "password"} # to private repository
+
+# Remove container
+Docker::API::Image.remove("image")
+Docker::API::Image.remove("image", force: true)
+
+# Remove unsued images (prune)
+Docker::API::Image.prune(filters: {dangling: {"false": true}})
+
+# Create image from a container (commit)
+Docker::API::Image.commit(container: container, repo: "my/image", tag: "latest", comment: "Comment from commit", author: "dockerapi", pause: false )
+
+# Build image from a local tar file
+Docker::API::Image.build("/path/to/file.tar")
+
+# Build image from a remote tar file
+Docker::API::Image.build(nil, remote: "https://url.to/file.tar")
+
+# Build image from a remote Dockerfile
+Docker::API::Image.build(nil, remote: "https://url.to/Dockerfile")
+
+# Delete builder cache
+Docker::API::Image.delete_cache
+
+# Export repo
+Docker::API::Image.export("repo:tag", "~/exported_image.tar")
+
+# Import repo
+Docker::API::Image.import("/path/to/file.tar")
+```
+
+### Containers 
+
 Let's test a Nginx container
 
 ```ruby
@@ -84,7 +154,7 @@ Docker::API::Container.prune
 
 ### Requests
 
-Requests should work as described in Docker API documentation.
+Requests should work as described in [Docker API documentation](https://docs.docker.com/engine/api/v1.40). Check it out to customize your requests.
 
 ### Response
 
@@ -106,7 +176,7 @@ WIP: Work In Progress
 | Class | Tests | Implementation | Refactoring |
 |---|---|---|---|
 | Container | Ok | Ok | NS |
-| Image | WIP | WIP | NS |
+| Image | Ok | Ok | NS |
 | Volume | NS | NS | NS |
 | Network | NS | NS | NS |
 | System | NS | NS | NS |

@@ -1,3 +1,23 @@
+# 0.2.0
+
+Add Docker::API::Image methods:
+* inspect
+* history
+* list
+* search
+* tag
+* prune
+* remove
+* export
+* import
+* push
+* commit
+* create
+* build
+* delete_cache
+
+Add Docker::API::System.auth (untested) for basic authentication
+
 # 0.1.0
 
 Add Docker::API::Container methods:
