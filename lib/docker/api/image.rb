@@ -1,5 +1,6 @@
 require "base64"
 require "json"
+require 'fileutils'
 module Docker
     module API
         CommitBody = [:Hostname, :Domainname, :User, :AttachStdin, :AttachStdout, :AttachStderr, :ExposedPorts, :Tty, :OpenStdin, :StdinOnce, :Env, :Cmd, :HealthCheck, :ArgsEscaped, :Image, :Volumes, :WorkingDir, :Entrypoint, :NetworkDisabled, :MacAddress, :OnBuild, :Labels, :StopSignal, :StopTimeout, :Shell]
@@ -20,6 +21,25 @@ module Docker
                     validate Docker::API::InvalidParameter, method[:params], params
                     connection.get(build_path([method[:path]], params)) 
                 end
+            end
+
+            def self.export name, path = "exported_image"
+                file = File.open("/tmp/exported-image", "wb")
+                streamer = lambda do |chunk, remaining_bytes, total_bytes|
+                    file.write(chunk)
+                end
+                response = connection.request(method: :get, path: build_path([name, "get"]) , response_block: streamer)
+                file.close
+                response.status == 200 ? FileUtils.mv("/tmp/exported-image", File.expand_path(path)) : FileUtils.rm("/tmp/exported-image")
+                response
+            end
+
+            def self.import path, params = {}
+                validate Docker::API::InvalidParameter, [:quiet], params
+                file = File.open(File.expand_path(path), "r")
+                response = connection.request(method: :post, path: build_path(["load"], params) , headers: {"Content-Type" => "application/x-tar"}, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
+                file.close
+                response
             end
 
             def self.push name, params = {}, authentication = {}

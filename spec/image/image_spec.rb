@@ -245,10 +245,48 @@ RSpec.describe Docker::API::Image do
         
         end
         
-        #describe "::export(one/several)";end
-        #describe "::import";end
+        describe "::export" do
+            after(:all) { File.delete(File.expand_path("~/exported_image.tar")) }
+            it Errno::ENOENT do
+                expect{File.open(File.expand_path("~/exported_image"))}.to raise_error(Errno::ENOENT)
+            end
+
+            it "returns status 200" do
+                expect(described_class.export(image, "~/exported_image.tar").status).to eq(200)
+            end
+
+            it "saves the exported image" do
+                expect{File.open(File.expand_path("~/exported_image.tar"))}.not_to raise_error
+            end
+
+            it "returns status 404 & doesn't create file" do
+                expect(described_class.export("doesn-exist", "~/exported_image2.tar").status).to eq(404)
+                expect{File.open(File.expand_path("~/exported_image2.tar"))}.to raise_error(Errno::ENOENT)
+            end
+            
+            context "having the exported image" do
+                describe "::import" do
+                    describe "with no params" do
+                        it "returns status 200" do
+                            expect(described_class.import("~/exported_image.tar").status).to eq(200)
+                        end
+                    end
+
+                    describe "with valid params" do
+                        it "returns status 200" do
+                            expect(described_class.import("~/exported_image.tar", quiet: true).status).to eq(200)
+                        end
+                    end
+
+                    describe "with invalid params" do
+                        it Docker::API::InvalidParameter do
+                            expect{described_class.import("~/exported_image.tar", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
+                        end
+                    end
+                end
+            end
+        end
     end
-    
     
     describe "::search" do
         describe "with no params" do
