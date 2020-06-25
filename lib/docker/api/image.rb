@@ -11,17 +11,37 @@ module Docker
                 "/images"
             end
 
-            [{name: "inspect", path: "json"},
-             {name: "history", path: "history"}].each do | method |
-                define_singleton_method(method[:name]) { | name | connection.get(build_path([name, method[:path]])) }
+            def self.inspect name
+                connection.get(build_path([name, "json"]))
             end
 
-            [{name: "list",     path: "json",   params: [:all, :filters, :digests]},
-             {name: "search",   path: "search", params: [:term, :limit, :filters]}].each do | method |
-                define_singleton_method(method[:name]) do | params = {} | 
-                    validate Docker::API::InvalidParameter, method[:params], params
-                    connection.get(build_path([method[:path]], params)) 
-                end
+            def self.history name
+                connection.get(build_path([name, "history"]))
+            end
+
+            def self.list params = {}
+                validate Docker::API::InvalidParameter, [:all, :filters, :digests], params
+                connection.get(build_path(["json"], params)) 
+            end
+
+            def self.search params = {}
+                validate Docker::API::InvalidParameter, [:term, :limit, :filters], params
+                connection.get(build_path(["search"], params)) 
+            end
+
+            def self.tag name, params = {}
+                validate Docker::API::InvalidParameter, [:repo, :tag], params
+                connection.post(build_path([name, "tag"], params))
+            end
+
+            def self.prune params = {}
+                validate Docker::API::InvalidParameter, [:filters], params
+                connection.post(build_path(["prune"], params))
+            end
+
+            def self.remove name, params = {}
+                validate Docker::API::InvalidParameter, [:force, :noprune], params
+                connection.delete(build_path([name], params))
             end
 
             def self.export name, path = "exported_image"
@@ -62,21 +82,6 @@ module Docker
                 return container if [404, 301].include? container.status
                 body = JSON.parse(container.body)["Config"].merge(body)
                 connection.request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: body.to_json)
-            end
-
-            def self.remove name, params = {}
-                validate Docker::API::InvalidParameter, [:force, :noprune], params
-                connection.delete(build_path([name], params))
-            end
-
-            def self.tag name, params = {}
-                validate Docker::API::InvalidParameter, [:repo, :tag], params
-                connection.post(build_path([name, "tag"], params))
-            end
-
-            def self.prune params = {}
-                validate Docker::API::InvalidParameter, [:filters], params
-                connection.post(build_path(["prune"], params))
             end
 
             def self.create params = {}, authentication = {}
