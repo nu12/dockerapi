@@ -156,16 +156,16 @@ Docker::API::Container.prune
 
 ```ruby
 # Create volume
-Docker::API::Volume.create Name:"my-volume"
+Docker::API::Volume.create( Name:"my-volume" )
 
 # List volumes
 Docker::API::Volume.list
 
 # Inspect volume
-Docker::API::Volume.inspect "my-volume"
+Docker::API::Volume.inspect("my-volume")
 
 # Remove volume
-Docker::API::Volume.remove "my-volume"
+Docker::API::Volume.remove("my-volume")
 
 # Remove unused volumes (prune)
 Docker::API::Volume.prune
