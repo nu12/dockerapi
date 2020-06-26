@@ -69,8 +69,10 @@ RSpec.describe Docker::API::Container do
                 expect(described_class.create( {name: name},  {Image: image}).status).to eq(201)
             end
         
-            #TODO: test container creation with volume
             describe "with additional configuration" do
+                volume = "rspec-volume"
+                before(:all) { Docker::API::Volume.create Name: volume }
+                after(:all) { Docker::API::Volume.remove volume }
                 it "retuns status 201" do
                     response = described_class.create(                    
                          {name: name}, 
@@ -80,7 +82,8 @@ RSpec.describe Docker::API::Container do
                                 Memory: 6000000,
                                 PortBindings: {
                                     "80/tcp": [ {HostIp: "0.0.0.0", HostPort: "80"} ]
-                                }
+                                },
+                                Binds: ["#{volume}:/home"]
                             },
                             Env: ["DOCKER=nice", "DOCKERAPI=awesome"],
                             Cmd: ["echo", "hello from test"],

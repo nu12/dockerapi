@@ -177,7 +177,7 @@ WIP: Work In Progress
 |---|---|---|---|
 | Container | Ok | Ok | NS |
 | Image | Ok | Ok | NS |
-| Volume | NS | NS | NS |
+| Volume | WIP | WIP | NS |
 | Network | NS | NS | NS |
 | System | NS | NS | NS |
 | Exec | NS | NS | NS |
