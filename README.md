@@ -152,6 +152,26 @@ Docker::API::Container.remove("nginx")
 Docker::API::Container.prune
 ```
 
+### Volumes
+
+```ruby
+# Create volume
+Docker::API::Volume.create Name:"my-volume"
+
+# List volumes
+Docker::API::Volume.list
+
+# Inspect volume
+Docker::API::Volume.inspect "my-volume"
+
+# Remove volume
+Docker::API::Volume.remove "my-volume"
+
+# Remove unused volumes (prune)
+Docker::API::Volume.prune
+
+```
+
 ### Requests
 
 Requests should work as described in [Docker API documentation](https://docs.docker.com/engine/api/v1.40). Check it out to customize your requests.
@@ -177,7 +197,7 @@ WIP: Work In Progress
 |---|---|---|---|
 | Container | Ok | Ok | NS |
 | Image | Ok | Ok | NS |
-| Volume | WIP | WIP | NS |
+| Volume | Ok | Ok | NS |
 | Network | NS | NS | NS |
 | System | NS | NS | NS |
 | Exec | NS | NS | NS |

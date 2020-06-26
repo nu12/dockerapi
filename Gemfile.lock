@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dockerapi (0.2.0)
+    dockerapi (0.3.0)
       excon (~> 0.74.0)
 
 GEM

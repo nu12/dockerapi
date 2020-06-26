@@ -1,3 +1,13 @@
+# 0.3.0
+
+Add Docker::API::Image methods:
+* list
+* inspect
+* create
+* remove
+* prune
+
+
 # 0.2.0
 
 Add Docker::API::Image methods:
