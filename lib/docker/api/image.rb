@@ -107,7 +107,7 @@ module Docker
             end
 
             def self.build path, params = {}, authentication = {}
-                raise Docker::API::InvalidRequestBody unless path || params[:remote] 
+                raise Docker::API::Error.new("Expected path or params[:remote]") unless path || params[:remote] 
                 validate Docker::API::InvalidParameter, Docker::API::BuildParams, params
 
                 header = {"Content-type": "application/x-tar"}

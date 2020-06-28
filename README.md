@@ -204,6 +204,10 @@ Requests should work as described in [Docker API documentation](https://docs.doc
 
 All requests return a Excon::Response object.
 
+### Error handling
+
+`Docker::API::InvalidParameter` and `Docker::API::InvalidRequestBody` may be raised when an invalid option is passed as argument (ie: an option not described in Docker API documentation for request query parameters nor request body (json) parameters). Even if no errors were raised, consider validating the status code and/or message of the response to check if the Docker daemon has fulfilled the operation properly.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -233,7 +237,7 @@ WIP: Work In Progress
 
 Misc: 
 * Improve response object
-* Improve error objects
+* ~~Improve error objects~~
 
 ## Contributing
 

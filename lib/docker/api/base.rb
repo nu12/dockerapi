@@ -12,9 +12,9 @@ module Docker
                 Docker::API::Connection.instance
             end
 
-            def self.validate error, permitted_keys, params
-                not_permitted = params.keys.map(&:to_s) - permitted_keys.map(&:to_s)
-                raise error if not_permitted.size > 0
+            def self.validate error, permitted, params
+                unpermitted = params.keys.map(&:to_s) - permitted.map(&:to_s)
+                raise error.new(permitted, unpermitted) if unpermitted.size > 0
             end
 
             ## Converts Ruby Hash into query parameters

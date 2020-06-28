@@ -393,8 +393,8 @@ RSpec.describe Docker::API::Image do
                 expect{described_class.build("resources/build.tar.xz", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
                 expect{described_class.build(nil, remote: "https://github.com/nu12/dockerapi/blob/master/resources/build.tar.xz?raw=true", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter)
             end
-            it Docker::API::InvalidRequestBody do
-                expect{described_class.build(nil, invalid: "invalid")}.to raise_error(Docker::API::InvalidRequestBody)
+            it Docker::API::Error do
+                expect{described_class.build(nil, invalid: "invalid")}.to raise_error(Docker::API::Error)
             end
         end
 
