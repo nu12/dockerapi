@@ -6,6 +6,7 @@ require "docker/api/base"
 require "docker/api/container"
 require "docker/api/image"
 require "docker/api/volume"
+require "docker/api/network"
 require "docker/api/system"
 
 module Docker

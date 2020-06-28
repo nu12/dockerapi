@@ -198,7 +198,7 @@ WIP: Work In Progress
 | Container | Ok | Ok | NS |
 | Image | Ok | Ok | NS |
 | Volume | Ok | Ok | NS |
-| Network | NS | NS | NS |
+| Network | WIP | WIP | NS |
 | System | NS | NS | NS |
 | Exec | NS | NS | NS |
 | Swarm | NS | NS | NS |
