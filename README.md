@@ -169,7 +169,31 @@ Docker::API::Volume.remove("my-volume")
 
 # Remove unused volumes (prune)
 Docker::API::Volume.prune
+```
 
+### Network
+
+```ruby
+# List networks
+Docker::API::Network.list
+
+# Inspect network
+Docker::API::Network.inspect("bridge")
+
+# Create network
+Docker::API::Network.create( Name:"my-network" )
+
+# Remove network
+Docker::API::Network.remove("my-network")
+
+# Remove unused network (prune)
+Docker::API::Network.prune
+
+# Connect container to a network
+Docker::API::Network.connect( "my-network", Container: "my-container" )
+
+# Disconnect container to a network
+Docker::API::Network.disconnect( "my-network", Container: "my-container" )
 ```
 
 ### Requests
@@ -198,7 +222,7 @@ WIP: Work In Progress
 | Container | Ok | Ok | NS |
 | Image | Ok | Ok | NS |
 | Volume | Ok | Ok | NS |
-| Network | WIP | WIP | NS |
+| Network | Ok | Ok | NS |
 | System | NS | NS | NS |
 | Exec | NS | NS | NS |
 | Swarm | NS | NS | NS |

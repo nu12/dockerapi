@@ -1,6 +1,17 @@
+# 0.4.0
+
+Add Docker::API::Network methods:
+* list
+* inspect
+* create
+* remove
+* prune
+* connect
+* disconnect
+
 # 0.3.0
 
-Add Docker::API::Image methods:
+Add Docker::API::Volume methods:
 * list
 * inspect
 * create
