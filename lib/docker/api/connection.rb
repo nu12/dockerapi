@@ -1,6 +1,4 @@
-require "excon"
 require "singleton"
-require "json"
 module Docker
     module API
         class Connection
@@ -15,7 +13,7 @@ module Docker
             end
 
             def request params
-                @connection.request(params)
+                Docker::API::Response.new(@connection.request(params).data)
             end
             
             private

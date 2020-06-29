@@ -202,7 +202,35 @@ Requests should work as described in [Docker API documentation](https://docs.doc
 
 ### Response
 
-All requests return a Excon::Response object.
+All requests return a response class that inherits from Excon::Response. Available attribute readers and methods include: `status`, `data`, `body`, `headers`, `json`, `path`, `success?`.
+
+```ruby
+response = Docker::API::Image.create(fromImage: "busybox:latest")
+
+response
+=> #<Docker::API::Response:0x000055bb390b35c0 ... >
+
+response.status
+=> 200
+
+response.data
+=> {:body=>"...", :cookies=>[], :host=>nil, :headers=>{ ... }, :path=>"/images/create?fromImage=busybox:latest", :port=>nil, :status=>200, :status_line=>"HTTP/1.1 200 OK\r\n", :reason_phrase=>"OK"}
+
+response.headers
+=> {"Api-Version"=>"1.40", "Content-Type"=>"application/json", "Docker-Experimental"=>"false", "Ostype"=>"linux", "Server"=>"Docker/19.03.11 (linux)", "Date"=>"Mon, 29 Jun 2020 16:10:06 GMT"}
+
+response.body
+=> "{\"status\":\"Pulling from library/busybox\" ... "
+
+response.json
+=> [{:status=>"Pulling from library/busybox", :id=>"latest"}, {:status=>"Pulling fs layer", :progressDetail=>{}, :id=>"76df9210b28c"}, ... , {:status=>"Status: Downloaded newer image for busybox:latest"}]
+
+response.path
+=> "/images/create?fromImage=busybox:latest"
+
+response.success?
+=> true
+```
 
 ### Error handling
 
@@ -236,7 +264,7 @@ WIP: Work In Progress
 | Secret | NS | NS | NS |
 
 Misc: 
-* Improve response object
+* ~~Improve response object~~
 * ~~Improve error objects~~
 
 ## Contributing
