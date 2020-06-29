@@ -1,3 +1,12 @@
+# 0.5.0 (upcomming)
+
+Add new response class Docker::API::Response with the following methods:
+* json
+* path
+* success?
+
+Error classes output better error messages.
+
 # 0.4.0
 
 Add Docker::API::Network methods:
