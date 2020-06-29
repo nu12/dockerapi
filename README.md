@@ -196,6 +196,25 @@ Docker::API::Network.connect( "my-network", Container: "my-container" )
 Docker::API::Network.disconnect( "my-network", Container: "my-container" )
 ```
 
+### System
+
+```ruby
+# Ping docker api
+Docker::API::System.ping
+
+# Docker components versions
+Docker::API::System.version
+
+# System info
+Docker::API::System.info
+
+# System events (stream)
+Docker::API::System.events(until: Time.now.to_i)
+
+# Data usage information
+Docker::API::System.df
+```
+
 ### Requests
 
 Requests should work as described in [Docker API documentation](https://docs.docker.com/engine/api/v1.40). Check it out to customize your requests.
@@ -255,7 +274,7 @@ WIP: Work In Progress
 | Image | Ok | Ok | NS |
 | Volume | Ok | Ok | NS |
 | Network | Ok | Ok | NS |
-| System | WIP | WIP | NS |
+| System | Ok | Ok | NS |
 | Exec | NS | NS | NS |
 | Swarm | NS | NS | NS |
 | Node | NS | NS | NS |

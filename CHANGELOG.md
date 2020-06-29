@@ -1,4 +1,12 @@
-# 0.5.0 (upcomming)
+# 0.5.0
+
+Add Docker::API::System methods:
+* auth
+* ping
+* info
+* version
+* events
+* df
 
 Add new response class Docker::API::Response with the following methods:
 * json
