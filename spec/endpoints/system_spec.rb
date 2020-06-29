@@ -13,6 +13,7 @@ RSpec.describe Docker::API::System do
     describe "::ping" do
         it { expect(described_class).to respond_to(:ping) }
         it { expect(described_class.ping.status).to eq(200) }
+        it { expect(described_class.ping.path).to eq("/_ping") }
     end
 
     describe "::info" do
@@ -21,6 +22,7 @@ RSpec.describe Docker::API::System do
         it { expect(subject.status).to eq(200) }
         it { expect(subject.success?).to eq(true) }
         it { expect(subject.json).to be_kind_of(Hash) }
+        it { expect(subject.path).to eq("/info") }
     end
 
     describe "::version" do
@@ -29,13 +31,16 @@ RSpec.describe Docker::API::System do
         it { expect(subject.status).to eq(200) }
         it { expect(subject.success?).to eq(true) }
         it { expect(subject.json).to be_kind_of(Hash) }
+        it { expect(subject.path).to eq("/version") }
     end
 
     describe "::events" do
-        subject { described_class.events(until: Time.now.to_i ) }
+        let(:now) { Time.now.to_i }
+        subject { described_class.events(until: now ) }
         it { expect(described_class).to respond_to(:events) }
         it { expect(subject.status).to eq(200) }
         it { expect(subject.success?).to eq(true) }
+        it { expect(subject.path).to eq("/events?until=#{now}") }
         it { expect{described_class.events(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
     end
 
@@ -45,6 +50,7 @@ RSpec.describe Docker::API::System do
         it { expect(subject.status).to eq(200) }
         it { expect(subject.success?).to eq(true) }
         it { expect(subject.json).to be_kind_of(Hash) }
+        it { expect(subject.path).to eq("/system/df") }
     end
 end
 
