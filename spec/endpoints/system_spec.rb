@@ -1,7 +1,4 @@
-# source: https://zverok.github.io/blog/2017-11-01-rspec-method-call.html
-
 RSpec.describe Docker::API::System do
-    
     
     describe "::auth" do
         subject { lambda { | params | described_class.auth(params) } }
