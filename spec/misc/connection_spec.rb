@@ -1,15 +1,9 @@
 RSpec.describe Docker::API::Connection do
     describe "is a Singleton" do
-        let(:instance) {described_class.instance}
-
-        it "::instance" do
-            expect(instance).not_to be nil
-            expect(instance).to be(described_class.instance)
-        end
-
-        it "#inspect" do
-            expect(instance.inspect).to match(/docker.sock/)
-        end
-
+        subject {described_class.instance}
+        
+        it { expect(subject).not_to be nil }
+        it { expect(subject).to be(described_class.instance) }
+        it { expect(subject.inspect).to match(/docker.sock/) }
     end
 end

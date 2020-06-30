@@ -1,5 +1,5 @@
 RSpec.describe Docker::API::Container do
-    image =  "nginx:latest"
+    image =  "nginx:alpine"
     name = "rspec-container"
 
     before(:all) { Docker::API::Image.create({fromImage: image}) }
