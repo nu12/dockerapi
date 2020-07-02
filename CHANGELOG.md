@@ -1,3 +1,11 @@
+# 0.6.0 (upcoming)
+
+Add Docker::API::Exec methods:
+* create
+* start
+* resize
+* inspect
+
 # 0.5.0
 
 Add Docker::API::System methods:
