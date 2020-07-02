@@ -37,7 +37,6 @@ Docker::API::Image.create( fromSrc: "https://url.to/file.tar", repo: "repo:tag" 
 
 # List images
 Docker::API::Image.list
-Docker::API::Image.list( all:true )
 
 # Inspect image
 Docker::API::Image.inspect("image")
@@ -59,7 +58,7 @@ Docker::API::Image.push("repo:tag") # to dockerhub
 Docker::API::Image.push("localhost:5000/repo:tag") # to local registry
 Docker::API::Image.push("private/repo", {tag: "tag"}, {username: "janedoe", password: "password"} # to private repository
 
-# Remove container
+# Remove image
 Docker::API::Image.remove("image")
 Docker::API::Image.remove("image", force: true)
 
@@ -275,7 +274,7 @@ WIP: Work In Progress
 | Volume | Ok | Ok | NS |
 | Network | Ok | Ok | NS |
 | System | Ok | Ok | NS |
-| Exec | NS | NS | NS |
+| Exec | Ok | Ok | NS |
 | Swarm | NS | NS | NS |
 | Node | NS | NS | NS |
 | Service | NS | NS | NS |
