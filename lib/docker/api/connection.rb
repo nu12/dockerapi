@@ -15,6 +15,10 @@ module Docker
             def request params
                 Docker::API::Response.new(@connection.request(params).data)
             end
+
+            def connect_to params
+                @connection = Excon.new(params)
+            end
             
             private
             def initialize

@@ -1,8 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 IFS=$'\n\t'
-set -vx
-
-bundle install
+#set -vx
 
 # Do any other automated setup that you need to do here
+if [ $USER == 'root' ]
+then
+    echo "Enabling TCP port 2375 for external connection to Docker"
+    echo '{"hosts": ["tcp://0.0.0.0:2375", "unix:///var/run/docker.sock"]}' > /etc/docker/daemon.json
+    mkdir -p /etc/systemd/system/docker.service.d
+    echo '[Service]' > /etc/systemd/system/docker.service.d/override.conf
+    echo 'ExecStart=' >> /etc/systemd/system/docker.service.d/override.conf
+    echo 'ExecStart=/usr/bin/dockerd' >> /etc/systemd/system/docker.service.d/override.conf
+    systemctl daemon-reload
+    systemctl restart docker.service
+    echo "Done!"
+else
+    echo "Running bundle install"
+    bundle install
+    echo "Run this script as root for further configurations"
+fi
