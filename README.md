@@ -214,6 +214,21 @@ Docker::API::System.events(until: Time.now.to_i)
 Docker::API::System.df
 ```
 
+### Exec
+
+```ruby
+# Create exec instance, get generated exec ID
+response = Docker::API::Exec.create(container, AttachStdout:true, Cmd: ["ls", "-l"])
+id = response.json["Id"]
+
+# Execute the command, stream from Stdout is stored in response data
+response = Docker::API::Exec.start(id)
+print response.data[:stream]
+
+# Inspect exec instance
+Docker::API::Exec.inspect(id)
+```
+
 ### Requests
 
 Requests should work as described in [Docker API documentation](https://docs.docker.com/engine/api/v1.40). Check it out to customize your requests.

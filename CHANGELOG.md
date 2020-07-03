@@ -1,4 +1,6 @@
-# 0.6.0 (upcoming)
+# 0.6.0
+
+Add connection parameters specifications with connect_to in Docker::API::Connection.
 
 Add Docker::API::Exec methods:
 * create
