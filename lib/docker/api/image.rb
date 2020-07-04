@@ -7,7 +7,7 @@ module Docker
         BuildParams = [:dockerfile, :t, :extrahosts, :remote, :q, :nocache, :cachefrom, :pull, :rm, :forcerm, :memory, :memswap, :cpushares, :cpusetcpus, :cpuperiod, :cpuquota, :buildargs, :shmsize, :squash, :labels, :networkmode, :platform, :target, :outputs]
         class Image < Docker::API::Base
 
-            def self.base_path
+            def base_path
                 "/images"
             end
 
@@ -39,9 +39,9 @@ module Docker
                 connection.post(build_path(["prune"], params))
             end
 
-            def self.remove name, params = {}
+            def remove name, params = {}
                 validate Docker::API::InvalidParameter, [:force, :noprune], params
-                connection.delete(build_path([name], params))
+                @connection.delete(build_path([name], params))
             end
 
             def self.export name, path = "exported_image"
@@ -84,25 +84,25 @@ module Docker
                 connection.request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: body.to_json)
             end
 
-            def self.create params = {}, authentication = {}
+            def create params = {}, authentication = {}
                 validate Docker::API::InvalidParameter, [:fromImage, :fromSrc, :repo, :tag, :message, :platform], params
                 
                 if authentication.keys.size > 0
                     auth = Docker::API::System.auth(authentication)
                     return auth unless [200, 204].include? auth.status
-                    connection.request(method: :post, path: build_path(["create"], params), headers: { "X-Registry-Auth" => Base64.encode64(authentication.to_json.to_s).chomp } )
+                    @connection.request(method: :post, path: build_path(["create"], params), headers: { "X-Registry-Auth" => Base64.encode64(authentication.to_json.to_s).chomp } )
                 elsif params.has_key? :fromSrc
                     if params[:fromSrc].match(/^(http|https)/)
-                        connection.request(method: :post, path: build_path(["create"], params))
+                        @connection.request(method: :post, path: build_path(["create"], params))
                     else
                         file = File.open(File.expand_path(params[:fromSrc]), "r")
                         params[:fromSrc] = "-"
-                        response = connection.request(method: :post, path: build_path(["create"], params) , headers: {"Content-Type" => "application/x-tar"}, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
+                        response = @connection.request(method: :post, path: build_path(["create"], params) , headers: {"Content-Type" => "application/x-tar"}, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
                         file.close
                         response
                     end
                 else
-                    connection.post(build_path(["create"], params))
+                    @connection.post(build_path(["create"], params))
                 end
             end
 

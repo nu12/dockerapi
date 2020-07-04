@@ -1,6 +1,10 @@
 module Docker
     module API
         class Base
+
+            def initialize connection = nil
+                @connection = connection || Docker::API::Connection.new
+            end
             
             private
 

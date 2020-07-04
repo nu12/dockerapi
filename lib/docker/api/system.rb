@@ -3,10 +3,6 @@ module Docker
     module API
         class System < Docker::API::Base
 
-            def initialize connection = nil
-                @connection = connection || Docker::API::Connection.new
-            end
-            
             def auth body = {}
                 validate Docker::API::InvalidRequestBody, [:username, :password, :email, :serveraddress, :identitytoken], body
                 @connection.request(method: :post, path: "/auth", headers: { "Content-Type" => "application/json" }, body: body.to_json)
