@@ -6,7 +6,7 @@ RSpec.describe Docker::API::Container do
     after(:all)  { Docker::API::Image.new.remove(image) }
     
     subject { described_class.new }
-    describe "::list" do
+    describe ".list" do
         it { expect(subject.list.json).to be_kind_of(Array) }
         it { expect { subject.list( { invalid: "invalid" } ) }.to raise_error(Docker::API::InvalidParameter) }
 
@@ -26,7 +26,7 @@ RSpec.describe Docker::API::Container do
         end
     end
 
-    describe "::create" do
+    describe ".create" do
         context "no name given" do
             subject { described_class.new.create( {}, { Image: image }) }
             let(:id) { subject.json["Id"] }
@@ -65,7 +65,7 @@ RSpec.describe Docker::API::Container do
         end
     end
 
-    describe "::remove" do
+    describe ".remove" do
         before(:each) { subject.create( {name: name},  {Image: image}) }
         after(:all) { described_class.new.remove(name, {force: true}) }
 
@@ -80,11 +80,11 @@ RSpec.describe Docker::API::Container do
         end
     end
     
-    context "after ::create" do
+    context "after .create" do
         before(:all) { described_class.new.create( {name: name},  {Image: image}) }
         after(:all) { described_class.new.remove(name, {force: true}) }
 
-        describe "::start" do
+        describe ".start" do
             before(:each) { subject.stop(name) }
             after(:all) { described_class.new.stop(name) }
             
@@ -99,11 +99,11 @@ RSpec.describe Docker::API::Container do
             end
         end
     
-        context "after ::start" do 
+        context "after .start" do 
             before(:each) { subject.start(name) }
             after(:all) { described_class.new.stop(name) }
 
-            describe "::stop" do
+            describe ".stop" do
                 it { expect(subject.stop(name).status).to be(204) }
                 it { expect(subject.stop("doesn-exist").status).to be(404) }
                 it { expect{subject.stop(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
@@ -113,7 +113,7 @@ RSpec.describe Docker::API::Container do
                 end
             end
 
-            describe "::kill" do
+            describe ".kill" do
                 it { expect(subject.kill(name).status).to be(204) }
                 it { expect(subject.kill("doesn-exist").status).to be(404) }
                 it { expect(subject.kill(name,  {signal: "SIGKILL"}).status).to eq(204) }
@@ -125,7 +125,7 @@ RSpec.describe Docker::API::Container do
                 end                
             end
 
-            describe "::restart" do
+            describe ".restart" do
                 it { expect(subject.restart(name).status).to be(204) }
                 it { expect(subject.restart("doesn-exist").status).to be(404) }
                 it { expect(subject.restart(name,  {t: 2}).status).to eq(204) }
@@ -133,17 +133,17 @@ RSpec.describe Docker::API::Container do
                 it { expect{subject.restart(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
             end
 
-            describe "::pause" do
+            describe ".pause" do
                 it { expect(subject.pause(name).status).to be(204) }
                 it { expect(subject.pause("doesn-exist").status).to be(404) }
             end
 
-            describe "::unpause" do
+            describe ".unpause" do
                 it { expect(subject.unpause(name).status).to be(204) }
                 it { expect(subject.unpause("doesn-exist").status).to be(404) }
             end
 
-            describe "::top" do
+            describe ".top" do
                 it { expect(subject.top(name).status).to be(200) }
                 it { expect(subject.top(name).json).to be_kind_of(Hash) }
                 it { expect(subject.top("doesn-exist").status).to be(404) }
@@ -152,7 +152,7 @@ RSpec.describe Docker::API::Container do
                 it { expect{subject.top(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
             end
 
-            describe "::wait" do
+            describe ".wait" do
                 it do 
                     Thread.new do
                         subject.stop(name,  {t: 2})
@@ -167,7 +167,7 @@ RSpec.describe Docker::API::Container do
                 end
             end
 
-            describe "::archive" do
+            describe ".archive" do
                 after(:all) { File.delete(File.expand_path("~/archive.tar")) }
                 it { expect(subject.archive(name, "file").status).to eq(400) }
                 it { expect(subject.archive("doesn-exist", "file").status).to eq(400) }
@@ -186,7 +186,7 @@ RSpec.describe Docker::API::Container do
                 end
             end
 
-            describe "::resize" do
+            describe ".resize" do
                 it { expect(subject.resize(name).status).to eq(400) }
                 it { expect(subject.resize(name,  {h: 100, w: 100}).status).to eq(200) }
                 it { expect(subject.resize("doesn-exist",  {h: 100, w: 100}).status).to eq(404) }
@@ -194,7 +194,7 @@ RSpec.describe Docker::API::Container do
             end
         end
 
-        describe "::inspect" do
+        describe ".inspect" do
             it { expect(subject.inspect(name).status).to eq(200) }
             it { expect(subject.inspect(name).body).to match(/\"Name\":\"\/#{name}\"/) }
             it { expect(subject.inspect("doesn-exist").status).to eq(404) }
@@ -203,7 +203,7 @@ RSpec.describe Docker::API::Container do
             it { expect{subject.inspect(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
         end
 
-        describe "::logs" do
+        describe ".logs" do
             it { expect(subject.logs(name).status).to eq(400) }
             it { expect(subject.logs(name,  {stdout: false, stderr: false}).status).to eq(400) }
             it { expect(subject.logs(name,  {stdout: true}).status).to eq(200) }
@@ -218,12 +218,12 @@ RSpec.describe Docker::API::Container do
             it { expect{subject.logs(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
         end
 
-        describe "::changes" do
+        describe ".changes" do
             it { expect(subject.changes(name).status).to eq(200) }
             it { expect(subject.changes("doesn-exist").status).to eq(404) }
         end
 
-        describe "::stats" do
+        describe ".stats" do
             #TODO: implement test to stream response
             it { expect(subject.stats(name, {stream: false}).status).to eq(200) }
             it { expect(subject.stats(name, {stream: false}).body).not_to be(nil) }
@@ -231,7 +231,7 @@ RSpec.describe Docker::API::Container do
             it { expect{subject.stats(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
         end
 
-        describe "::export" do
+        describe ".export" do
             after(:all)  { File.delete(File.expand_path("~/exported_container")) }
             it { expect{File.open(File.expand_path("~/exported_container"))}.to raise_error(Errno::ENOENT) }
             it { expect(subject.export(name, "~/exported_container").status).to eq(200) }
@@ -240,7 +240,7 @@ RSpec.describe Docker::API::Container do
             it { expect{File.open(File.expand_path("~/wont_exist"))}.to raise_error(Errno::ENOENT) }
         end
 
-        describe "::update" do
+        describe ".update" do
             it { expect(subject.update("doesn-exist").status).to eq(404) }
             it { expect{subject.update(name,  {invalid: "invalid"})}.to raise_error(Docker::API::InvalidRequestBody)  }
             it do
@@ -256,7 +256,7 @@ RSpec.describe Docker::API::Container do
             end   
         end
 
-        describe "::rename" do
+        describe ".rename" do
             after(:all) { described_class.new.remove("already-in-use") }
             it { expect(subject.rename(name).status).to eq(400) }
             it { expect(subject.rename(name, {name: "#{name}2"}).status).to eq(204) }
@@ -269,12 +269,12 @@ RSpec.describe Docker::API::Container do
             end
         end
 
-        describe "::attach" do
+        describe ".attach" do
             it { expect(subject.attach(name).status).to eq(200) }
             it { expect{subject.attach(name,  {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
         end
 
-        describe "::prune" do
+        describe ".prune" do
             subject { described_class.new.prune }
             it { expect(subject.status).to eq(200) }
             it { expect(subject.json).to be_kind_of(Hash) }

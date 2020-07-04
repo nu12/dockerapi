@@ -11,32 +11,32 @@ module Docker
                 "/images"
             end
 
-            def self.inspect name
-                connection.get(build_path([name, "json"]))
+            def inspect name
+                @connection.get(build_path([name, "json"]))
             end
 
-            def self.history name
-                connection.get(build_path([name, "history"]))
+            def history name
+                @connection.get(build_path([name, "history"]))
             end
 
-            def self.list params = {}
+            def list params = {}
                 validate Docker::API::InvalidParameter, [:all, :filters, :digests], params
-                connection.get(build_path(["json"], params)) 
+                @connection.get(build_path(["json"], params)) 
             end
 
-            def self.search params = {}
+            def search params = {}
                 validate Docker::API::InvalidParameter, [:term, :limit, :filters], params
-                connection.get(build_path(["search"], params)) 
+                @connection.get(build_path(["search"], params)) 
             end
 
-            def self.tag name, params = {}
+            def tag name, params = {}
                 validate Docker::API::InvalidParameter, [:repo, :tag], params
-                connection.post(build_path([name, "tag"], params))
+                @connection.post(build_path([name, "tag"], params))
             end
 
-            def self.prune params = {}
+            def prune params = {}
                 validate Docker::API::InvalidParameter, [:filters], params
-                connection.post(build_path(["prune"], params))
+                @connection.post(build_path(["prune"], params))
             end
 
             def remove name, params = {}
@@ -44,44 +44,44 @@ module Docker
                 @connection.delete(build_path([name], params))
             end
 
-            def self.export name, path = "exported_image"
+            def export name, path = "exported_image"
                 file = File.open("/tmp/exported-image", "wb")
                 streamer = lambda do |chunk, remaining_bytes, total_bytes|
                     file.write(chunk)
                 end
-                response = connection.request(method: :get, path: build_path([name, "get"]) , response_block: streamer)
+                response = @connection.request(method: :get, path: build_path([name, "get"]) , response_block: streamer)
                 file.close
                 response.status == 200 ? FileUtils.mv("/tmp/exported-image", File.expand_path(path)) : FileUtils.rm("/tmp/exported-image")
                 response
             end
 
-            def self.import path, params = {}
+            def import path, params = {}
                 validate Docker::API::InvalidParameter, [:quiet], params
                 file = File.open(File.expand_path(path), "r")
-                response = connection.request(method: :post, path: build_path(["load"], params) , headers: {"Content-Type" => "application/x-tar"}, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
+                response = @connection.request(method: :post, path: build_path(["load"], params) , headers: {"Content-Type" => "application/x-tar"}, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
                 file.close
                 response
             end
 
-            def self.push name, params = {}, authentication = {}
+            def push name, params = {}, authentication = {}
                 validate Docker::API::InvalidParameter, [:tag], params
 
                 if authentication.keys.size > 0
                     auth = Docker::API::System.auth(authentication)
                     return auth unless [200, 204].include? auth.status
-                    connection.request(method: :post, path: build_path([name, "push"], params), headers: { "X-Registry-Auth" => Base64.encode64(authentication.to_json.to_s).chomp } )
+                    @connection.request(method: :post, path: build_path([name, "push"], params), headers: { "X-Registry-Auth" => Base64.encode64(authentication.to_json.to_s).chomp } )
                 else
-                    connection.post(build_path([name, "push"], params))
+                    @connection.post(build_path([name, "push"], params))
                 end
             end
 
-            def self.commit params = {}, body = {}
+            def commit params = {}, body = {}
                 validate Docker::API::InvalidParameter, [:container, :repo, :tag, :comment, :author, :pause, :changes], params
                 validate Docker::API::InvalidRequestBody, Docker::API::CommitBody, body
-                container = Docker::API::Container.inspect(params[:container])
+                container = Docker::API::Container.new.inspect(params[:container])
                 return container if [404, 301].include? container.status
                 body = JSON.parse(container.body)["Config"].merge(body)
-                connection.request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: body.to_json)
+                @connection.request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: body.to_json)
             end
 
             def create params = {}, authentication = {}
@@ -106,14 +106,14 @@ module Docker
                 end
             end
 
-            def self.build path, params = {}, authentication = {}
+            def build path, params = {}, authentication = {}
                 raise Docker::API::Error.new("Expected path or params[:remote]") unless path || params[:remote] 
                 validate Docker::API::InvalidParameter, Docker::API::BuildParams, params
 
                 header = {"Content-type": "application/x-tar"}
                 if authentication.keys.size > 0
                     authentication.each_key do |server|
-                        auth = Docker::API::System.auth({username: authentication[server][:username] ,password:authentication[server][:password], serveraddress: server})
+                        auth = Docker::API::System.new.auth({username: authentication[server][:username] ,password:authentication[server][:password], serveraddress: server})
                         return auth unless [200, 204].include? auth.status
                     end
                     header.merge!({"X-Registry-Config": Base64.urlsafe_encode64(authentication.to_json.to_s).chomp})
@@ -121,17 +121,17 @@ module Docker
 
                 begin
                     file = File.open( File.expand_path( path ) , "r")
-                    response = connection.request(method: :post, path: build_path("/build", params), headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s})
+                    response = @connection.request(method: :post, path: build_path("/build", params), headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s})
                     file.close
                 rescue
-                    response = connection.request(method: :post, path: build_path("/build", params), headers: header)
+                    response = @connection.request(method: :post, path: build_path("/build", params), headers: header)
                 end
                 response
             end
 
-            def self.delete_cache params = {}
+            def delete_cache params = {}
                 validate Docker::API::InvalidParameter, [:all, "keep-storage", :filters], params
-                connection.post(build_path("/build/prune", params))
+                @connection.post(build_path("/build/prune", params))
             end
 
         end
