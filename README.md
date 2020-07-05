@@ -20,71 +20,76 @@ Or install it yourself as:
 
 ## Usage
 
+New implementation details as of v0.7.0.
+
 ### Images
 
 ```ruby
+# Connect to local image endpoints
+image = Docker::API::Image.new
+
 # Pull from a public repository
-Docker::API::Image.create( fromImage: "nginx:latest" )
+image.create( fromImage: "nginx:latest" )
 
 # Pull from a private repository
-Docker::API::Image.create( {fromImage: "private/repo:tag"}, {username: "janedoe", password: "password"} )
+image.create( {fromImage: "private/repo:tag"}, {username: "janedoe", password: "password"} )
 
 # Create image from local tar file
-Docker::API::Image.create( fromSrc: "/path/to/file.tar", repo: "repo:tag" )
+image.create( fromSrc: "/path/to/file.tar", repo: "repo:tag" )
 
 # Create image from remote tar file
-Docker::API::Image.create( fromSrc: "https://url.to/file.tar", repo: "repo:tag" )
+image.create( fromSrc: "https://url.to/file.tar", repo: "repo:tag" )
 
 # List images
-Docker::API::Image.list
+image.list
 
 # Inspect image
-Docker::API::Image.inspect("image")
+image.inspect("image")
 
 # History
-Docker::API::Image.history("image")
+image.history("image")
 
 # Search image
-Docker::API::Image.search(term: "busybox", limit: 2)
-Docker::API::Image.search(term: "busybox", filters: {"is-automated": {"true": true}})
-Docker::API::Image.search(term: "busybox", filters: {"is-official": {"true": true}})
+image.search(term: "busybox", limit: 2)
+image.search(term: "busybox", filters: {"is-automated": {"true": true}})
+image.search(term: "busybox", filters: {"is-official": {"true": true}})
 
 # Tag image
-Docker::API::Image.tag("current:tag", repo: "new:tag") # or
-Docker::API::Image.tag("current:tag", repo: "new", tag: "tag")
+image.tag("current:tag", repo: "new:tag") # or
+image.tag("current:tag", repo: "new", tag: "tag")
 
 # Push image
-Docker::API::Image.push("repo:tag") # to dockerhub
-Docker::API::Image.push("localhost:5000/repo:tag") # to local registry
-Docker::API::Image.push("private/repo", {tag: "tag"}, {username: "janedoe", password: "password"} # to private repository
+image.push("repo:tag") # to dockerhub
+image.push("localhost:5000/repo:tag") # to local registry
+image.push("private/repo", {tag: "tag"}, {username: "janedoe", password: "password"} # to private repository
 
 # Remove image
-Docker::API::Image.remove("image")
-Docker::API::Image.remove("image", force: true)
+image.remove("image")
+image.remove("image", force: true)
 
 # Remove unsued images (prune)
-Docker::API::Image.prune(filters: {dangling: {"false": true}})
+image.prune(filters: {dangling: {"false": true}})
 
 # Create image from a container (commit)
-Docker::API::Image.commit(container: container, repo: "my/image", tag: "latest", comment: "Comment from commit", author: "dockerapi", pause: false )
+image.commit(container: container, repo: "my/image", tag: "latest", comment: "Comment from commit", author: "dockerapi", pause: false )
 
 # Build image from a local tar file
-Docker::API::Image.build("/path/to/file.tar")
+image.build("/path/to/file.tar")
 
 # Build image from a remote tar file
-Docker::API::Image.build(nil, remote: "https://url.to/file.tar")
+image.build(nil, remote: "https://url.to/file.tar")
 
 # Build image from a remote Dockerfile
-Docker::API::Image.build(nil, remote: "https://url.to/Dockerfile")
+image.build(nil, remote: "https://url.to/Dockerfile")
 
 # Delete builder cache
-Docker::API::Image.delete_cache
+image.delete_cache
 
 # Export repo
-Docker::API::Image.export("repo:tag", "~/exported_image.tar")
+image.export("repo:tag", "~/exported_image.tar")
 
 # Import repo
-Docker::API::Image.import("/path/to/file.tar")
+image.import("/path/to/file.tar")
 ```
 
 ### Containers 
@@ -93,140 +98,177 @@ Let's test a Nginx container
 
 ```ruby
 # Pull nginx image
-Docker::API::Image.create( fromImage: "nginx:latest" )
+Docker::API::Image.new.create( fromImage: "nginx:latest" )
+
+# Connect to local container endpoints
+container = Docker::API::Container.new
 
 # Create container
-Docker::API::Container.create( {name: "nginx"}, {Image: "nginx:latest", HostConfig: {PortBindings: {"80/tcp": [ {HostIp: "0.0.0.0", HostPort: "80"} ]}}})
+container.create( {name: "nginx"}, {Image: "nginx:latest", HostConfig: {PortBindings: {"80/tcp": [ {HostIp: "0.0.0.0", HostPort: "80"} ]}}})
 
 # Start container
-Docker::API::Container.start("nginx")
+container.start("nginx")
 
 # Open localhost or machine IP to check the container running
 
 # Restart container
-Docker::API::Container.restart("nginx")
+container.restart("nginx")
 
 # Pause/unpause container
-Docker::API::Container.pause("nginx")
-Docker::API::Container.unpause("nginx")
+container.pause("nginx")
+container.unpause("nginx")
 
 # List containers
-Docker::API::Container::list
+container.list
 
 # List containers (including stopped ones)
-Docker::API::Container::list(all: true)
+container.list(all: true)
 
 # Inspect container
-Docker::API::Container.inspect("nginx")
+container.inspect("nginx")
 
 # View container's processes
-Docker::API::Container.top("nginx")
+container.top("nginx")
 
-# Let's enhance the output
-JSON.parse(Docker::API::Container.top("nginx").body)
+# Using json output
+container.top("nginx").json
 
 # View filesystem changes
-Docker::API::Container.changes("nginx")
+container.changes("nginx")
 
 # View filesystem logs
-Docker::API::Container.logs("nginx", stdout: true)
-Docker::API::Container.logs("nginx", stdout: true, follow: true)
+container.logs("nginx", stdout: true)
+container.logs("nginx", stdout: true, follow: true)
 
 # View filesystem stats
-Docker::API::Container.stats("nginx", stream: true)
+container.stats("nginx", stream: true)
 
 # Export container
-Docker::API::Container.export("nginx", "~/exported_container")
+container.export("nginx", "~/exported_container")
 
 # Get files from container
-Docker::API::Container.archive("nginx", "~/html.tar", path: "/usr/share/nginx/html/")
+container.archive("nginx", "~/html.tar", path: "/usr/share/nginx/html/")
 
 # Stop container
-Docker::API::Container.stop("nginx")
+container.stop("nginx")
 
 # Remove container
-Docker::API::Container.remove("nginx")
+container.remove("nginx")
 
 # Remove stopped containers (prune)
-Docker::API::Container.prune
+container.prune
 ```
 
 ### Volumes
 
 ```ruby
+# Connect to local volume endpoints
+volume = Docker::API::Volume.new
+
 # Create volume
-Docker::API::Volume.create( Name:"my-volume" )
+volume.create( Name:"my-volume" )
 
 # List volumes
-Docker::API::Volume.list
+volume.list
 
 # Inspect volume
-Docker::API::Volume.inspect("my-volume")
+volume.inspect("my-volume")
 
 # Remove volume
-Docker::API::Volume.remove("my-volume")
+volume.remove("my-volume")
 
 # Remove unused volumes (prune)
-Docker::API::Volume.prune
+volume.prune
 ```
 
 ### Network
 
 ```ruby
+# Connect to local network endpoints
+network = Docker::API::Network.new
+
 # List networks
-Docker::API::Network.list
+network.list
 
 # Inspect network
-Docker::API::Network.inspect("bridge")
+network.inspect("bridge")
 
 # Create network
-Docker::API::Network.create( Name:"my-network" )
+network.create( Name:"my-network" )
 
 # Remove network
-Docker::API::Network.remove("my-network")
+network.remove("my-network")
 
 # Remove unused network (prune)
-Docker::API::Network.prune
+network.prune
 
 # Connect container to a network
-Docker::API::Network.connect( "my-network", Container: "my-container" )
+network.connect( "my-network", Container: "my-container" )
 
 # Disconnect container to a network
-Docker::API::Network.disconnect( "my-network", Container: "my-container" )
+network.disconnect( "my-network", Container: "my-container" )
 ```
 
 ### System
 
 ```ruby
+# Connect to local system endpoints
+sys = Docker::API::System.new
+
 # Ping docker api
-Docker::API::System.ping
+sys.ping
 
 # Docker components versions
-Docker::API::System.version
+sys.version
 
 # System info
-Docker::API::System.info
+sys.info
 
 # System events (stream)
-Docker::API::System.events(until: Time.now.to_i)
+sys.events(until: Time.now.to_i)
 
 # Data usage information
-Docker::API::System.df
+sys.df
 ```
 
 ### Exec
 
 ```ruby
+# Connect to local exec endpoints
+exe = Docker::API::Exec.new
+
 # Create exec instance, get generated exec ID
-response = Docker::API::Exec.create(container, AttachStdout:true, Cmd: ["ls", "-l"])
+response = exe.create(container, AttachStdout:true, Cmd: ["ls", "-l"])
 id = response.json["Id"]
 
 # Execute the command, stream from Stdout is stored in response data
-response = Docker::API::Exec.start(id)
+response = exe.start(id)
 print response.data[:stream]
 
 # Inspect exec instance
-Docker::API::Exec.inspect(id)
+exe.inspect(id)
+```
+
+### Connection
+
+By default Docker::API::Connection will connect to local Docker socket at `/var/run/docker.sock`. See examples below to use a different path or connect to a remote address.
+
+```ruby
+# Setting different connections
+local = Docker::API::Connection.new('unix:///', socket: "/path/to/docker.sock")
+remote = Docker::API::Connection.new("http://127.0.0.1:2375") # change the IP address accordingly
+
+# Using default /var/run/docker.sock
+image_default = Docker::API::Image.new
+image_default.list
+
+# Using custom socket path
+image_custom = Docker::API::Image.new(local)
+image_custom.list
+
+# Using remote address
+image_remote = Docker::API::Image.new(remote)
+image_remote.list
 ```
 
 ### Requests
@@ -238,7 +280,7 @@ Requests should work as described in [Docker API documentation](https://docs.doc
 All requests return a response class that inherits from Excon::Response. Available attribute readers and methods include: `status`, `data`, `body`, `headers`, `json`, `path`, `success?`.
 
 ```ruby
-response = Docker::API::Image.create(fromImage: "busybox:latest")
+response = Docker::API::Image.new.create(fromImage: "busybox:latest")
 
 response
 => #<Docker::API::Response:0x000055bb390b35c0 ... >

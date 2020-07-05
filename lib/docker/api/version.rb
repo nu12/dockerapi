@@ -1,6 +1,6 @@
 module Docker
   module API
-    GEM_VERSION = "0.6.0"
+    GEM_VERSION = "0.7.0"
 
     API_VERSION = "1.40"
 
