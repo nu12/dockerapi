@@ -69,39 +69,16 @@ RSpec.describe Docker::API::Image do
             it { expect{subject.tag(image, invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
         end
 
-        #describe ".push" do
-            #before(:all) do
-            #    described_class.new.create(fromImage: "registry:2.7.1")
-            #    Docker::API::Container.new.create(
-            #        {name: "registry"}, 
-            #        {Image: "registry:2.7.1",
-            #        HostConfig: {
-            #            Memory: 6000000,
-            #            PortBindings: {
-            #                "5000/tcp": [ {HostIp: "0.0.0.0", HostPort: "5000"} ]
-            #            }
-            #        }}
-            #    )
-            #    Docker::API::Container.new.start("registry")
-            #    described_class.new.tag(image, repo: "127.0.0.1:5000/push:1")
-            #end
-            #after(:all) do
-            #    Docker::API::Container.new.stop("registry")
-            #    Docker::API::Container.new.remove("registry")
-            #    described_class.new.remove("registry:2.7.1")
-            #end
-
-            # TODO: Needs re-work
-            #it { expect{subject.push("127.0.0.1:5000/push:1", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
-            #it { expect(subject.push("127.0.0.1:5000/push:1").status).to be(200) }
-            #it { expect(subject.push("127.0.0.1:5000/push", tag: "1").status).to be(200) }
-
-            #describe "returns status 200 with error message" do
-            #    subject { described_class.new.push("127.0.0.1:5000/doesn-exist") }
-            #    it { expect(subject.status).to be(200) }
-            #    it { expect(subject.body).to match(/(An image does not exist locally with the tag)/) }
-            #end
-        #end
+        describe ".push" do
+            it { expect{subject.push("localhost:5000/push:1", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.push("localhost:5000/push:1")}.to raise_error(Docker::API::Error, "Provide authentication parameters to push an image") }
+            
+            describe "returns status 200 with error message" do
+                subject { described_class.new.push("localhost:5000/doesn-exist", {},{username: "janedoe", password: "password"}) }
+                it { expect(subject.status).to be(200) }
+                it { expect(subject.body).to match(/(An image does not exist locally with the tag)/) }
+            end
+        end
 
         describe ".commit" do
             container = "rspec-test"

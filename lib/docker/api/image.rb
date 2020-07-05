@@ -67,11 +67,9 @@ module Docker
                 validate Docker::API::InvalidParameter, [:tag], params
 
                 if authentication.keys.size > 0
-                    auth = Docker::API::System.auth(authentication)
-                    return auth unless [200, 204].include? auth.status
-                    @connection.request(method: :post, path: build_path([name, "push"], params), headers: { "X-Registry-Auth" => Base64.encode64(authentication.to_json.to_s).chomp } )
+                    @connection.request(method: :post, path: build_path([name, "push"], params), headers: { "X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s).chomp } )
                 else
-                    @connection.post(build_path([name, "push"], params))
+                    raise Docker::API::Error.new("Provide authentication parameters to push an image")
                 end
             end
 
@@ -88,7 +86,7 @@ module Docker
                 validate Docker::API::InvalidParameter, [:fromImage, :fromSrc, :repo, :tag, :message, :platform], params
                 
                 if authentication.keys.size > 0
-                    auth = Docker::API::System.auth(authentication)
+                    auth = Docker::API::System.new.auth(authentication)
                     return auth unless [200, 204].include? auth.status
                     @connection.request(method: :post, path: build_path(["create"], params), headers: { "X-Registry-Auth" => Base64.encode64(authentication.to_json.to_s).chomp } )
                 elsif params.has_key? :fromSrc
