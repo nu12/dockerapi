@@ -2,20 +2,20 @@ module Docker
     module API
         class Exec < Docker::API::Base
 
-            def self.base_path
+            def base_path
                 "/exec"
             end
 
-            def self.create name, body = {}
+            def create name, body = {}
                 validate Docker::API::InvalidRequestBody, [:AttachStdin, :AttachStdout, :AttachStderr, :DetachKeys, :Tty, :Env, :Cmd, :Privileged, :User, :WorkingDir], body
-                connection.request(method: :post, path: "/containers/#{name}/exec", headers: {"Content-Type": "application/json"}, body: body.to_json )
+                @connection.request(method: :post, path: "/containers/#{name}/exec", headers: {"Content-Type": "application/json"}, body: body.to_json )
             end
 
-            def self.start name, body = {}
+            def start name, body = {}
                 validate Docker::API::InvalidRequestBody, [:Detach, :Tty], body
 
                 stream = ""
-                response = connection.request(method: :post, 
+                response = @connection.request(method: :post, 
                     path: "/exec/#{name}/start", 
                     headers: {"Content-Type": "application/json"},  
                     body: body.to_json, 
@@ -25,13 +25,13 @@ module Docker
                 response
             end
 
-            def self.resize name, params = {}
+            def resize name, params = {}
                 validate Docker::API::InvalidParameter, [:w, :h], params
-                connection.post(build_path([name, "resize"], params))
+                @connection.post(build_path([name, "resize"], params))
             end
 
-            def self.inspect name
-                connection.get(build_path([name, "json"]))
+            def inspect name
+                @connection.get(build_path([name, "json"]))
             end
 
         end
