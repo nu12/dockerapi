@@ -319,28 +319,19 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ### Road to 1.0.0
 
-NS: Not Started
-
-WIP: Work In Progress
-
-
 | Class | Tests | Implementation | Refactoring |
 |---|---|---|---|
-| Container | Ok | Ok | NS |
-| Image | Ok | Ok | NS |
-| Volume | Ok | Ok | NS |
-| Network | Ok | Ok | NS |
-| System | Ok | Ok | NS |
-| Exec | Ok | Ok | NS |
-| Swarm | NS | NS | NS |
-| Node | NS | NS | NS |
-| Service | NS | NS | NS |
-| Task | NS | NS | NS |
-| Secret | NS | NS | NS |
-
-Misc: 
-* ~~Improve response object~~
-* ~~Improve error objects~~
+| Container | Ok | Ok | 7/24 |
+| Image | Ok | Ok | 7/31 |
+| Volume | Ok | Ok | 8/7 |
+| Network | Ok | Ok | 8/7 |
+| System | Ok | Ok | 8/7 |
+| Exec | Ok | Ok | 8/7 |
+| Swarm | 7/10 | 7/10 | 8/14 |
+| Node | 7/10 | 7/10 | 8/14 |
+| Service | 7/17 | 7/17 | 8/14 |
+| Task | 7/17 | 7/17 | 8/14 |
+| Secret | 7/17 | 7/17 | 8/14 |
 
 ## Contributing
 
