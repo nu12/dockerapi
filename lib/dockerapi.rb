@@ -12,6 +12,7 @@ require "docker/api/volume"
 require "docker/api/network"
 require "docker/api/exec"
 require "docker/api/system"
+require "docker/api/swarm"
 
 module Docker
   module API
