@@ -37,6 +37,7 @@ RSpec.describe Docker::API::Node do
             it { expect(subject.update(id, {version: version}, {Role: "worker", Availability: "active" }).data[:body]).to match(/attempting to demote the last manager of the swarm/) }
             it { expect(subject.update(id, {version: version}, {Name: "node-name", Role: "manager", Availability: "active" }).status).to eq(200) }
             it { expect(subject.update(id, {version: version}, {Labels: {"KEY": "VALUE"}, Role: "manager", Availability: "active" }).status).to eq(200) }
+            it { expect(subject.update(id, {}, {Labels: {"KEY": "VALUE"}, Role: "manager", Availability: "active" }).status).to eq(400) }
             it { expect(subject.update(id, {version: version}, {Name: "node-name" }).status).to eq(400) }
             it { expect(subject.update(id, {version: version}, {Labels: {"KEY": "VALUE"}}).status).to eq(400) }
             it { expect(subject.update(id, {version: version}, {Role: "manager"}).status).to eq(400) }
