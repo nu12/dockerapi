@@ -1,3 +1,22 @@
+# 0.8.0
+
+Add Docker::API::Swarm methods:
+* init
+* update
+* inspect
+* unlock_key
+* unlock
+* join
+* leave
+
+Add Docker::API::Node methods:
+* list
+* inspect
+* update
+* delete
+
+Query parameters and request body json can now skip the validation step with `:skip_validation => true` option.
+
 # 0.7.0
 
 Major changes: Docker::API::Connection is now a regular class intead of a Singleton, allowing multiple connections to be stablished within the same program (replacing the connect_to implementation). To leverage this feature, API-related classes must be initialized and may or may not receive a Docker::API::Connection as parameter, or it'll connect to /var/run/docker.sock by default. For this reason, class methods were replaced with instance methods. Documentation will reflect this changes of implementation.

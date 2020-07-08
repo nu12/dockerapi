@@ -249,6 +249,56 @@ print response.data[:stream]
 exe.inspect(id)
 ```
 
+### Swarm
+```ruby
+# Connect to local swarm endpoints
+swarm = Docker::API::Swarm.new
+
+# Init swarm
+swarm.init({AdvertiseAddr: "local-ip-address:2377", ListenAddr: "0.0.0.0:4567"})
+
+# Inspect swarm
+swarm.inspect
+
+# Update swarm
+swarm.update(version, {rotateWorkerToken: true})
+swarm.update(version, {rotateManagerToken: true})
+swarm.update(version, {rotateManagerUnlockKey: true})
+swarm.update(version, {EncryptionConfig: { AutoLockManagers: true }})
+
+# Get unlock key
+swarm.unlock_key
+
+# Unlock swarm
+swarm.unlock(UnlockKey: "key-value")
+
+# Join an existing swarm
+swarm.join(RemoteAddrs: ["remote-manager-address:2377"], JoinToken: "Join-Token-Here")
+
+# Leave a swarm
+swarm.leave(force: true)
+```
+
+### Node
+```ruby
+# Connect to local node endpoints
+node = Docker::API::Node.new
+
+# List nodes
+node.list
+
+# Inspect node
+node.inspect("node-id")
+
+# Update node (version, Role and Availability must be present)
+node.update("node-id", {version: "version"}, {Role: "worker", Availability: "pause" })
+node.update("node-id", {version: "version"}, {Role: "worker", Availability: "active" })
+node.update("node-id", {version: "version"}, {Role: "manager", Availability: "active" })
+
+# Delete node
+node.delete("node-id")
+```
+
 ### Connection
 
 By default Docker::API::Connection will connect to local Docker socket at `/var/run/docker.sock`. See examples below to use a different path or connect to a remote address.
@@ -311,6 +361,8 @@ response.success?
 
 `Docker::API::InvalidParameter` and `Docker::API::InvalidRequestBody` may be raised when an invalid option is passed as argument (ie: an option not described in Docker API documentation for request query parameters nor request body (json) parameters). Even if no errors were raised, consider validating the status code and/or message of the response to check if the Docker daemon has fulfilled the operation properly.
 
+To completely skip the validation process, add `:skip_validation => true` in the hash to be validated.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -327,8 +379,8 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 | Network | Ok | Ok | 8/7 |
 | System | Ok | Ok | 8/7 |
 | Exec | Ok | Ok | 8/7 |
-| Swarm | 7/10 | 7/10 | 8/14 |
-| Node | 7/10 | 7/10 | 8/14 |
+| Swarm | Ok | Ok | 8/14 |
+| Node | Ok | Ok | 8/14 |
 | Service | 7/17 | 7/17 | 8/14 |
 | Task | 7/17 | 7/17 | 8/14 |
 | Secret | 7/17 | 7/17 | 8/14 |
