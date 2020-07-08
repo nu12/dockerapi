@@ -4,6 +4,7 @@ RSpec.describe Docker::API::System do
         it { expect(subject).to respond_to(:auth) }
         it { expect{subject.auth(username: "", password: "", email: "", serveraddress: "", identitytoken: "")}.not_to raise_error }
         it { expect{subject.auth(invalid: true)}.to raise_error(Docker::API::InvalidRequestBody) }
+        it { expect{subject.auth(invalid: true, skip_validation: true)}.not_to raise_error }
     end
 
     describe ".ping" do
@@ -36,6 +37,7 @@ RSpec.describe Docker::API::System do
         it { expect(subject.success?).to eq(true) }
         it { expect(subject.path).to eq("/events?until=#{now}") }
         it { expect{described_class.new.events(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+        it { expect{described_class.new.events(invalid: true, skip_validation: false)}.to raise_error(Docker::API::InvalidParameter) }
     end
 
     describe ".df" do

@@ -48,6 +48,7 @@ RSpec.describe Docker::API::Image do
                 it { expect(subject.list(all: true, filters: {reference: {"#{image}": true}}).path).to eq("/images/json?all=true&filters={\"reference\":{\"#{image}\":true}}") }
                 it { expect(subject.list(all: true, filters: {before: {"#{image}": true}}).path).to eq("/images/json?all=true&filters={\"before\":{\"#{image}\":true}}") }
                 it { expect(subject.list(all: true, filters: {since: {"#{image}": true}}).path).to eq("/images/json?all=true&filters={\"since\":{\"#{image}\":true}}") }
+                it { expect(subject.list(all: true, invalid: true, skip_validation: true).path).to eq("/images/json?all=true&invalid=true") }
             end
             it { expect{subject.list(invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
         end

@@ -14,6 +14,7 @@ module Docker
             end
 
             def validate error, permitted, params
+                return if params[:skip_validation]
                 unpermitted = params.keys.map(&:to_s) - permitted.map(&:to_s)
                 raise error.new(permitted, unpermitted) if unpermitted.size > 0
             end
@@ -23,7 +24,7 @@ module Docker
             ## If value is another Hash, it should keep a json syntax {key:value}
             def hash_to_params h
                 p = []
-                h.each { |k,v| p.push( v.is_a?(Hash) ? "#{k}=#{v.to_json}" : "#{k}=#{v}") }
+                h.delete_if{ | k, v | k.to_s == "skip_validation" }.each { |k,v| p.push( v.is_a?(Hash) ? "#{k}=#{v.to_json}" : "#{k}=#{v}") }
                 p.join("&").gsub(" ","")
             end
 
