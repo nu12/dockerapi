@@ -3,12 +3,13 @@ module Docker
         class Base
 
             def initialize connection = nil
+                raise Docker::API::Error.new("Expect connection to be a Docker::API::Connection class") if connection != nil && !connection.is_a?(Docker::API::Connection)
                 @connection = connection || Docker::API::Connection.new
             end
             
             private
 
-            def base_path
+            def base_path # TODO: this method to be removed?
                 "/"
             end
 
@@ -27,7 +28,7 @@ module Docker
             end
 
             def build_path path, params = {}
-                p = path.is_a?(Array) ? ([base_path] << path).join("/") : path
+                p = path.is_a?(Array) ? ([base_path] << path).join("/") : path # TODO: this line to be removed?
                 params.size > 0 ? [p, hash_to_params(params)].join("?") : p
             end
 
