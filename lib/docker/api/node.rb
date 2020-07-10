@@ -1,14 +1,16 @@
 module Docker
     module API        
         class Node < Docker::API::Base
+
+            def inspect *args
+                return super.inspect if args.size == 0
+                name = args[0]
+                @connection.get("/nodes/#{name}")
+            end
             
             def list params = {}
                 validate Docker::API::InvalidParameter, [:filters], params
                 @connection.get(build_path("/nodes", params))
-            end
-
-            def inspect name
-                @connection.get("/nodes/#{name}")
             end
 
             def update name, params = {}, body = {}

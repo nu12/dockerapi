@@ -2,8 +2,10 @@ module Docker
     module API
         class Exec < Docker::API::Base
 
-            def base_path
-                "/exec"
+            def inspect *args
+                return super.inspect if args.size == 0
+                name = args[0]
+                @connection.get("/exec/#{name}/json")
             end
 
             def create name, body = {}
@@ -27,11 +29,7 @@ module Docker
 
             def resize name, params = {}
                 validate Docker::API::InvalidParameter, [:w, :h], params
-                @connection.post(build_path([name, "resize"], params))
-            end
-
-            def inspect name
-                @connection.get(build_path([name, "json"]))
+                @connection.post(build_path("/exec/#{name}/resize", params))
             end
 
         end

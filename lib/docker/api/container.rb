@@ -9,14 +9,16 @@ module Docker
                 "/containers"
             end
 
+            def inspect *args
+                return super.inspect if args.size == 0
+                name, params = args[0], args[1] || {}
+                validate Docker::API::InvalidParameter, [:size], params
+                @connection.get(build_path([name, "json"], params))
+            end
+
             def list params = {}
                 validate Docker::API::InvalidParameter, [:all, :limit, :size, :filters], params
                 @connection.get(build_path(["json"], params))
-            end
-
-            def inspect name, params = {}
-                validate Docker::API::InvalidParameter, [:size], params
-                @connection.get(build_path([name, "json"], params))
             end
 
             def top name, params = {}

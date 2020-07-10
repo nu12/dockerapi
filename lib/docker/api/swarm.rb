@@ -14,6 +14,7 @@ module Docker
             end
 
             def inspect
+                caller.each { | el | return super.inspect if el.match(/inspector/) }
                 @connection.get("/swarm")
             end
 

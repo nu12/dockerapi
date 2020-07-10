@@ -5,6 +5,12 @@ module Docker
                 "/volumes"
             end
 
+            def inspect *args
+                return super.inspect if args.size == 0
+                name = args[0]
+                @connection.get(build_path([name]))
+            end
+
             def list params = {}
                 validate Docker::API::InvalidParameter, [:filters], params
                 @connection.get(build_path("/volumes", params))
@@ -13,10 +19,6 @@ module Docker
             def create body = {}
                 validate Docker::API::InvalidRequestBody, [:Name, :Driver, :DriverOpts, :Labels], body
                 @connection.request(method: :post, path: build_path(["create"]), headers: {"Content-Type": "application/json"}, body: body.to_json)
-            end
-
-            def inspect name
-                @connection.get(build_path([name]))
             end
 
             def remove name, params = {}

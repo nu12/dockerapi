@@ -11,7 +11,9 @@ module Docker
                 "/images"
             end
 
-            def inspect name
+            def inspect *args
+                return super.inspect if args.size == 0
+                name = args[0]
                 @connection.get(build_path([name, "json"]))
             end
 

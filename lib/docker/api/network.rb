@@ -6,14 +6,16 @@ module Docker
                 "/networks"
             end
 
+            def inspect *args
+                return super.inspect if args.size == 0
+                name, params = args[0], args[1] || {}
+                validate Docker::API::InvalidParameter, [:verbose, :scope], params
+                @connection.get(build_path([name], params))
+            end
+
             def list params = {}
                 validate Docker::API::InvalidParameter, [:filters], params
                 @connection.get(build_path("/networks", params))
-            end
-
-            def inspect name, params = {}
-                validate Docker::API::InvalidParameter, [:verbose, :scope], params
-                @connection.get(build_path([name], params))
             end
 
             def create body = {}
