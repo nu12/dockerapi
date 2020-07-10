@@ -44,7 +44,7 @@ image.create( fromSrc: "https://url.to/file.tar", repo: "repo:tag" )
 image.list
 
 # Inspect image
-image.inspect("image")
+image.details("image")
 
 # History
 image.history("image")

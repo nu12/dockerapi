@@ -53,9 +53,9 @@ RSpec.describe Docker::API::Image do
             it { expect{subject.list(invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
         end
 
-        describe ".inspect" do
-            it { expect(subject.inspect(image).status).to eq(200) }
-            it { expect(subject.inspect("doesn-exist").status).to eq(404) }
+        describe ".details" do
+            it { expect(subject.details(image).status).to eq(200) }
+            it { expect(subject.details("doesn-exist").status).to eq(404) }
             
         end
         describe ".history" do
