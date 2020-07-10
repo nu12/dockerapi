@@ -1,3 +1,9 @@
+# 0.8.1
+
+Restore the default `#inspect` output for `Docker::API` classes. 
+
+Most of the overriding methods take an argument, therefore calling using the expect arguments will return a `Docker::API::Response` object, while calling without arguments will return `Kernel#inspect`. To avoid this confusing schema, next release will rename `#inspect` within `Docker::API` to something else.
+
 # 0.8.0
 
 Add Docker::API::Swarm methods:
@@ -19,7 +25,7 @@ Query parameters and request body json can now skip the validation step with `:s
 
 # 0.7.0
 
-Major changes: Docker::API::Connection is now a regular class intead of a Singleton, allowing multiple connections to be stablished within the same program (replacing the connect_to implementation). To leverage this feature, API-related classes must be initialized and may or may not receive a Docker::API::Connection as parameter, or it'll connect to /var/run/docker.sock by default. For this reason, class methods were replaced with instance methods. Documentation will reflect this changes of implementation.
+Significant changes: Docker::API::Connection is now a regular class intead of a Singleton, allowing multiple connections to be stablished within the same program (replacing the connect_to implementation). To leverage this feature, API-related classes must be initialized and may or may not receive a Docker::API::Connection as parameter, or it'll connect to /var/run/docker.sock by default. For this reason, class methods were replaced with instance methods. Documentation will reflect this changes of implementation.
 
 Bug fix: Image push returns a 20X status even when the push is unsucessful. To prevent false positives, it now requires the authentication parameters to be provided, generating a 403 status for invalid credentials or an error if they are absent.
 
