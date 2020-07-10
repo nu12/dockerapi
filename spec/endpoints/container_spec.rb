@@ -194,13 +194,13 @@ RSpec.describe Docker::API::Container do
             end
         end
 
-        describe ".inspect" do
-            it { expect(subject.inspect(name).status).to eq(200) }
-            it { expect(subject.inspect(name).body).to match(/\"Name\":\"\/#{name}\"/) }
-            it { expect(subject.inspect("doesn-exist").status).to eq(404) }
-            it { expect(subject.inspect(name,  {size: true}).status).to eq(200) }
-            it { expect(subject.inspect(name,  {size: false}).status).to eq(200) }
-            it { expect{subject.inspect(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
+        describe ".details" do
+            it { expect(subject.details(name).status).to eq(200) }
+            it { expect(subject.details(name).body).to match(/\"Name\":\"\/#{name}\"/) }
+            it { expect(subject.details("doesn-exist").status).to eq(404) }
+            it { expect(subject.details(name,  {size: true}).status).to eq(200) }
+            it { expect(subject.details(name,  {size: false}).status).to eq(200) }
+            it { expect{subject.details(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
         end
 
         describe ".logs" do

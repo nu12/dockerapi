@@ -5,20 +5,29 @@ module Docker
 
         class Container < Docker::API::Base
 
+            #################################################
+            # Items in this area to be removed before 1.0.0 #
+            #################################################
             def base_path
                 "/containers"
             end
 
             def inspect *args
                 return super.inspect if args.size == 0
+                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
                 name, params = args[0], args[1] || {}
-                validate Docker::API::InvalidParameter, [:size], params
-                @connection.get(build_path([name, "json"], params))
+                details(name, params)
             end
+            #################################################
 
             def list params = {}
                 validate Docker::API::InvalidParameter, [:all, :limit, :size, :filters], params
                 @connection.get(build_path(["json"], params))
+            end
+
+            def details name, params = {}
+                validate Docker::API::InvalidParameter, [:size], params
+                @connection.get(build_path([name, "json"], params))
             end
 
             def top name, params = {}
@@ -126,7 +135,7 @@ module Docker
             end
 
             def export name, path = "exported_container"
-                response = self.inspect(name)
+                response = self.details(name)
                 if response.status == 200
                     file = File.open(File.expand_path(path), "wb")
                     streamer = lambda do |chunk, remaining_bytes, total_bytes|

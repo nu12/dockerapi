@@ -1,3 +1,10 @@
+# 0.9.0 (upcoming)
+
+Significant change: `#inspect` is now deprecated and was replaced by `#details` in the following classes:
+* `Docker::API::Container`
+
+The method will be removed in the refactoring phase.
+
 # 0.8.1
 
 Restore the default `#inspect` output for `Docker::API` classes. 
@@ -6,7 +13,7 @@ Most of the overriding methods take an argument, therefore calling using the exp
 
 # 0.8.0
 
-Add Docker::API::Swarm methods:
+Add `Docker::API::Swarm` methods:
 * init
 * update
 * inspect
@@ -15,7 +22,7 @@ Add Docker::API::Swarm methods:
 * join
 * leave
 
-Add Docker::API::Node methods:
+Add `Docker::API::Node` methods:
 * list
 * inspect
 * update
@@ -25,7 +32,7 @@ Query parameters and request body json can now skip the validation step with `:s
 
 # 0.7.0
 
-Significant changes: Docker::API::Connection is now a regular class intead of a Singleton, allowing multiple connections to be stablished within the same program (replacing the connect_to implementation). To leverage this feature, API-related classes must be initialized and may or may not receive a Docker::API::Connection as parameter, or it'll connect to /var/run/docker.sock by default. For this reason, class methods were replaced with instance methods. Documentation will reflect this changes of implementation.
+Significant changes: `Docker::API::Connection` is now a regular class intead of a Singleton, allowing multiple connections to be stablished within the same program (replacing the connect_to implementation). To leverage this feature, API-related classes must be initialized and may or may not receive a `Docker::API::Connection` as parameter, or it'll connect to `/var/run/docker.sock` by default. For this reason, class methods were replaced with instance methods. Documentation will reflect this changes of implementation.
 
 Bug fix: Image push returns a 20X status even when the push is unsucessful. To prevent false positives, it now requires the authentication parameters to be provided, generating a 403 status for invalid credentials or an error if they are absent.
 
@@ -33,7 +40,7 @@ Bug fix: Image push returns a 20X status even when the push is unsucessful. To p
 
 Add connection parameters specifications with connect_to in Docker::API::Connection.
 
-Add Docker::API::Exec methods:
+Add `Docker::API::Exec` methods:
 * create
 * start
 * resize
@@ -41,7 +48,7 @@ Add Docker::API::Exec methods:
 
 # 0.5.0
 
-Add Docker::API::System methods:
+Add `Docker::API::System` methods:
 * auth
 * ping
 * info
@@ -49,7 +56,7 @@ Add Docker::API::System methods:
 * events
 * df
 
-Add new response class Docker::API::Response with the following methods:
+Add new response class `Docker::API::Response` with the following methods:
 * json
 * path
 * success?
@@ -58,7 +65,7 @@ Error classes output better error messages.
 
 # 0.4.0
 
-Add Docker::API::Network methods:
+Add `Docker::API::Network` methods:
 * list
 * inspect
 * create
@@ -69,7 +76,7 @@ Add Docker::API::Network methods:
 
 # 0.3.0
 
-Add Docker::API::Volume methods:
+Add `Docker::API::Volume` methods:
 * list
 * inspect
 * create
@@ -79,7 +86,7 @@ Add Docker::API::Volume methods:
 
 # 0.2.0
 
-Add Docker::API::Image methods:
+Add `Docker::API::Image` methods:
 * inspect
 * history
 * list
@@ -95,13 +102,13 @@ Add Docker::API::Image methods:
 * build
 * delete_cache
 
-Add Docker::API::System.auth (untested) for basic authentication
+Add `Docker::API::System.auth` (untested) for basic authentication
 
 # 0.1.0
 
-Add Docker::API::Container methods:
+Add `Docker::API::Container` methods:
 * list
-* inspect
+* ~~inspect~~ details
 * top
 * changes
 * start

@@ -125,7 +125,7 @@ container.list
 container.list(all: true)
 
 # Inspect container
-container.inspect("nginx")
+container.details("nginx")
 
 # View container's processes
 container.top("nginx")
