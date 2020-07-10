@@ -46,7 +46,7 @@ Add `Docker::API::Exec` methods:
 * create
 * start
 * resize
-* inspect
+* ~~inspect~~ details
 
 # 0.5.0
 
@@ -89,7 +89,7 @@ Add `Docker::API::Volume` methods:
 # 0.2.0
 
 Add `Docker::API::Image` methods:
-* inspect
+* ~~inspect~~ details
 * history
 * list
 * search

@@ -373,17 +373,20 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 | Class | Tests | Implementation | Refactoring |
 |---|---|---|---|
-| Container | Ok | Ok | 7/24 |
-| Image | Ok | Ok | 7/31 |
-| Volume | Ok | Ok | 8/7 |
-| Network | Ok | Ok | 8/7 |
-| System | Ok | Ok | 8/7 |
-| Exec | Ok | Ok | 8/7 |
-| Swarm | Ok | Ok | 8/14 |
-| Node | Ok | Ok | 8/14 |
-| Service | 7/17 | 7/17 | 8/14 |
-| Task | 7/17 | 7/17 | 8/14 |
-| Secret | 7/17 | 7/17 | 8/14 |
+| Image | Ok | Ok | 8/7 |
+| Container | Ok | Ok | 8/14 |
+| Volume | Ok | Ok | 8/21 |
+| Network | Ok | Ok | 8/21 |
+| System | Ok | Ok | 8/21 |
+| Exec | Ok | Ok | 8/21 |
+| Swarm | Ok | Ok | 8/28 |
+| Node | Ok | Ok | 8/28 |
+| Service | 7/17 | 7/17 | 8/28 |
+| Task | 7/17 | 7/17 | 9/4 |
+| Secret | 7/17 | 7/17 | 9/4 |
+| Config | 7/17 | 7/17 | 9/4 |
+| Distribution | 7/17 | 7/17 | 9/4 |
+| Plugin | 7/24 | 7/24 | 9/4 |
 
 ## Contributing
 
