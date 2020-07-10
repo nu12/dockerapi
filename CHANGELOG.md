@@ -3,6 +3,7 @@
 Significant change: `#inspect` is now deprecated and was replaced by `#details` in the following classes:
 * `Docker::API::Container`
 * `Docker::API::Image`
+* `Docker::API::Exec`
 
 The method will be removed in the refactoring phase.
 

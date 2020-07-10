@@ -2,11 +2,16 @@ module Docker
     module API
         class Exec < Docker::API::Base
 
+            #################################################
+            # Items in this area to be removed before 1.0.0 #
+            #################################################
             def inspect *args
                 return super.inspect if args.size == 0
+                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
                 name = args[0]
-                @connection.get("/exec/#{name}/json")
+                details(name)
             end
+            #################################################
 
             def create name, body = {}
                 validate Docker::API::InvalidRequestBody, [:AttachStdin, :AttachStdout, :AttachStderr, :DetachKeys, :Tty, :Env, :Cmd, :Privileged, :User, :WorkingDir], body
@@ -30,6 +35,10 @@ module Docker
             def resize name, params = {}
                 validate Docker::API::InvalidParameter, [:w, :h], params
                 @connection.post(build_path("/exec/#{name}/resize", params))
+            end
+
+            def details name
+                @connection.get("/exec/#{name}/json")
             end
 
         end

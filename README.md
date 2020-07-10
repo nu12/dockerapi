@@ -246,7 +246,7 @@ response = exe.start(id)
 print response.data[:stream]
 
 # Inspect exec instance
-exe.inspect(id)
+exe.details(id)
 ```
 
 ### Swarm

@@ -47,9 +47,9 @@ RSpec.describe Docker::API::Exec do
             it { expect(described_class.new.resize("doesn-exist", h:100, w:100).status).to eq(404) }
         end
     
-        describe ".inspect" do
-            it { expect(described_class.new.inspect(subject.json["Id"]).status).to eq(200) }
-            it { expect(described_class.new.inspect("doesn-exist").status).to eq(404) }
+        describe ".details" do
+            it { expect(described_class.new.details(subject.json["Id"]).status).to eq(200) }
+            it { expect(described_class.new.details("doesn-exist").status).to eq(404) }
         end
 
     end
