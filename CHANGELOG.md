@@ -5,6 +5,7 @@ Significant change: `#inspect` is now deprecated and was replaced by `#details` 
 * `Docker::API::Image`
 * `Docker::API::Network`
 * `Docker::API::Exec`
+* `Docker::API::Node`
 
 The method will be removed in the refactoring phase.
 
@@ -27,7 +28,7 @@ Add `Docker::API::Swarm` methods:
 
 Add `Docker::API::Node` methods:
 * list
-* inspect
+* ~~inspect~~ details
 * update
 * delete
 

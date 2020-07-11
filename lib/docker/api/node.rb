@@ -2,11 +2,16 @@ module Docker
     module API        
         class Node < Docker::API::Base
 
+            #################################################
+            # Items in this area to be removed before 1.0.0 #
+            #################################################
             def inspect *args
                 return super.inspect if args.size == 0
+                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
                 name = args[0]
-                @connection.get("/nodes/#{name}")
+                details(name)
             end
+            #################################################
             
             def list params = {}
                 validate Docker::API::InvalidParameter, [:filters], params
@@ -23,6 +28,11 @@ module Docker
                 validate Docker::API::InvalidParameter, [:force], params
                 @connection.delete(build_path("/nodes/#{name}", params))
             end
+
+            def details name
+                @connection.get("/nodes/#{name}")
+            end
+
         end
     end
 end

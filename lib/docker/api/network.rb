@@ -11,6 +11,7 @@ module Docker
 
             def inspect *args
                 return super.inspect if args.size == 0
+                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
                 name, params = args[0], args[1] || {}
                 details(name, params)
             end

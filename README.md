@@ -288,7 +288,7 @@ node = Docker::API::Node.new
 node.list
 
 # Inspect node
-node.inspect("node-id")
+node.details("node-id")
 
 # Update node (version, Role and Availability must be present)
 node.update("node-id", {version: "version"}, {Role: "worker", Availability: "pause" })

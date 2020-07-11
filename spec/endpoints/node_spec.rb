@@ -2,7 +2,7 @@ RSpec.describe Docker::API::Node do
     ip_address = Socket.ip_address_list[2].ip_address
     subject { described_class.new }
     it { is_expected.to respond_to(:list) }
-    it { is_expected.to respond_to(:inspect) }
+    it { is_expected.to respond_to(:details) }
     it { is_expected.to respond_to(:delete) }
     it { is_expected.to respond_to(:update) }
     it { expect(subject.list.status).to eq(503) }
@@ -23,9 +23,9 @@ RSpec.describe Docker::API::Node do
             it { expect{subject.list(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
         end
     
-        describe ".inspect" do
-            it { expect(subject.inspect(id).status).to eq(200) }
-            it { expect(subject.inspect("doesn-exist").status).to eq(404) }
+        describe ".details" do
+            it { expect(subject.details(id).status).to eq(200) }
+            it { expect(subject.details("doesn-exist").status).to eq(404) }
         end
 
         describe ".update" do
