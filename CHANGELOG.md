@@ -3,6 +3,7 @@
 Significant change: `#inspect` is now deprecated and was replaced by `#details` in the following classes:
 * `Docker::API::Container`
 * `Docker::API::Image`
+* `Docker::API::Network`
 * `Docker::API::Exec`
 
 The method will be removed in the refactoring phase.
@@ -69,7 +70,7 @@ Error classes output better error messages.
 
 Add `Docker::API::Network` methods:
 * list
-* inspect
+* ~~inspect~~ details
 * create
 * remove
 * prune

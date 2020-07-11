@@ -12,12 +12,12 @@ RSpec.describe Docker::API::Network do
         it { expect{subject.list( invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
     end
 
-    describe ".inspect" do 
-        it { expect(subject.inspect( "bridge" ).status).to eq(200) }
-        it { expect(subject.inspect( "doesn-exist" ).status).to eq(404) }
-        it { expect(subject.inspect( "bridge", verbose: true ).status).to eq(200) }
-        it { expect(subject.inspect( "bridge", scope: "local" ).status).to eq(200) }
-        it { expect{subject.inspect( "bridge", invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
+    describe ".details" do 
+        it { expect(subject.details( "bridge" ).status).to eq(200) }
+        it { expect(subject.details( "doesn-exist" ).status).to eq(404) }
+        it { expect(subject.details( "bridge", verbose: true ).status).to eq(200) }
+        it { expect(subject.details( "bridge", scope: "local" ).status).to eq(200) }
+        it { expect{subject.details( "bridge", invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
     end
 
     describe ".create" do 

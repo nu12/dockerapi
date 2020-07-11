@@ -2,6 +2,9 @@ module Docker
     module API        
         class Network < Docker::API::Base
 
+            #################################################
+            # Items in this area to be removed before 1.0.0 #
+            #################################################
             def base_path
                 "/networks"
             end
@@ -9,13 +12,18 @@ module Docker
             def inspect *args
                 return super.inspect if args.size == 0
                 name, params = args[0], args[1] || {}
-                validate Docker::API::InvalidParameter, [:verbose, :scope], params
-                @connection.get(build_path([name], params))
+                details(name, params)
             end
+            #################################################
 
             def list params = {}
                 validate Docker::API::InvalidParameter, [:filters], params
                 @connection.get(build_path("/networks", params))
+            end
+
+            def details name, params = {}
+                validate Docker::API::InvalidParameter, [:verbose, :scope], params
+                @connection.get(build_path([name], params))
             end
 
             def create body = {}

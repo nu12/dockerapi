@@ -191,7 +191,7 @@ network = Docker::API::Network.new
 network.list
 
 # Inspect network
-network.inspect("bridge")
+network.details("bridge")
 
 # Create network
 network.create( Name:"my-network" )
