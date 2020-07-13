@@ -22,9 +22,9 @@ RSpec.describe Docker::API::Volume do
         it { expect{subject.create( invalid: true )}.to raise_error(Docker::API::InvalidRequestBody) }
     end
 
-    describe ".inspect" do
-        it { expect(subject.inspect(volume).status).to eq(200) }
-        it { expect(subject.inspect("doesn-exist").status).to eq(404) }    
+    describe ".details" do
+        it { expect(subject.details(volume).status).to eq(200) }
+        it { expect(subject.details("doesn-exist").status).to eq(404) }    
     end
 
     describe ".remove" do

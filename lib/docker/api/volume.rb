@@ -1,19 +1,29 @@
 module Docker
     module API
         class Volume < Docker::API::Base
+
+            #################################################
+            # Items in this area to be removed before 1.0.0 #
+            #################################################
             def base_path
                 "/volumes"
             end
 
             def inspect *args
                 return super.inspect if args.size == 0
+                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
                 name = args[0]
                 @connection.get(build_path([name]))
             end
+            #################################################
 
             def list params = {}
                 validate Docker::API::InvalidParameter, [:filters], params
                 @connection.get(build_path("/volumes", params))
+            end
+
+            def details name
+                @connection.get(build_path([name]))
             end
 
             def create body = {}

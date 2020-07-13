@@ -83,7 +83,7 @@ Add `Docker::API::Network` methods:
 
 Add `Docker::API::Volume` methods:
 * list
-* inspect
+* ~~inspect~~ details
 * create
 * remove
 * prune

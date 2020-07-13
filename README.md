@@ -172,7 +172,7 @@ volume.create( Name:"my-volume" )
 volume.list
 
 # Inspect volume
-volume.inspect("my-volume")
+volume.details("my-volume")
 
 # Remove volume
 volume.remove("my-volume")
