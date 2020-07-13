@@ -1,4 +1,4 @@
-# 0.9.0 (upcoming)
+# 0.9.0
 
 Significant change: `#inspect` is now deprecated and replaced by `#details` in the following classes:
 * `Docker::API::Container`

@@ -20,8 +20,6 @@ Or install it yourself as:
 
 ## Usage
 
-New implementation details as of v0.7.0.
-
 ### Images
 
 ```ruby
