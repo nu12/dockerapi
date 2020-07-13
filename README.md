@@ -258,7 +258,7 @@ swarm = Docker::API::Swarm.new
 swarm.init({AdvertiseAddr: "local-ip-address:2377", ListenAddr: "0.0.0.0:4567"})
 
 # Inspect swarm
-swarm.inspect
+swarm.details
 
 # Update swarm
 swarm.update(version, {rotateWorkerToken: true})

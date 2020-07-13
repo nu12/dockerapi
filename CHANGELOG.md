@@ -5,6 +5,7 @@ Significant change: `#inspect` is now deprecated and was replaced by `#details` 
 * `Docker::API::Image`
 * `Docker::API::Network`
 * `Docker::API::Exec`
+* `Docker::API::Swarm`
 * `Docker::API::Node`
 
 The method will be removed in the refactoring phase.
@@ -20,7 +21,7 @@ Most of the overriding methods take an argument, therefore calling using the exp
 Add `Docker::API::Swarm` methods:
 * init
 * update
-* inspect
+* ~~inspect~~ details
 * unlock_key
 * unlock
 * join

@@ -11,8 +11,8 @@ RSpec.describe Docker::API::Swarm do
     end
 
     context "after .init" do
-        describe ".inspect" do
-            subject { described_class.new.inspect }
+        describe ".details" do
+            subject { described_class.new.details }
             it { expect(subject.status).to eq(200) }
             it { expect(subject.json["ID"]).not_to be nil }
             it { expect(subject.json["Version"]).not_to be nil }
@@ -24,13 +24,13 @@ RSpec.describe Docker::API::Swarm do
 
         describe ".update" do
             it { expect(subject.update.status).to eq(400) }
-            it { expect(subject.update({version: described_class.new.inspect.json["Version"]["Index"]}, {}).status).to eq(200) }
-            it { expect(subject.update({version: described_class.new.inspect.json["Version"]["Index"], rotateWorkerToken: true}).status).to eq(200) }
-            it { expect(subject.update({version: described_class.new.inspect.json["Version"]["Index"], rotateManagerToken: true}).status).to eq(200) }
-            it { expect(subject.update({version: described_class.new.inspect.json["Version"]["Index"], rotateManagerUnlockKey: true}).status).to eq(200) }
-            it { expect{subject.update({version: described_class.new.inspect.json["Version"]["Index"], invalid: true})}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect(subject.update({version: described_class.new.inspect.json["Version"]["Index"]}, {EncryptionConfig: { AutoLockManagers: true } }).status).to eq(200) }
-            it { expect{subject.update({version: described_class.new.inspect.json["Version"]["Index"]},{invalid: true})}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect(subject.update({version: described_class.new.details.json["Version"]["Index"]}, {}).status).to eq(200) }
+            it { expect(subject.update({version: described_class.new.details.json["Version"]["Index"], rotateWorkerToken: true}).status).to eq(200) }
+            it { expect(subject.update({version: described_class.new.details.json["Version"]["Index"], rotateManagerToken: true}).status).to eq(200) }
+            it { expect(subject.update({version: described_class.new.details.json["Version"]["Index"], rotateManagerUnlockKey: true}).status).to eq(200) }
+            it { expect{subject.update({version: described_class.new.details.json["Version"]["Index"], invalid: true})}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect(subject.update({version: described_class.new.details.json["Version"]["Index"]}, {EncryptionConfig: { AutoLockManagers: true } }).status).to eq(200) }
+            it { expect{subject.update({version: described_class.new.details.json["Version"]["Index"]},{invalid: true})}.to raise_error(Docker::API::InvalidRequestBody) }
         end
     
         describe ".unlock_key" do
@@ -46,7 +46,7 @@ RSpec.describe Docker::API::Swarm do
     
         describe ".join" do
             it { expect(subject.join.status).to eq(503) }
-            it { expect(subject.join(RemoteAddrs: ["#{ip_address}:2377"], JoinToken: subject.inspect.json["JoinTokens"]["Worker"] ).status).to eq(503) }
+            it { expect(subject.join(RemoteAddrs: ["#{ip_address}:2377"], JoinToken: subject.details.json["JoinTokens"]["Worker"] ).status).to eq(503) }
         end
     
         describe ".leave" do
