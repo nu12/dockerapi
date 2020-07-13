@@ -2,16 +2,6 @@ module Docker
     module API
         class Swarm < Docker::API::Base
 
-            #################################################
-            # Items in this area to be removed before 1.0.0 #
-            #################################################
-            def inspect
-                caller.each { | el | return super.inspect if el.match(/inspector/) }
-                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
-                details
-            end
-            #################################################
-
             def init body = {}
                 validate Docker::API::InvalidRequestBody, [:ListenAddr, :AdvertiseAddr, :DataPathAddr, :DataPathPort, :DefaultAddrPool, :ForceNewCluster, :SubnetSize, :Spec], body
                 @connection.request(method: :post, path: build_path("/swarm/init"), headers: {"Content-Type": "application/json"}, body: body.to_json)
@@ -45,6 +35,17 @@ module Docker
                 validate Docker::API::InvalidParameter, [:force], params
                 @connection.post(build_path("/swarm/leave", params))
             end
+
+            #################################################
+            # Items in this area to be removed before 1.0.0 #
+            #################################################
+            def inspect
+                caller.each { | el | return super.inspect if el.match(/inspector/) }
+                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
+                details
+            end
+            #################################################
+            
         end
     end
 end

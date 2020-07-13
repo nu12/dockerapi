@@ -1,9 +1,10 @@
 # 0.9.0 (upcoming)
 
-Significant change: `#inspect` is now deprecated and was replaced by `#details` in the following classes:
+Significant change: `#inspect` is now deprecated and replaced by `#details` in the following classes:
 * `Docker::API::Container`
 * `Docker::API::Image`
 * `Docker::API::Network`
+* `Docker::API::Volume`
 * `Docker::API::Exec`
 * `Docker::API::Swarm`
 * `Docker::API::Node`

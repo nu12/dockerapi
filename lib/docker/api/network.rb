@@ -2,21 +2,6 @@ module Docker
     module API        
         class Network < Docker::API::Base
 
-            #################################################
-            # Items in this area to be removed before 1.0.0 #
-            #################################################
-            def base_path
-                "/networks"
-            end
-
-            def inspect *args
-                return super.inspect if args.size == 0
-                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
-                name, params = args[0], args[1] || {}
-                details(name, params)
-            end
-            #################################################
-
             def list params = {}
                 validate Docker::API::InvalidParameter, [:filters], params
                 @connection.get(build_path("/networks", params))
@@ -50,6 +35,21 @@ module Docker
                 validate Docker::API::InvalidRequestBody, [:Container, :Force], body
                 @connection.request(method: :post, path: build_path([name, "disconnect"]), headers: {"Content-Type": "application/json"}, body: body.to_json)
             end
+
+            #################################################
+            # Items in this area to be removed before 1.0.0 #
+            #################################################
+            def base_path
+                "/networks"
+            end
+
+            def inspect *args
+                return super.inspect if args.size == 0
+                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
+                name, params = args[0], args[1] || {}
+                details(name, params)
+            end
+            #################################################
 
         end
     end

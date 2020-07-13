@@ -7,21 +7,6 @@ module Docker
         BuildParams = [:dockerfile, :t, :extrahosts, :remote, :q, :nocache, :cachefrom, :pull, :rm, :forcerm, :memory, :memswap, :cpushares, :cpusetcpus, :cpuperiod, :cpuquota, :buildargs, :shmsize, :squash, :labels, :networkmode, :platform, :target, :outputs]
         class Image < Docker::API::Base
 
-            #################################################
-            # Items in this area to be removed before 1.0.0 #
-            #################################################
-            def base_path
-                "/images"
-            end
-
-            def inspect *args
-                return super.inspect if args.size == 0
-                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
-                name = args[0]
-                details(name)
-            end
-            #################################################
-
             def details name
                 @connection.get(build_path([name, "json"]))
             end
@@ -143,7 +128,21 @@ module Docker
                 @connection.post(build_path("/build/prune", params))
             end
 
-        end
+            #################################################
+            # Items in this area to be removed before 1.0.0 #
+            #################################################
+            def base_path
+                "/images"
+            end
 
+            def inspect *args
+                return super.inspect if args.size == 0
+                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
+                name = args[0]
+                details(name)
+            end
+            #################################################
+
+        end
     end
 end
