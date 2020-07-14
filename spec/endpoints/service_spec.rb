@@ -49,6 +49,39 @@ RSpec.describe Docker::API::Service do
                 it { expect(subject.details( "doesn-exist" ).status).to eq(404) }
                 it { expect{subject.details( service, invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
             end
+
+            describe ".logs" do
+                it { expect(subject.logs( service ).status).to eq(500) }
+                it { expect(subject.logs( service, details: true ).status).to eq(500) }
+                it { expect(subject.logs( service, details: true, stdout: true ).status).to eq(200) }
+                it { expect(subject.logs( service, details: true, stderr: true ).status).to eq(200) }
+                it { expect(subject.logs( service, since: 0, stdout: true ).status).to eq(200) }
+                it { expect(subject.logs( service, timestamps: 0, stdout: true ).status).to eq(200) }
+                it { expect(subject.logs( service, tail: 10, stdout: true ).status).to eq(200) }
+                it { expect(subject.logs( service, tail: "all", stdout: true ).status).to eq(200) }
+                it { expect{subject.details( service, invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
+            end
+
+            describe ".update" do
+                let(:spec) { subject.details(service).json["Spec"] }
+                let(:version) { subject.details( service ).json["Version"]["Index"] }
+                it { expect(subject.update(service).status).to eq(400) }
+                it { expect(subject.update(service, {version: version}).status).to eq(400) }
+                it { expect(subject.update(service, {version: version}, spec).status).to eq(200) }
+                it { expect(subject.update(service, {version: version}, 
+                        spec.merge!({TaskTemplate: {RestartPolicy: { Condition: "any", MaxAttempts: 2 }}, Mode: { Replicated: { Replicas: 1 } }})
+                    ).status).to eq(200) }
+                it { expect{subject.update(service, {version: version, invalid: true })}.to raise_error(Docker::API::InvalidParameter) }
+                it { expect{subject.update(service, {version: version, invalid: true, skip_validation: true })}.not_to raise_error }
+                it { expect{subject.update(service, {version: version}, { invalid: true })}.to raise_error(Docker::API::InvalidRequestBody) }
+                it { expect{subject.update(service, {version: version}, { invalid: true, skip_validation: true })}.not_to raise_error }
+                it { expect{subject.update(service, {version: version, invalid: true, skip_validation: true}, { invalid: true, skip_validation: true })}.not_to raise_error }
+            end
+
+            describe ".delete" do
+                it { expect(subject.delete(service).status).to eq(200) }
+                it { expect(subject.delete(service).status).to eq(404) }
+            end
         end
     end
 end
