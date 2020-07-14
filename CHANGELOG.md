@@ -1,3 +1,13 @@
+# 0.10.0
+
+Add `Docker::API::Service` methods:
+* create
+* update
+* list
+* details
+* logs
+* delete
+
 # 0.9.0
 
 Significant change: `#inspect` is now deprecated and replaced by `#details` in the following classes:

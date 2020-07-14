@@ -134,7 +134,7 @@ container.top("nginx").json
 # View filesystem changes
 container.changes("nginx")
 
-# View filesystem logs
+# View container logs
 container.logs("nginx", stdout: true)
 container.logs("nginx", stdout: true, follow: true)
 
@@ -295,6 +295,37 @@ node.update("node-id", {version: "version"}, {Role: "manager", Availability: "ac
 
 # Delete node
 node.delete("node-id")
+```
+
+### Service
+```ruby
+# Connect to local service endpoints
+service = Docker::API::Service.new
+
+# List services
+service.list
+
+# Create a service
+service.create({Name: "nginx-service", 
+    TaskTemplate: {ContainerSpec: { Image: "nginx:alpine" }},
+    Mode: { Replicated: { Replicas: 2 } },
+    EndpointSpec: { Ports: [ {Protocol: "tcp", PublishedPort: 80, TargetPort: 80} ] }
+})
+
+# Update a service (needs version and current Spec)
+version = service.details( service ).json["Version"]["Index"]
+spec = service.details(service).json["Spec"]
+service.update("nginx-service", {version: version}, spec.merge!({ Mode: { Replicated: { Replicas: 1 } } }))
+
+# View service logs
+service.logs("nginx-service", stdout: true)
+
+# Inspect service 
+service.details("nginx-service")
+
+# Delete service 
+service.delete("nginx-service")
+
 ```
 
 ### Connection
