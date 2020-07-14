@@ -14,6 +14,7 @@ require "docker/api/exec"
 require "docker/api/system"
 require "docker/api/swarm"
 require "docker/api/node"
+require "docker/api/service"
 
 module Docker
   module API

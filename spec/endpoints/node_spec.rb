@@ -12,7 +12,6 @@ RSpec.describe Docker::API::Node do
         after(:all) { Docker::API::Swarm.new.leave(force: true) }
         let(:id) { Docker::API::Node.new.list.json.first["ID"] }
         
-    
         describe ".list" do
             it { expect(subject.list.status).to eq(200) }
             it { expect(subject.list(filters: {label: ["key=value"]}).status).to eq(200) }
