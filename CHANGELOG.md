@@ -1,3 +1,10 @@
+# 0.11.0 (upcoming)
+
+Add `Docker::API::Task` methods:
+* list
+* details
+* logs
+
 # 0.10.0
 
 Add `Docker::API::Service` methods:

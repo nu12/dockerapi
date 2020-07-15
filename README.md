@@ -325,7 +325,21 @@ service.details("nginx-service")
 
 # Delete service 
 service.delete("nginx-service")
+```
 
+### Task
+```ruby
+# Connect to local task endpoints
+task = Docker::API::Task.new
+
+# List tasks
+task.list
+
+# View task logs
+task.logs("task-id", stdout: true)
+
+# Inspect service 
+task.details("task-id")
 ```
 
 ### Connection
@@ -410,7 +424,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 | Exec | Ok | Ok | 8/21 |
 | Swarm | Ok | Ok | 8/28 |
 | Node | Ok | Ok | 8/28 |
-| Service | 7/17 | 7/17 | 8/28 |
+| Service | Ok | Ok | 8/28 |
 | Task | 7/17 | 7/17 | 9/4 |
 | Secret | 7/17 | 7/17 | 9/4 |
 | Config | 7/17 | 7/17 | 9/4 |

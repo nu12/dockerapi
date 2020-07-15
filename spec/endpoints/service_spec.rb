@@ -14,7 +14,10 @@ RSpec.describe Docker::API::Service do
 
     context "having a swarm cluster" do
         before(:all) { Docker::API::Swarm.new.init({AdvertiseAddr: "#{ip_address}:2377", ListenAddr: "0.0.0.0:4567"}) }
-        after(:all) { Docker::API::Swarm.new.leave(force: true) }        
+        after(:all) do 
+            Docker::API::Swarm.new.leave(force: true) 
+            Docker::API::Image.new.prune(filters: {dangling: {"true": true}})
+        end
     
         describe ".list" do
             it { expect(subject.list.status).to eq(200) }
