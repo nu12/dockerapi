@@ -425,9 +425,9 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 | Swarm | Ok | Ok | 8/28 |
 | Node | Ok | Ok | 8/28 |
 | Service | Ok | Ok | 8/28 |
-| Task | 7/17 | 7/17 | 9/4 |
-| Secret | 7/17 | 7/17 | 9/4 |
-| Config | 7/17 | 7/17 | 9/4 |
+| Task | Ok | Ok | 9/4 |
+| Secret | Ok | Ok | 9/4 |
+| Config | Ok | Ok | 9/4 |
 | Distribution | 7/17 | 7/17 | 9/4 |
 | Plugin | 7/24 | 7/24 | 9/4 |
 

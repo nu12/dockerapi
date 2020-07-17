@@ -1,5 +1,6 @@
 # This class represents the Docker API endpoints regarding secrets.
 # https://docs.docker.com/engine/api/v1.40/#tag/Secret
+# Secrets are sensitive data that can be used by services. Swarm mode must be enabled for these endpoints to work.
 class Docker::API::Secret < Docker::API::Base
 
     # List secrets
@@ -52,5 +53,4 @@ class Docker::API::Secret < Docker::API::Base
     def delete name
         @connection.delete("/secrets/#{name}")
     end
-
 end
