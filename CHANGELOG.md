@@ -1,9 +1,26 @@
-# 0.11.0 (upcoming)
+# 0.11.0
 
 Add `Docker::API::Task` methods:
 * list
 * details
 * logs
+
+Add `Docker::API::Secret` methods:
+* create
+* update
+* list
+* details
+* delete
+
+Add `Docker::API::Config` methods:
+* create
+* update
+* list
+* details
+* delete
+
+Add `Docker::API::Image` methods:
+* distribution
 
 # 0.10.0
 

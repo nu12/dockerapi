@@ -44,6 +44,9 @@ image.list
 # Inspect image
 image.details("image")
 
+# Return image digest and platform information by contacting the registry.
+image.distribution("image")
+
 # History
 image.history("image")
 
@@ -340,6 +343,52 @@ task.logs("task-id", stdout: true)
 
 # Inspect service 
 task.details("task-id")
+```
+
+### Secret
+```ruby
+# Connect to local secret endpoints
+secret = Docker::API::Secret.new
+
+# List secrets
+secret.list
+
+# Create a secret
+secret.create({Name: "secret-name", Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="})
+
+# Inspect secrets 
+secret.details("secret-name")
+
+# Update a secret (needs version and current Spec)
+version = secret.details( "secret-name" ).json["Version"]["Index"]
+spec = secret.details("secret-name").json["Spec"]
+secret.update("secret-name", {version: version}, spec.merge!({ Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg==" }))
+
+# Delete secret
+secret.delete("secret-name")
+```
+
+### Config
+```ruby
+# Connect to local config endpoints
+config = Docker::API::Config.new
+
+# List configs
+config.list
+
+# Create a config
+config.create({Name: "config-name", Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="})
+
+# Inspect configs 
+config.details("config-name")
+
+# Update a configs (needs version and current Spec)
+version = config.details( "config-name" ).json["Version"]["Index"]
+spec = config.details("config-name").json["Spec"]
+config.update("config-name", {version: version}, spec.merge!({ Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg==" }))
+
+# Delete config
+config.delete("config-name")
 ```
 
 ### Connection
