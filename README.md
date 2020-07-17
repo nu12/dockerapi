@@ -428,7 +428,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 | Task | Ok | Ok | 9/4 |
 | Secret | Ok | Ok | 9/4 |
 | Config | Ok | Ok | 9/4 |
-| Distribution | 7/17 | 7/17 | 9/4 |
+| Distribution | Ok | Ok | 9/4 |
 | Plugin | 7/24 | 7/24 | 9/4 |
 
 ## Contributing

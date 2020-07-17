@@ -11,6 +11,10 @@ module Docker
                 @connection.get(build_path([name, "json"]))
             end
 
+            def distribution name
+                @connection.get("/distribution/#{name}/json")
+            end
+
             def history name
                 @connection.get(build_path([name, "history"]))
             end

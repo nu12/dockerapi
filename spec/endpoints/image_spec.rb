@@ -184,5 +184,9 @@ RSpec.describe Docker::API::Image do
         it { expect(subject.delete_cache(all:true, "keep-storage": 100000, filters: {until: {"24h": true}, inuse: {"true": true}, shared: {"true": true}}).status).to eq(200) }
         it { expect{subject.delete_cache(invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
     end
-    
+
+    describe ".distribution" do
+        it { expect(subject.distribution(image).status).to eq(200) }
+        it { expect(subject.distribution("doesn-exist").status).to eq(403) }
+    end
 end
