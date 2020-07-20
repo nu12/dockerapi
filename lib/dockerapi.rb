@@ -18,6 +18,7 @@ require "docker/api/service"
 require "docker/api/task"
 require "docker/api/secret"
 require "docker/api/config"
+require "docker/api/plugin"
 
 module Docker
   module API
