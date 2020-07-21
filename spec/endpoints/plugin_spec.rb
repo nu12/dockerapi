@@ -41,4 +41,53 @@ RSpec.describe Docker::API::Plugin do
         it { expect{subject.install(remote: plugin, invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
         it { expect{subject.install(remote: plugin, invalid: true, skip_validation: true)}.not_to raise_error }
     end
+
+    context "after .create" do
+        before(:all) { described_class.new.install({remote: plugin}, privileges) }
+        after(:all) { described_class.new.remove(plugin, force: true) }
+
+        describe ".details" do
+            it { expect(subject.details(plugin).status).to eq(200) }
+            it { expect(subject.details("doesn-exist").status).to eq(404) }
+        end
+
+        describe ".configure" do
+            it { expect(subject.configure(plugin, ["DEBUG=1"]).status).to eq(204) }
+            it { expect(subject.configure("doesn-exist", ["DEBUG=1"]).status).to eq(404) }
+        end
+
+        describe ".enable" do
+            before(:each) { subject.disable(plugin) }
+            it { expect(subject.enable(plugin).status).to eq(500) }
+            it { expect(subject.enable(plugin, timeout: 0).status).to eq(200) }
+            it { expect(subject.enable("doesn-exist").status).to eq(500) }
+            it { expect(subject.enable("doesn-exist", timeout: 10).status).to eq(404) }
+            it { expect{subject.enable(plugin, invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.enable(plugin, invalid: true, skip_validation: true)}.not_to raise_error }
+        end
+
+        describe ".disable" do
+            before(:each) { subject.enable(plugin, timeout: 0) }
+            it { expect(subject.disable(plugin).status).to eq(200) }
+            it { expect(subject.enable("doesn-exist").status).to eq(500) }
+        end
+
+        describe ".upgrade" do
+            before(:all) { described_class.new.disable(plugin) }
+            it { expect(subject.upgrade(plugin, {remote: plugin}).status).to eq(200) }
+            it { expect(subject.upgrade(plugin, {remote: plugin}).body).to match(/incorrect/) }
+            it { expect(subject.upgrade(plugin, {remote: plugin}, privileges).status).to eq(200) }
+            it { expect(subject.upgrade(plugin, {remote: plugin}, privileges).body).not_to match(/incorrect/) }
+            it { expect{subject.upgrade(plugin, remote: plugin, invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.upgrade(plugin, remote: plugin, invalid: true, skip_validation: true)}.not_to raise_error }
+        end
+
+        describe ".remove" do
+            it { expect(subject.remove(plugin).status).to eq(200) }
+            it { expect(subject.remove(plugin).status).to eq(404) }
+            it { expect(subject.remove(plugin, force: true).status).to eq(404) }
+            it { expect{subject.remove(plugin, invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.remove(plugin, invalid: true, skip_validation: true)}.not_to raise_error }
+        end
+    end
 end

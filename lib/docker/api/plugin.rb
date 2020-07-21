@@ -42,58 +42,73 @@ class Docker::API::Plugin < Docker::API::Base
     # @param authentication [Hash]: Authentication parameters.
     def install params = {}, privileges = [], authentication = {}
         validate Docker::API::InvalidParameter, [:remote, :name], params
-        @connection.request(method: :post, path: build_path("/plugins/pull", params), headers: {"Content-Type": "application/json"}, body: privileges.to_json )
+        headers = {"Content-Type": "application/json"}
+        headers.merge!({"X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s)}) if authentication.keys.size > 0
+        @connection.request(method: :post, path: build_path("/plugins/pull", params), headers: headers, body: privileges.to_json )
     end
 
-    # 
+    # Inspect a plugin
     #
-    # Docker API: 
+    # Docker API: GET /plugins/{name}/json
     #
-    # @see 
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/PluginInspect
     #
-    # @param 
-    def details
+    # @param name [String]: The ID or name of the plugin.
+    def details name 
+        @connection.get("/plugins/#{name}/json")
     end
 
-    # 
+    # Remove a plugin
     #
-    # Docker API: 
+    # Docker API: DELETE /plugins/{name}
     #
-    # @see 
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/PluginDelete
     #
-    # @param 
-    def remove name
-        @connection.delete("/plugins/#{name}")
+    # @param name [String]: The ID or name of the plugin.
+    #
+    # @param params [Hash]: Parameters that are appended to the URL.
+    def remove name, params = {}
+        validate Docker::API::InvalidParameter, [:force], params
+        @connection.delete(build_path("/plugins/#{name}",params))
     end
 
-    # 
+    # Enable a plugin
     #
-    # Docker API: 
+    # Docker API: POST /plugins/{name}/enable
     #
-    # @see 
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/PluginEnable
     #
-    # @param 
-    def enable
+    # @param name [String]: The ID or name of the plugin.
+    #
+    # @param params [Hash]: Parameters that are appended to the URL.
+    def enable name, params = {}
+        validate Docker::API::InvalidParameter, [:timeout], params
+        @connection.post(build_path("/plugins/#{name}/enable", params))
     end
 
-    # 
+    # Disable a plugin
     #
-    # Docker API: 
+    # Docker API: POST /plugins/{name}/disable
     #
-    # @see 
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/PluginDisable
     #
-    # @param 
-    def disable
+    # @param name [String]: The ID or name of the plugin.
+    def disable name
+        @connection.post("/plugins/#{name}/disable")
     end
 
-    # 
+    # Upgrade a plugin
     #
-    # Docker API: 
+    # Docker API: POST /plugins/{name}/upgrade
     #
-    # @see 
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/PluginUpgrade
     #
     # @param 
-    def upgrade
+    def upgrade name, params = {}, privileges = [], authentication = {}
+        validate Docker::API::InvalidParameter, [:remote], params
+        headers = {"Content-Type": "application/json"}
+        headers.merge!({"X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s)}) if authentication.keys.size > 0
+        @connection.request(method: :post, path: build_path("/plugins/#{name}/upgrade", params), headers: headers, body: privileges.to_json )
     end
 
     # 
@@ -116,14 +131,17 @@ class Docker::API::Plugin < Docker::API::Base
     def push
     end
 
-    # 
+    # Configure a plugin
     #
-    # Docker API: 
+    # Docker API: POST /plugins/{name}/set
     #
-    # @see 
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/PluginSet
     #
-    # @param 
-    def configure
+    # @param name [String]: The ID or name of the plugin.
+    #
+    # @param config [Array]: Plugin configuration to be sent as json in request body.
+    def configure name, config
+        @connection.request(method: :post, path: "/plugins/#{name}/set", headers: {"Content-Type": "application/json"}, body:config.to_json)
     end
 
 end
