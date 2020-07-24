@@ -103,7 +103,13 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @see https://docs.docker.com/engine/api/v1.40/#operation/PluginUpgrade
     #
-    # @param 
+    # @param name [String]: The ID or name of the plugin.
+    #
+    # @param params [Hash]: Parameters that are appended to the URL.
+    #
+    # @param privileges [Array]: Plugin privileges to be sent as json in request body.
+    #
+    # @param authentication [Hash]: Authentication parameters.
     def upgrade name, params = {}, privileges = [], authentication = {}
         validate Docker::API::InvalidParameter, [:remote], params
         headers = {"Content-Type": "application/json"}
@@ -111,24 +117,37 @@ class Docker::API::Plugin < Docker::API::Base
         @connection.request(method: :post, path: build_path("/plugins/#{name}/upgrade", params), headers: headers, body: privileges.to_json )
     end
 
-    # 
+    # Create a plugin
     #
-    # Docker API: 
+    # Docker API: POST /plugins/create
     #
-    # @see 
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/PluginCreate
     #
-    # @param 
-    def create
+    # @param name [String]: The ID or name of the plugin.
+    #
+    # @param path [String]: Path to tar file that contains rootfs folder and config.json file.
+    def create name, path
+        file = File.open( File.expand_path( path ) , "r")
+        response = @connection.request(method: :post, path: "/plugins/create?name=#{name}", body: file.read.to_s )
+        file.close        
+        response
     end
 
-    # 
+    # Push a plugin to the registry.
     #
-    # Docker API: 
+    # Docker API: POST /plugins/{name}/push
     #
-    # @see 
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/PluginPush
     #
-    # @param 
-    def push
+    # @param name [String]: The ID or name of the plugin.
+    #
+    # @param authentication [Hash]: Authentication parameters.
+    def push name, authentication = {}
+        if authentication.keys.size > 0
+            @connection.request(method: :post, path: "/plugins/#{name}/push", headers: {"X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s)})
+        else
+            @connection.post("/plugins/#{name}/push")
+        end
     end
 
     # Configure a plugin

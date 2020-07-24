@@ -1,5 +1,6 @@
 RSpec.describe Docker::API::Plugin do
     plugin = "vieux/sshfs"
+    myplugin = "rspec-plugin"
     privileges = Docker::API::Plugin.new.privileges(remote: plugin).json
     subject { described_class.new }
     it { is_expected.to respond_to(:list) }
@@ -42,7 +43,7 @@ RSpec.describe Docker::API::Plugin do
         it { expect{subject.install(remote: plugin, invalid: true, skip_validation: true)}.not_to raise_error }
     end
 
-    context "after .create" do
+    context "after .install" do
         before(:all) { described_class.new.install({remote: plugin}, privileges) }
         after(:all) { described_class.new.remove(plugin, force: true) }
 
@@ -88,6 +89,21 @@ RSpec.describe Docker::API::Plugin do
             it { expect(subject.remove(plugin, force: true).status).to eq(404) }
             it { expect{subject.remove(plugin, invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
             it { expect{subject.remove(plugin, invalid: true, skip_validation: true)}.not_to raise_error }
+        end
+    end
+
+    context "create a plugin" do
+        after(:all) { described_class.new.remove(myplugin) }
+        describe ".create" do
+            it { expect(subject.create(myplugin, "resources/plugin.tar").status).to eq(204) }
+            it { expect(subject.create(myplugin, "resources/plugin.tar").status).to eq(409) }
+            it { expect{subject.create(myplugin, "doesn-exist")}.to raise_error(Errno::ENOENT) }
+        end
+
+        describe ".push" do
+            it { expect(subject.push(myplugin).status).to eq(200) }
+            it { expect(subject.push(myplugin).body).to match(/(requested access to the resource is denied)/) }
+            it { expect(subject.push("doesn-exist").status).to eq(404) }
         end
     end
 end
