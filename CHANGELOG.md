@@ -1,3 +1,18 @@
+# 0.12.0
+
+Add `Docker::API::Plugin` methods:
+* list
+* privileges
+* install
+* details
+* remove
+* enable
+* disable
+* upgrade
+* create
+* push
+* configure
+
 # 0.11.0
 
 Add `Docker::API::Task` methods:

@@ -391,9 +391,50 @@ config.update("config-name", {version: version}, spec.merge!({ Data: "VEhJUyBJUy
 config.delete("config-name")
 ```
 
+### Plugin
+```ruby
+# Connect to local plugin endpoints
+plugin = Docker::API::Plugin.new
+
+# List plugins
+plugin.list
+
+# List plugin's privileges
+plugin.privileges(remote: "plugin-name")
+
+# Install plugin (using defined privileges)
+privileges = plugin.privileges(remote: "plugin-name")
+plugin.install({remote: "plugin-name"}, privileges)
+
+# Upgrade plugin (using defined privileges)
+privileges = plugin.privileges(remote: "plugin-name2")
+plugin.upgrade("plugin-name", {remote: "plugin-name2"}, privileges)
+
+# Enable plugin
+plugin.enable("plugin-name", timeout: 0)
+
+# Disable plugin
+plugin.disable("plugin-name")
+
+# Configure plugin
+plugin.configure("plugin-name", ["DEBUG=1"])
+
+# Inspect plugin
+plugin.details("plugin-name")
+
+# Remove plugin
+plugin.remove("plugin-name")
+
+# Create plugin (tar file must contain rootfs folder and config.json file)
+plugin.create("name", "/path/to/file.tar")
+
+# Push plugin
+plugin.push("name")
+```
+
 ### Connection
 
-By default Docker::API::Connection will connect to local Docker socket at `/var/run/docker.sock`. See examples below to use a different path or connect to a remote address.
+By default `Docker::API::Connection` will connect to local Docker socket at `/var/run/docker.sock`. See examples below to use a different path or connect to a remote address.
 
 ```ruby
 # Setting different connections
@@ -478,7 +519,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 | Secret | Ok | Ok | 9/4 |
 | Config | Ok | Ok | 9/4 |
 | Distribution | Ok | Ok | 9/4 |
-| Plugin | 7/24 | 7/24 | 9/4 |
+| Plugin | Ok | 7/24 | 9/4 |
 
 ## Contributing
 
