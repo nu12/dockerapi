@@ -37,7 +37,6 @@ class Docker::API::Image < Docker::API::Base
         @connection.request(method: :get, path: build_path("/images/#{name}/get") , response_block: block_given? ? block.call : default_writer(path))
     end
 
-    # File reader
     def import path, params = {}
         default_reader(path, build_path("/images/load", params))
     end
@@ -50,8 +49,7 @@ class Docker::API::Image < Docker::API::Base
     def commit params = {}, body = {}
         container = Docker::API::Container.new.details(params[:container])
         return container if [404, 301].include? container.status
-        body = JSON.parse(container.body)["Config"].merge(body)
-        @connection.request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: body.to_json)
+        @connection.request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: container.json["Config"].merge(body).to_json)
     end
 
     # stream
