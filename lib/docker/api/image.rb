@@ -52,24 +52,15 @@ class Docker::API::Image < Docker::API::Base
         @connection.request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: container.json["Config"].merge(body).to_json)
     end
 
-    # stream
-    def create params = {}, authentication = {}, &block               
-        if authentication.keys.size > 0
-            auth = Docker::API::System.new.auth(authentication)
-            return auth unless [200, 204].include? auth.status
-            @connection.request(method: :post, path: build_path("/images/create", params), headers: { "X-Registry-Auth" => Base64.encode64(authentication.to_json.to_s).chomp } )
-        elsif params.has_key? :fromSrc
-            if params[:fromSrc].match(/^(http|https)/)
-                @connection.request(method: :post, path: build_path("/images/create", params))
-            else
-                file = File.open(File.expand_path(params[:fromSrc]), "r")
-                params[:fromSrc] = "-"
-                response = @connection.request(method: :post, path: build_path("/images/create", params) , headers: {"Content-Type" => "application/x-tar"}, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
-                file.close
-                response
-            end
+    def create params = {}, authentication = {}, &block
+        request = {method: :post, path: build_path("/images/create", params), response_block: block_given? ? block.call : default_streamer }
+        if params.has_key? :fromSrc and !params[:fromSrc].match(/^(http|https)/)
+            path = params[:fromSrc]
+            params[:fromSrc] = "-"
+            default_reader(path, build_path("/images/create", params))
         else
-            @connection.request(method: :post, path: build_path("/images/create", params), response_block: block_given? ? block.call : default_streamer )
+            request[:headers] = { "X-Registry-Auth" => Base64.encode64(authentication.to_json.to_s).chomp } if authentication.keys.size > 0
+            @connection.request(request)
         end
     end
 
