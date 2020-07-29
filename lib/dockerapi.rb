@@ -25,6 +25,8 @@ require "docker/api/plugin"
 module Docker
   module API
 
+    PRINT_TO_STDOUT = true
+
     VALID_PARAMS = {
       "Docker::API::Image" => {
         "build" => [:dockerfile, :t, :extrahosts, :remote, :q, :nocache, :cachefrom, :pull, :rm, :forcerm, :memory, :memswap, :cpushares, :cpusetcpus, :cpuperiod, :cpuquota, :buildargs, :shmsize, :squash, :labels, :networkmode, :platform, :target, :outputs],
