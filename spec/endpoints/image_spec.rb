@@ -109,9 +109,9 @@ RSpec.describe Docker::API::Image do
             
             context "having the exported image" do
                 describe ".import" do
-                    it { expect(subject.import("~/exported_image.tar").status).to eq(200) }
-                    it { expect(subject.import("~/exported_image.tar", quiet: true).status).to eq(200) }
-                    it { expect{subject.import("~/exported_image.tar", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
+                    it { expect(subject.import("resources/import.tar").status).to eq(200) }
+                    it { expect(subject.import("resources/import.tar", quiet: true).status).to eq(200) }
+                    it { expect{subject.import("resources/import.tar", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
                 end
             end
         end

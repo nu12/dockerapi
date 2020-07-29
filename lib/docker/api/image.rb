@@ -65,26 +65,17 @@ class Docker::API::Image < Docker::API::Base
     end
 
     # File reader
-    def build path, params = {}, authentication = {}
+    def build path, params = {}, authentication = {}, &block
         raise Docker::API::Error.new("Expected path or params[:remote]") unless path || params[:remote] 
 
-        header = {"Content-type": "application/x-tar"}
-        if authentication.keys.size > 0
-            authentication.each_key do |server|
-                auth = Docker::API::System.new.auth({username: authentication[server][:username] ,password:authentication[server][:password], serveraddress: server})
-                return auth unless [200, 204].include? auth.status
-            end
-            header.merge!({"X-Registry-Config": Base64.urlsafe_encode64(authentication.to_json.to_s).chomp})
-        end
+        headers = {"Content-type": "application/x-tar"}
+        headers.merge!({"X-Registry-Config": Base64.urlsafe_encode64(authentication.to_json.to_s).chomp}) if authentication.keys.size > 0
 
-        begin # Local
-            file = File.open( File.expand_path( path ) , "r")
-            response = @connection.request(method: :post, path: build_path("/build", params), headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s})
-            file.close
-        rescue # Git
-            response = @connection.request(method: :post, path: build_path("/build", params), headers: header)
+        if path == nil and params.has_key? :remote
+            response = @connection.request(method: :post, path: build_path("/build", params), headers: headers, response_block: block_given? ? block.call : default_streamer)
+        else
+            default_reader(path, build_path("/build", params), headers)
         end
-        response
     end
 
     def delete_cache params = {}

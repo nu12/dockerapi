@@ -36,9 +36,9 @@ class Docker::API::Base
         streamer
     end
 
-    def default_reader path, url, header = {"Content-Type" => "application/x-tar"}
+    def default_reader path, url, header = {"Content-Type" => "application/x-tar"}, &block
         file = File.open(File.expand_path(path), "r")
-        response = @connection.request(method: :post, path: url , headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
+        response = @connection.request(method: :post, path: url , headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s}, response_block: block_given? ? block.call : default_streamer )
         file.close
         response
     end
