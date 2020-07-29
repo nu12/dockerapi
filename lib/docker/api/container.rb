@@ -1,22 +1,16 @@
 module Docker
     module API
-        CreateBody = [:Hostname,:Domainname,:User,:AttachStdin,:AttachStdout,:AttachStderr,:ExposedPorts,:Tty,:OpenStdin,:StdinOnce,:Env,:Cmd,:HealthCheck,:ArgsEscaped,:Image,:Volumes,:WorkingDir,:Entrypoint,:NetworkDisabled,:MacAddress,:OnBuild,:Labels,:StopSignal,:StopTimeout,:Shell,:HostConfig,:NetworkingConfig]
-        UpdateBody = [:CpuShares, :Memory, :CgroupParent, :BlkioWeight, :BlkioWeightDevice, :BlkioWeightReadBps, :BlkioWeightWriteBps, :BlkioWeightReadOps, :BlkioWeightWriteOps, :CpuPeriod, :CpuQuota, :CpuRealtimePeriod, :CpuRealtimeRuntime, :CpusetCpus, :CpusetMems, :Devices, :DeviceCgroupRules, :DeviceRequest, :Kernel, :Memory, :KernelMemoryTCP, :MemoryReservation, :MemorySwap, :MemorySwappiness, :NanoCPUs, :OomKillDisable, :Init, :PidsLimit, :ULimits, :CpuCount, :CpuPercent, :IOMaximumIOps, :IOMaximumBandwidth, :RestartPolicy]
-
         class Container < Docker::API::Base
 
             def list params = {}
-                validate Docker::API::InvalidParameter, [:all, :limit, :size, :filters], params
                 @connection.get(build_path(["json"], params))
             end
 
             def details name, params = {}
-                validate Docker::API::InvalidParameter, [:size], params
                 @connection.get(build_path([name, "json"], params))
             end
 
             def top name, params = {}
-                validate Docker::API::InvalidParameter, [:ps_args], params
                 @connection.get(build_path([name, "top"], params))
             end
 
@@ -25,47 +19,38 @@ module Docker
             end
 
             def start name, params = {}
-                validate Docker::API::InvalidParameter, [:detachKeys], params
                 @connection.post(build_path([name, "start"], params))
             end
 
             def stop name, params = {}
-                validate Docker::API::InvalidParameter, [:t], params
                 @connection.post(build_path([name, "stop"], params))
             end
 
             def restart name, params = {}
-                validate Docker::API::InvalidParameter, [:t], params
                 @connection.post(build_path([name, "restart"], params))
             end
 
             def kill name, params = {}
-                validate Docker::API::InvalidParameter, [:signal], params
                 @connection.post(build_path([name, "kill"], params))
             end
 
             def wait name, params = {}
-                validate Docker::API::InvalidParameter, [:condition], params
                 @connection.post(build_path([name, "wait"], params))
             end
 
             def update name, body = {}
-                validate Docker::API::InvalidRequestBody, Docker::API::UpdateBody, body
                 @connection.request(method: :post, path: build_path([name, "update"]), headers: {"Content-Type": "application/json"}, body: body.to_json)
             end
 
             def rename name, params = {}
-                validate Docker::API::InvalidParameter, [:name], params
                 @connection.post(build_path([name, "rename"], params))
             end
 
             def resize name, params = {}
-                validate Docker::API::InvalidParameter, [:w, :h], params
                 @connection.post(build_path([name, "resize"], params))
             end
 
             def prune params = {}
-                validate Docker::API::InvalidParameter, [:filters], params
                 @connection.post(build_path(["prune"], params))
             end
 
@@ -78,12 +63,10 @@ module Docker
             end
 
             def remove name, params = {}
-                validate Docker::API::InvalidParameter, [:v, :force, :link], params
                 @connection.delete(build_path([name]))
             end
 
             def logs name, params = {}
-                validate Docker::API::InvalidParameter, [:follow, :stdout, :stderr, :since, :until, :timestamps, :tail], params
                 
                 path = build_path([name, "logs"], params)
 
@@ -95,18 +78,14 @@ module Docker
             end
 
             def attach name, params = {}
-                validate Docker::API::InvalidParameter, [:detachKeys, :logs, :stream, :stdin, :stdout, :stderr], params
                 @connection.request(method: :post, path: build_path([name, "attach"], params) , response_block: lambda { |chunk, remaining_bytes, total_bytes| puts chunk.inspect })
             end
 
             def create params = {}, body = {}
-                validate Docker::API::InvalidParameter, [:name], params
-                validate Docker::API::InvalidRequestBody, Docker::API::CreateBody, body
                 @connection.request(method: :post, path: build_path(["create"], params), headers: {"Content-Type": "application/json"}, body: body.to_json)
             end
 
             def stats name, params = {}
-                validate Docker::API::InvalidParameter, [:stream], params
                 path = build_path([name, "stats"], params)
 
                 if params[:stream] == true || params[:stream] == 1
@@ -133,7 +112,6 @@ module Docker
             end
 
             def archive name, file, params = {}
-                validate Docker::API::InvalidParameter, [:path, :noOverwriteDirNonDir, :copyUIDGID], params
 
                 begin # File exists on disk, send it to container
                     file = File.open( File.expand_path( file ) , "r")

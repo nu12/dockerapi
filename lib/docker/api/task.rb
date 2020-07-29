@@ -13,7 +13,6 @@ class Docker::API::Task < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        validate Docker::API::InvalidParameter, [:filters], params
         @connection.get(build_path("/tasks",params))
     end
 
@@ -40,7 +39,6 @@ class Docker::API::Task < Docker::API::Base
     #
     # @param params (Hash) : Parameters that are appended to the URL.
     def logs name, params = {}
-        validate Docker::API::InvalidParameter, [:details, :follow, :stdout, :stderr, :since, :timestamps, :tail], params
         @connection.get(build_path("/tasks/#{name}/logs", params))
     end
 end

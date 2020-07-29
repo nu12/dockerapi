@@ -3,17 +3,14 @@ module Docker
         class Network < Docker::API::Base
 
             def list params = {}
-                validate Docker::API::InvalidParameter, [:filters], params
                 @connection.get(build_path("/networks", params))
             end
 
             def details name, params = {}
-                validate Docker::API::InvalidParameter, [:verbose, :scope], params
                 @connection.get(build_path([name], params))
             end
 
             def create body = {}
-                validate Docker::API::InvalidRequestBody, [:Name, :CheckDuplicate, :Driver, :Internal, :Attachable, :Ingress, :IPAM, :EnableIPv6, :Options, :Labels], body
                 @connection.request(method: :post, path: build_path(["create"]), headers: {"Content-Type": "application/json"}, body: body.to_json)
             end
 
@@ -22,17 +19,14 @@ module Docker
             end
 
             def prune params = {}
-                validate Docker::API::InvalidParameter, [:filters], params
                 @connection.post(build_path(["prune"], params))
             end
 
             def connect name, body = {}
-                validate Docker::API::InvalidRequestBody, [:Container, :EndpointConfig], body
                 @connection.request(method: :post, path: build_path([name, "connect"]), headers: {"Content-Type": "application/json"}, body: body.to_json)
             end
 
             def disconnect name, body = {}
-                validate Docker::API::InvalidRequestBody, [:Container, :Force], body
                 @connection.request(method: :post, path: build_path([name, "disconnect"]), headers: {"Content-Type": "application/json"}, body: body.to_json)
             end
 

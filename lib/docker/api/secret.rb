@@ -13,7 +13,6 @@ class Docker::API::Secret < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        validate Docker::API::InvalidParameter, [:filters], params
         @connection.get(build_path("/secrets",params))
     end
 
@@ -25,7 +24,6 @@ class Docker::API::Secret < Docker::API::Base
     #
     # @param body [Hash]: Request body to be sent as json.
     def create body = {}
-        validate Docker::API::InvalidRequestBody, [:Name, :Labels, :Data, :Driver, :Templating], body
         @connection.request(method: :post, path: "/secrets/create", headers: {"Content-Type": "application/json"}, body: body.to_json)
     end
 
@@ -52,8 +50,6 @@ class Docker::API::Secret < Docker::API::Base
     #
     # @param body [Hash]: Request body to be sent as json.
     def update name, params = {}, body = {}
-        validate Docker::API::InvalidParameter, [:version], params
-        validate Docker::API::InvalidRequestBody, [:Name, :Labels, :Data, :Driver, :Templating], body
         @connection.request(method: :post, path: build_path("/secrets/#{name}/update",params), headers: {"Content-Type": "application/json"}, body: body.to_json)
     end
 

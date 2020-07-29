@@ -3,13 +3,10 @@ module Docker
         class Exec < Docker::API::Base
 
             def create name, body = {}
-                validate Docker::API::InvalidRequestBody, [:AttachStdin, :AttachStdout, :AttachStderr, :DetachKeys, :Tty, :Env, :Cmd, :Privileged, :User, :WorkingDir], body
                 @connection.request(method: :post, path: "/containers/#{name}/exec", headers: {"Content-Type": "application/json"}, body: body.to_json )
             end
 
             def start name, body = {}
-                validate Docker::API::InvalidRequestBody, [:Detach, :Tty], body
-
                 stream = ""
                 response = @connection.request(method: :post, 
                     path: "/exec/#{name}/start", 
@@ -22,7 +19,6 @@ module Docker
             end
 
             def resize name, params = {}
-                validate Docker::API::InvalidParameter, [:w, :h], params
                 @connection.post(build_path("/exec/#{name}/resize", params))
             end
 

@@ -11,7 +11,6 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        validate Docker::API::InvalidParameter, [:filters], params
         @connection.get(build_path("/plugins", params))
     end
 
@@ -23,7 +22,6 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def privileges params = {}
-        validate Docker::API::InvalidParameter, [:remote], params
         @connection.get(build_path("/plugins/privileges", params))
     end
 
@@ -41,7 +39,6 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param authentication [Hash]: Authentication parameters.
     def install params = {}, privileges = [], authentication = {}
-        validate Docker::API::InvalidParameter, [:remote, :name], params
         headers = {"Content-Type": "application/json"}
         headers.merge!({"X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s)}) if authentication.keys.size > 0
         @connection.request(method: :post, path: build_path("/plugins/pull", params), headers: headers, body: privileges.to_json )
@@ -68,7 +65,6 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def remove name, params = {}
-        validate Docker::API::InvalidParameter, [:force], params
         @connection.delete(build_path("/plugins/#{name}",params))
     end
 
@@ -82,7 +78,6 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def enable name, params = {}
-        validate Docker::API::InvalidParameter, [:timeout], params
         @connection.post(build_path("/plugins/#{name}/enable", params))
     end
 
@@ -111,7 +106,6 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param authentication [Hash]: Authentication parameters.
     def upgrade name, params = {}, privileges = [], authentication = {}
-        validate Docker::API::InvalidParameter, [:remote], params
         headers = {"Content-Type": "application/json"}
         headers.merge!({"X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s)}) if authentication.keys.size > 0
         @connection.request(method: :post, path: build_path("/plugins/#{name}/upgrade", params), headers: headers, body: privileges.to_json )
