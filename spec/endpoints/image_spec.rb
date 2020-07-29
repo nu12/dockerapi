@@ -101,7 +101,7 @@ RSpec.describe Docker::API::Image do
         
         describe ".export" do
             after(:all) { File.delete(File.expand_path("~/exported_image.tar")) }
-            it { expect{File.open(File.expand_path("~/exported_image"))}.to raise_error(Errno::ENOENT) }
+            it { expect{File.open(File.expand_path("~/exported_image.tar"))}.to raise_error(Errno::ENOENT) }
             it { expect(subject.export(image, "~/exported_image.tar").status).to eq(200) }
             it { expect{File.open(File.expand_path("~/exported_image.tar"))}.not_to raise_error }
             it { expect(subject.export("doesn-exist", "~/wont-exist.tar").status).to eq(404) }

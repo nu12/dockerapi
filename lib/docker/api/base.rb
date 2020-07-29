@@ -26,6 +26,23 @@ class Docker::API::Base
         streamer
     end
 
+    def default_writer path
+        streamer = lambda do |chunk, remaining_bytes, total_bytes|
+            return if "#{chunk}".match(/(No such image)/)
+            file = File.open(File.expand_path(path), "wb+")
+            file.write(chunk)
+            file.close
+        end
+        streamer
+    end
+
+    def default_reader path, url, header = {"Content-Type" => "application/x-tar"}
+        file = File.open(File.expand_path(path), "r")
+        response = @connection.request(method: :post, path: url , headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
+        file.close
+        response
+    end
+
     def validate error, permitted, params
         return if params[:skip_validation]
         unpermitted = params.keys.map(&:to_s) - permitted.map(&:to_s)

@@ -2,7 +2,7 @@
 class Docker::API::Image < Docker::API::Base
 
     def details name
-        @connection.get(build_path("/images/#{name}/json"))
+        @connection.get("/images/#{name}/json")
     end
 
     def distribution name
@@ -10,7 +10,7 @@ class Docker::API::Image < Docker::API::Base
     end
 
     def history name
-        @connection.get(build_path("/images/#{name}/history"))
+        @connection.get("/images/#{name}/history")
     end
 
     def list params = {}
@@ -33,33 +33,18 @@ class Docker::API::Image < Docker::API::Base
         @connection.delete(build_path("/images/#{name}", params))
     end
 
-    # File writer
-    def export name, path = "exported_image"
-        file = File.open("/tmp/exported-image", "wb")
-        streamer = lambda do |chunk, remaining_bytes, total_bytes|
-            file.write(chunk)
-        end
-        response = @connection.request(method: :get, path: build_path("/images/#{name}/get") , response_block: streamer)
-        file.close
-        response.status == 200 ? FileUtils.mv("/tmp/exported-image", File.expand_path(path)) : FileUtils.rm("/tmp/exported-image")
-        response
+    def export name, path = "exported_image", &block
+        @connection.request(method: :get, path: build_path("/images/#{name}/get") , response_block: block_given? ? block.call : default_writer(path))
     end
 
     # File reader
     def import path, params = {}
-        validate Docker::API::InvalidParameter, [:quiet], params
-        file = File.open(File.expand_path(path), "r")
-        response = @connection.request(method: :post, path: build_path("/images/load", params) , headers: {"Content-Type" => "application/x-tar"}, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
-        file.close
-        response
+        default_reader(path, build_path("/images/load", params))
     end
 
     def push name, params = {}, authentication = {}
-        if authentication.keys.size > 0
-            @connection.request(method: :post, path: build_path("/images/#{name}/push", params), headers: { "X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s).chomp } )
-        else
-            raise Docker::API::Error.new("Provide authentication parameters to push an image")
-        end
+        raise Docker::API::Error.new("Provide authentication parameters to push an image") unless authentication.keys.size > 0
+        @connection.request(method: :post, path: build_path("/images/#{name}/push", params), headers: { "X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s).chomp } )
     end
 
     def commit params = {}, body = {}
