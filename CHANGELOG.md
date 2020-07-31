@@ -1,3 +1,16 @@
+# 0.13.0
+
+Add default behavior for file read, write and output to stdout. Whenever a method can receive a block, this default behavior can be replaced.
+
+The following `Docker::API::Image` methods that can now receive a block:
+* export (write file)
+* create (output to stdout)
+* build (output to stdout)
+
+Default output to stdout can be supressed by setting `Docker::API::PRINT_TO_STDOUT` to `false`
+
+Method parameters `params` and `body` will be automatically evaluated whenever they are present in the method's signature.
+
 # 0.12.0
 
 Add `Docker::API::Plugin` methods:

@@ -509,7 +509,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 | Class | Tests | Implementation | Refactoring |
 |---|---|---|---|
-| Image | Ok | Ok | 8/7 |
+| Image | Ok | Ok | Ok |
 | Container | Ok | Ok | 8/14 |
 | Volume | Ok | Ok | 8/21 |
 | Network | Ok | Ok | 8/21 |
@@ -522,7 +522,9 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 | Secret | Ok | Ok | 9/4 |
 | Config | Ok | Ok | 9/4 |
 | Distribution | Ok | Ok | 9/4 |
-| Plugin | Ok | 7/24 | 9/4 |
+| Plugin | Ok | Ok | 9/4 |
+
+Add doc in these files: `base`, `connection`, `error`, `response`, `dockerapi`
 
 ## Contributing
 
