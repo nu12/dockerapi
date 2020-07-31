@@ -75,13 +75,16 @@ image.prune(filters: {dangling: {"false": true}})
 image.commit(container: container, repo: "my/image", tag: "latest", comment: "Comment from commit", author: "dockerapi", pause: false )
 
 # Build image from a local tar file
-image.build("/path/to/file.tar")
+image.build("/path/to/file.tar", {t: "tag"})
+
+# Build image using private repository
+image.build("/path/to/file.tar", {t: "tag"}, {"https://index.docker.io/v1/" => {username: "janedoe", password: "janedoe"}})
 
 # Build image from a remote tar file
-image.build(nil, remote: "https://url.to/file.tar")
+image.build(nil, {remote: "https://url.to/file.tar", t: "tag"})
 
 # Build image from a remote Dockerfile
-image.build(nil, remote: "https://url.to/Dockerfile")
+image.build(nil, {remote: "https://url.to/Dockerfile", t: "tag"})
 
 # Delete builder cache
 image.delete_cache
