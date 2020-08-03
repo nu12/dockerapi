@@ -1,6 +1,29 @@
 # dockerapi
 
-Interact directly with Docker API from Ruby code.
+Interact with Docker API directly from Ruby code. Comprehensive implementation (all available endpoints), no local Docker installation required, easily manipulated http responses.
+
+* [Installation](#installation)
+* [Usage](#usage)
+  * [Images](#images)
+  * [Containers](#containers)
+  * [Volumes](#volumes)
+  * [Network](#network)
+  * [System](#system)
+  * [Exec](#exec)
+  * [Swarm](#swarm)
+  * [Node](#node)
+  * [Service](#service)
+  * [Task](#task)
+  * [Secret](#secret)
+  * [Config](#config)
+  * [Plugin](#plugin)
+  * [Connection](#connection)
+  * [Requests](#requests)
+  * [Response](#response)
+  * [Error handling](#error-handling)
+* [Development](#development)
+* [Contributing](#contributing)
+* [License](#license)
 
 ## Installation
 
@@ -19,6 +42,12 @@ Or install it yourself as:
     $ gem install dockerapi
 
 ## Usage
+
+The following section will bring you up to speed in order to use most this gem resources with pratical examples. 
+
+If you need more information about the different Docker API endpoints, please see the [Docker API documentation](https://docs.docker.com/engine/api/v1.40/). 
+
+For a more detailed and comprehensive documentation about this gem's API, please see the [documentation page](https://rubydoc.info/gems/dockerapi).
 
 ### Images
 
