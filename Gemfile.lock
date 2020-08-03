@@ -2,13 +2,13 @@ PATH
   remote: .
   specs:
     dockerapi (0.13.0)
-      excon (~> 0.74.0)
+      excon (~> 0.76.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.3)
-    excon (0.74.0)
+    excon (0.76.0)
     rake (12.3.3)
     rspec (3.9.0)
       rspec-core (~> 3.9.0)
