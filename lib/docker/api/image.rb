@@ -102,9 +102,8 @@ class Docker::API::Image < Docker::API::Base
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageGet
     #
     # @param name [String]: The ID or name of the image.
-    # @param path [Hash]: Parameters that are appended to the URL.
-    # @param block [Hash]: Request body to be sent as json.
-    # @block: Replace the default file writing method.
+    # @param path [String]: Parameters that are appended to the URL.
+    # @param &block: Replace the default file writing behavior.
     def export name, path = "exported_image", &block
         @connection.request(method: :get, path: build_path("/images/#{name}/get") , response_block: block_given? ? block.call : default_writer(path))
     end
