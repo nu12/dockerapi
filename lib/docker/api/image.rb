@@ -5,6 +5,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Return low-level information about an image.
+    #
     # Docker API: GET /images/{name}/json
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageInspect
     #
@@ -15,6 +16,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Return image digest and platform information by contacting the registry.
+    #
     # Docker API: GET /distribution/{name}/json
     # @see https://docs.docker.com/engine/api/v1.40/#tag/Distribution
     #
@@ -25,6 +27,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Return parent layers of an image.
+    #
     # Docker API: GET /images/{name}/history
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageHistory
     #
@@ -35,6 +38,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Returns a list of images on the server. Note that it uses a different, smaller representation of an image than inspecting a single image.
+    #
     # Docker API: GET /images/json
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageList
     #
@@ -45,6 +49,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Search for an image on Docker Hub.
+    #
     # Docker API: GET /images/search
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageSearch
     #
@@ -55,6 +60,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Tag an image so that it becomes part of a repository.
+    #
     # Docker API: POST /images/{name}/tag
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageTag
     #
@@ -66,6 +72,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Delete unused images.
+    #
     # Docker API: POST /images/prune
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImagePrune
     #
@@ -76,7 +83,9 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Remove an image, along with any untagged parent images that were referenced by that image.
+    #
     # Images can't be removed if they have descendant images, are being used by a running container or are being used by a build.
+    #
     # Docker API: DELETE /images/{name}
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageDelete
     #
@@ -88,6 +97,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Export an image.
+    #
     # Docker API: GET /images/{name}/get
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageGet
     #
@@ -101,6 +111,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Import images.
+    #
     # Docker API: POST /images/load
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageLoad
     #
@@ -112,6 +123,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Push an image to a registry.
+    #
     # Docker API: POST /images/{name}/push
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImagePush
     #
@@ -125,6 +137,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Create a new image from a container.
+    #
     # Docker API: POST /commit
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageCommit
     #
@@ -138,6 +151,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Create an image by either pulling it from a registry or importing it.
+    #
     # Docker API: POST /images/create
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageCreate
     #
@@ -158,6 +172,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Build an image from a tar archive with a Dockerfile in it.
+    #
     # Docker API: POST /build
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageBuild
     #
@@ -180,6 +195,7 @@ class Docker::API::Image < Docker::API::Base
 
     ##
     # Delete builder cache.
+    #
     # Docker API: POST /build/prune
     # @see https://docs.docker.com/engine/api/v1.40/#operation/BuildPrune
     #
