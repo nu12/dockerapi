@@ -57,7 +57,8 @@ module Docker
         "logs" => [:follow, :stdout, :stderr, :since, :until, :timestamps, :tail],
         "attach" => [:detachKeys, :logs, :stream, :stdin, :stdout, :stderr],
         "stats" => [:stream],
-        "archive" => [:path, :noOverwriteDirNonDir, :copyUIDGID],
+        "get_archive" => [:path],
+        "put_archive" => [:path, :noOverwriteDirNonDir, :copyUIDGID],
         "create" => [:name]
       },
       "Docker::API::Volume" => {

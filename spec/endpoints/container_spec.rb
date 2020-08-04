@@ -71,7 +71,7 @@ RSpec.describe Docker::API::Container do
 
         it { expect(subject.remove(name).status).to eq(204) }
         it { expect(subject.remove("doesn-exist").status).to eq(404) }
-        it { expect(subject.remove(name,  {v: true, link: true}).status).to eq(204) }
+        it { expect(subject.remove(name,  {v: true}).status).to eq(204) }
         it { expect(subject.remove(name,  {force: true}).status).to eq(204) }
         it { expect{subject.remove(name,  {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
         it do 
@@ -167,22 +167,22 @@ RSpec.describe Docker::API::Container do
                 end
             end
 
-            describe ".archive" do
+            context ".archive" do
                 after(:all) { File.delete(File.expand_path("~/archive.tar")) }
-                it { expect(subject.archive(name, "file").status).to eq(400) }
-                it { expect(subject.archive("doesn-exist", "file").status).to eq(400) }
-                it { expect{subject.archive(name, "file",  {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
+                it { expect(subject.get_archive(name, "file").status).to eq(400) }
+                it { expect(subject.get_archive("doesn-exist", "file").status).to eq(400) }
+                it { expect{subject.get_archive(name, "file",  {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
                 
-                context "from container to disk" do
-                    it { expect(subject.archive(name, "~/archive.tar", { path: "/usr/share/nginx/html/" }).status).to eq(200) }
+                describe ".get_archive" do
+                    it { expect(subject.get_archive(name, "~/archive.tar", { path: "/usr/share/nginx/html/" }).status).to eq(200) }
                     it { expect{File.open(File.expand_path("~/archive.tar"))}.not_to raise_error }
-                    it { expect(subject.archive(name, "~/wont_exist.tar", { path: "/this-path-doesnt-exist" }).status).to eq(404) }
+                    it { expect(subject.get_archive(name, "~/wont_exist.tar", { path: "/this-path-doesnt-exist" }).status).to eq(404) }
                     it { expect{File.open(File.expand_path("~/wont_exist.tar"))}.to raise_error(Errno::ENOENT)   }
                 end
 
-                context "from disk to container" do
-                    it { expect(subject.archive(name, "~/archive.tar", { path: "/home" }).status).to eq(200) }
-                    it { expect(subject.archive(name, "~/archive.tar", { path: "/this-path-doesnt-exist" }).status).to eq(404) }
+                describe ".put_archive" do
+                    it { expect(subject.put_archive(name, "~/archive.tar", { path: "/home" }).status).to eq(200) }
+                    it { expect(subject.put_archive(name, "~/archive.tar", { path: "/this-path-doesnt-exist" }).status).to eq(404) }
                 end
             end
 

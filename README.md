@@ -180,7 +180,10 @@ container.stats("nginx", stream: true)
 container.export("nginx", "~/exported_container")
 
 # Get files from container
-container.archive("nginx", "~/html.tar", path: "/usr/share/nginx/html/")
+container.get_archive("nginx", "~/html.tar", path: "/usr/share/nginx/html/")
+
+# Send files to container
+container.put_archive("nginx", "~/html.tar", path: "/usr/share/nginx/html/")
 
 # Stop container
 container.stop("nginx")
