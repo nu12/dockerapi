@@ -104,7 +104,7 @@ class Docker::API::Image < Docker::API::Base
     # @param name [String]: The ID or name of the image.
     # @param path [String]: Path to the exported file.
     # @param &block: Replace the default file writing behavior.
-    def export name, path = "exported_image", &block
+    def export name, path, &block
         @connection.request(method: :get, path: build_path("/images/#{name}/get") , response_block: block_given? ? block.call : default_writer(path))
     end
 

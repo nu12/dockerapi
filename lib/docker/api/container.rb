@@ -273,7 +273,7 @@ class Docker::API::Container < Docker::API::Base
     #
     # Get a tar archive of a resource in the filesystem of container id.
     #
-    # Docker API: 
+    # Docker API: GET /containers/{id}/archive
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ContainerArchive
     #
     # @param name [String]: The ID or name of the container.
@@ -295,7 +295,7 @@ class Docker::API::Container < Docker::API::Base
     #
     # Upload a tar archive to be extracted to a path in the filesystem of container id.
     #
-    # Docker API: 
+    # Docker API: PUT /containers/{id}/archive
     # @see https://docs.docker.com/engine/api/v1.40/#operation/PutContainerArchive
     #
     # @param name [String]: The ID or name of the container.
