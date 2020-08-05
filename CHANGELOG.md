@@ -1,3 +1,14 @@
+# 0.14.0
+
+Method `Docker::API::Container#archive` is splitted in `#get_archive` and `#put_archive` as per Docker API documentation.
+
+The following `Docker::API::Container` methods that can now receive a block:
+* logs (output to stdout)
+* attach (output to stdout)
+* stats (output to stdout)
+* export (write file)
+* get_archive (write file)
+
 # 0.13.0
 
 Add default behavior for file read, write and output to stdout. Whenever a method can receive a block, this default behavior can be replaced.

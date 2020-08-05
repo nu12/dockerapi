@@ -542,19 +542,19 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 | Class | Tests | Implementation | Refactoring |
 |---|---|---|---|
 | Image | Ok | Ok | Ok |
-| Container | Ok | Ok | 8/14 |
-| Volume | Ok | Ok | 8/21 |
-| Network | Ok | Ok | 8/21 |
-| System | Ok | Ok | 8/21 |
-| Exec | Ok | Ok | 8/21 |
-| Swarm | Ok | Ok | 8/28 |
-| Node | Ok | Ok | 8/28 |
-| Service | Ok | Ok | 8/28 |
-| Task | Ok | Ok | 9/4 |
-| Secret | Ok | Ok | 9/4 |
-| Config | Ok | Ok | 9/4 |
-| Distribution | Ok | Ok | 9/4 |
-| Plugin | Ok | Ok | 9/4 |
+| Container | Ok | Ok | Ok |
+| Volume | Ok | Ok | 8/14 |
+| Network | Ok | Ok | 8/14 |
+| System | Ok | Ok | 8/14 |
+| Exec | Ok | Ok | 8/14 |
+| Swarm | Ok | Ok | 8/21 |
+| Node | Ok | Ok | 8/21 |
+| Service | Ok | Ok | 8/21 |
+| Task | Ok | Ok | 8/28 |
+| Secret | Ok | Ok | 8/28 |
+| Config | Ok | Ok | 8/28 |
+| Distribution | Ok | Ok | 8/28 |
+| Plugin | Ok | Ok | 8/28 |
 
 Add doc in these files: `base`, `connection`, `error`, `response`, `dockerapi`
 
