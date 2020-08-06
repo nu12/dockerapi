@@ -37,7 +37,6 @@ RSpec.describe Docker::API::Exec do
         subject { described_class.new.create(container, AttachStdout:true, WorkingDir: "/etc", Cmd: ["ls", "-l"]) }
         describe ".start" do
             it { expect(described_class.new.start(subject.json["Id"]).status).to eq(200) }
-            it { expect(described_class.new.start(subject.json["Id"]).data[:stream]).not_to be(nil) }
             it { expect(described_class.new.start("doesn-exist").status).to eq(404) }
         end
     
