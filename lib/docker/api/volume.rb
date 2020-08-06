@@ -1,42 +1,61 @@
-module Docker
-    module API
-        class Volume < Docker::API::Base
+##
+# This class represents the Docker API endpoints regarding volumes.
+# @see https://docs.docker.com/engine/api/v1.40/#tag/Volume
+class Docker::API::Volume < Docker::API::Base
 
-            def list params = {}
-                @connection.get(build_path("/volumes", params))
-            end
+    ##
+    # List volumes.
+    #
+    # Docker API: GET
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/VolumeList
+    #
+    # @param params [Hash]: Parameters that are appended to the URL.
+    def list params = {}
+        @connection.get(build_path("/volumes", params))
+    end
 
-            def details name
-                @connection.get(build_path([name]))
-            end
+    ##
+    # Inspect a volume.
+    #
+    # Docker API: GET /volumes/{name}
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/VolumeInspect
+    #
+    # @param name [String]: The ID or name of the volume.
+    def details name
+        @connection.get("/volumes/#{name}")
+    end
 
-            def create body = {}
-                @connection.request(method: :post, path: build_path(["create"]), headers: {"Content-Type": "application/json"}, body: body.to_json)
-            end
+    ##
+    # Create a volume.
+    #
+    # Docker API: POST /volumes/create
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/VolumeCreate
+    #
+    # @param body [Hash]: Request body to be sent as json.
+    def create body = {}
+        @connection.request(method: :post, path: "/volumes/create", headers: {"Content-Type": "application/json"}, body: body.to_json)
+    end
 
-            def remove name, params = {}
-                @connection.delete(build_path([name]))
-            end
+    ##
+    # Remove a volume.
+    #
+    # Docker API: DELETE /volumes/{name}
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/VolumeDelete
+    #
+    # @param name [String]: The ID or name of the volume.
+    # @param params [Hash]: Parameters that are appended to the URL.
+    def remove name, params = {}
+        @connection.delete(build_path("/volumes/#{name}",params))
+    end
 
-            def prune params = {}
-                @connection.post(build_path(["prune"], params))
-            end
-
-            #################################################
-            # Items in this area to be removed before 1.0.0 #
-            #################################################
-            def base_path
-                "/volumes"
-            end
-
-            def inspect *args
-                return super.inspect if args.size == 0
-                warn  "WARNING: #inspect is deprecated and will be removed in the future, please use #details instead."
-                name = args[0]
-                @connection.get(build_path([name]))
-            end
-            #################################################
-
-        end
+    ##
+    # Delete unused volumes.
+    #
+    # Docker API: POST /volumes/prune
+    # @see https://docs.docker.com/engine/api/v1.40/#operation/VolumePrune
+    #
+    # @param params [Hash]: Parameters that are appended to the URL.
+    def prune params = {}
+        @connection.post(build_path("/volumes/prune", params))
     end
 end
