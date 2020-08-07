@@ -1,20 +1,26 @@
-module Docker
-    module API
-        class Connection
-            [:get, :post, :head, :delete, :put].each do | method |
-                define_method(method) { | path | self.request(method: method, path: path) }
-            end
-
-            def request params
-                Docker::API::Response.new(@connection.request(params).data)
-            end
-            
-            def initialize url = nil, params = nil
-                url ||= 'unix:///'
-                params ||= url == 'unix:///' ? {socket: '/var/run/docker.sock'} : {}
-                @connection = Excon.new(url, params)
-            end
-
-        end
+##
+# Connection class.
+class Docker::API::Connection
+    [:get, :post, :head, :delete, :put].each do | method |
+        define_method(method) { | path | self.request(method: method, path: path) }
     end
+
+    ##
+    # Calls an Excon request and returns a Docker::API::Response object.
+    #
+    # @param params [Hash]: Request parameters.
+    def request params
+        Docker::API::Response.new(@connection.request(params).data)
+    end
+    
+    ##
+    # Creates an Excon connection.
+    #
+    # @param url [String]: URL for the connection.
+    # @param params [String]: Additional parameters.
+    def initialize url = nil, params = nil
+        return @connection = Excon.new('unix:///', {socket: '/var/run/docker.sock'}) unless url
+        @connection = Excon.new(url, params || {})
+    end
+
 end
