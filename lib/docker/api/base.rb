@@ -43,6 +43,10 @@ class Docker::API::Base
         response
     end
 
+    def auth_encoder(authentication)
+        Base64.urlsafe_encode64(authentication.to_json.to_s).chomp
+    end
+
     def validate error, permitted, params
         return if params[:skip_validation]
         unpermitted = params.keys.map(&:to_s) - permitted.map(&:to_s)
@@ -59,8 +63,8 @@ class Docker::API::Base
     end
 
     def build_path path, params = {}
-        p = path.is_a?(Array) ? ([base_path] << path).join("/") : path # TODO: this line to be removed?
-        params.size > 0 ? [p, hash_to_params(params)].join("?") : p
+        #p = path.is_a?(Array) ? ([base_path] << path).join("/") : path # TODO: this line to be removed?
+        params.size > 0 ? [path, hash_to_params(params)].join("?") : path
     end
 
 end

@@ -1,6 +1,12 @@
+# 0.16.0 (Upcoming)
+
+`Docker::API::Task#logs` method can now receive a block to replace standard output to stdout behavior.
+
+Add `auth_encoder` to provide standard implementation for the authentication header where needed.
+
 # 0.15.0
 
-`Docker::API::System#events` and `Docker::API::Exec#start` methods that can now receive a block to replace standard output to stdout behavior.
+`Docker::API::System#events` and `Docker::API::Exec#start` methods can now receive a block to replace standard output to stdout behavior.
 
 General refactoring and API documentation.
 

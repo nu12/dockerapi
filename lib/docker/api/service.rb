@@ -23,7 +23,7 @@ class Docker::API::Service < Docker::API::Base
     # @param authentication [Hash]: Authentication parameters.
     def create body = {}, authentication = {}
         headers = {"Content-Type": "application/json"}
-        headers.merge!({"X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s)}) if authentication.keys.size > 0
+        headers.merge!({"X-Registry-Auth" => auth_encoder(authentication) }) if authentication.keys.size > 0
         @connection.request(method: :post, path: "/services/create", headers: headers, body: body.to_json)
     end
 
@@ -39,7 +39,7 @@ class Docker::API::Service < Docker::API::Base
     def update name, params = {}, body = {}, authentication = {}
         # view https://github.com/docker/swarmkit/issues/1394#issuecomment-240850719
         headers = {"Content-Type": "application/json"}
-        headers.merge!({"X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s)}) if authentication.keys.size > 0
+        headers.merge!({"X-Registry-Auth" => auth_encoder(authentication) }) if authentication.keys.size > 0
         @connection.request(method: :post, path: build_path("/services/#{name}/update", params), headers: headers, body: body.to_json)
     end
 

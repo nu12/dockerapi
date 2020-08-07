@@ -131,7 +131,7 @@ class Docker::API::Image < Docker::API::Base
     # @param authentication [Hash]: Authentication parameters.
     def push name, params = {}, authentication = {}
         raise Docker::API::Error.new("Provide authentication parameters to push an image") unless authentication.keys.size > 0
-        @connection.request(method: :post, path: build_path("/images/#{name}/push", params), headers: { "X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s).chomp } )
+        @connection.request(method: :post, path: build_path("/images/#{name}/push", params), headers: { "X-Registry-Auth" => auth_encoder(authentication) } )
     end
 
     ##
@@ -164,7 +164,7 @@ class Docker::API::Image < Docker::API::Base
             params[:fromSrc] = "-"
             default_reader(path, build_path("/images/create", params))
         else
-            request[:headers] = { "X-Registry-Auth" => Base64.encode64(authentication.to_json.to_s).chomp } if authentication.keys.size > 0
+            request[:headers] = { "X-Registry-Auth" => auth_encoder(authentication) } if authentication.keys.size > 0
             @connection.request(request)
         end
     end
@@ -183,7 +183,7 @@ class Docker::API::Image < Docker::API::Base
         raise Docker::API::Error.new("Expected path or params[:remote]") unless path || params[:remote] 
 
         headers = {"Content-type": "application/x-tar"}
-        headers.merge!({"X-Registry-Config": Base64.urlsafe_encode64(authentication.to_json.to_s).chomp}) if authentication.keys.size > 0
+        headers.merge!({"X-Registry-Config": auth_encoder(authentication) }) if authentication.keys.size > 0
 
         if path == nil and params.has_key? :remote
             response = @connection.request(method: :post, path: build_path("/build", params), headers: headers, response_block: block_given? ? block.call : default_streamer)
