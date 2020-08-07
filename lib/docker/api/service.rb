@@ -1,14 +1,12 @@
 # This class represents the Docker API endpoints regarding services.
 #
-# @see https://docs.docker.com/engine/api/v1.40/#tag/Service
-#
 # Services are the definitions of tasks to run on a swarm. Swarm mode must be enabled for these endpoints to work.
+# @see https://docs.docker.com/engine/api/v1.40/#tag/Service
 class Docker::API::Service < Docker::API::Base
 
     # List services
     #
     # Docker API: GET /services
-    #
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ServiceList
     #
     # @param params [Hash]: Parameters that are appended to the URL.
@@ -19,11 +17,9 @@ class Docker::API::Service < Docker::API::Base
     # Create a service
     #
     # Docker API: POST /services/create
-    #
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ServiceCreate
     #
     # @param body [Hash]: Request body to be sent as json.
-    #
     # @param authentication [Hash]: Authentication parameters.
     def create body = {}, authentication = {}
         headers = {"Content-Type": "application/json"}
@@ -34,15 +30,11 @@ class Docker::API::Service < Docker::API::Base
     # Update a service
     #
     # Docker API: POST /services/{id}/update
-    #
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ServiceUpdate
     #
     # @param name [String]: The ID or name of the service.
-    #
     # @param params [Hash]:  Parameters that are appended to the URL.
-    #
     # @param body [Hash]: Request body to be sent as json.
-    #
     # @param authentication [Hash]:  Authentication parameters.
     def update name, params = {}, body = {}, authentication = {}
         # view https://github.com/docker/swarmkit/issues/1394#issuecomment-240850719
@@ -54,11 +46,9 @@ class Docker::API::Service < Docker::API::Base
     # Inspect a service
     #
     # Docker API: GET /services/{id}
-    #
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ServiceInspect
     #
     # @param name [String]: The ID or name of the service.
-    #
     # @param params [Hash]: Parameters that are appended to the URL. 
     def details name, params = {}
         @connection.get(build_path("/services/#{name}", params))
@@ -66,14 +56,10 @@ class Docker::API::Service < Docker::API::Base
 
     # Get stdout and stderr logs from a service. 
     #
-    # Note: This endpoint works only for services with the local, json-file or journald logging drivers.
-    #
     # Docker API: GET /services/{id}/logs
-    #
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ServiceLogs
     #
     # @param name [String]: The ID or name of the service.
-    #
     # @param params [Hash]: Parameters that are appended to the URL. 
     def logs name, params = {}
         @connection.get(build_path("/services/#{name}/logs", params))
@@ -82,7 +68,6 @@ class Docker::API::Service < Docker::API::Base
     # Delete a service
     #
     # Docker API: DELETE /services/{id}
-    #
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ServiceDelete
     #
     # @param name [String]: The ID or name of the service.
