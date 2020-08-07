@@ -543,18 +543,18 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 |---|---|---|---|
 | Image | Ok | Ok | Ok |
 | Container | Ok | Ok | Ok |
-| Volume | Ok | Ok | 8/14 |
-| Network | Ok | Ok | 8/14 |
-| System | Ok | Ok | 8/14 |
-| Exec | Ok | Ok | 8/14 |
-| Swarm | Ok | Ok | 8/21 |
-| Node | Ok | Ok | 8/21 |
-| Service | Ok | Ok | 8/21 |
-| Task | Ok | Ok | 8/28 |
-| Secret | Ok | Ok | 8/28 |
-| Config | Ok | Ok | 8/28 |
-| Distribution | Ok | Ok | 8/28 |
-| Plugin | Ok | Ok | 8/28 |
+| Volume | Ok | Ok | Ok |
+| Network | Ok | Ok | Ok |
+| System | Ok | Ok | Ok |
+| Exec | Ok | Ok | Ok |
+| Swarm | Ok | Ok | 8/11 |
+| Node | Ok | Ok | 8/11 |
+| Service | Ok | Ok | 8/11 |
+| Task | Ok | Ok | 8/11 |
+| Secret | Ok | Ok | 8/11 |
+| Config | Ok | Ok | 8/14 |
+| Distribution | Ok | Ok | 8/14 |
+| Plugin | Ok | Ok | 8/14 |
 
 Add doc in these files: `base`, `connection`, `error`, `response`, `dockerapi`
 

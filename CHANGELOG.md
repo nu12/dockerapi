@@ -1,3 +1,9 @@
+# 0.15.0
+
+`Docker::API::System#events` and `Docker::API::Exec#start` methods that can now receive a block to replace standard output to stdout behavior.
+
+General refactoring and API documentation.
+
 # 0.14.0
 
 Method `Docker::API::Container#archive` is splitted in `#get_archive` and `#put_archive` as per Docker API documentation.
