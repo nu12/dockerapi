@@ -556,7 +556,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 | Distribution | Ok | Ok | 8/14 |
 | Plugin | Ok | Ok | 8/14 |
 
-Add doc in these files: ~~`base`~~, ~~`connection`~~, `error`, ~~`response`~~, `dockerapi`
+Add doc in these files: ~~`base`~~, ~~`connection`~~, ~~`error`~~, ~~`response`~~, `dockerapi`
 
 ## Contributing
 
