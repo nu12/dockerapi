@@ -1,4 +1,4 @@
-# 0.16.0 (Upcoming)
+# 0.16.0
 
 `Docker::API::Task#logs` method can now receive a block to replace standard output to stdout behavior.
 

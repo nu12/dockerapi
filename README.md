@@ -31,6 +31,8 @@ Add this line to your application's Gemfile:
 
 ```ruby
 gem 'dockerapi'
+# or
+gem 'dockerapi', github: 'nu12/dockerapi'
 ```
 
 And then execute:
@@ -547,16 +549,13 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 | Network | Ok | Ok | Ok |
 | System | Ok | Ok | Ok |
 | Exec | Ok | Ok | Ok |
-| Swarm | Ok | Ok | 8/11 |
-| Node | Ok | Ok | 8/11 |
-| Service | Ok | Ok | 8/11 |
-| Task | Ok | Ok | 8/11 |
-| Secret | Ok | Ok | 8/11 |
+| Swarm | Ok | Ok | Ok |
+| Node | Ok | Ok | Ok |
+| Service | Ok | Ok | Ok |
+| Task | Ok | Ok | Ok |
+| Secret | Ok | Ok | Ok |
 | Config | Ok | Ok | 8/14 |
-| Distribution | Ok | Ok | 8/14 |
 | Plugin | Ok | Ok | 8/14 |
-
-Add doc in these files: ~~`base`~~, ~~`connection`~~, ~~`error`~~, ~~`response`~~, ~~`dockerapi`~~
 
 ## Contributing
 
