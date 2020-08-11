@@ -25,8 +25,12 @@ require "docker/api/plugin"
 module Docker
   module API
 
+    ##
+    # This variable controls output verbosity.
     PRINT_TO_STDOUT = true
 
+    ##
+    # Valid values for parameter validations.
     VALID_PARAMS = {
       "Docker::API::Image" => {
         "build" => [:dockerfile, :t, :extrahosts, :remote, :q, :nocache, :cachefrom, :pull, :rm, :forcerm, :memory, :memswap, :cpushares, :cpusetcpus, :cpuperiod, :cpuquota, :buildargs, :shmsize, :squash, :labels, :networkmode, :platform, :target, :outputs],
@@ -114,6 +118,8 @@ module Docker
       }
     }
 
+    ##
+    # Valid values for request body validations.
     VALID_BODY = {
       "Docker::API::Image" => {
         "commit" => [:Hostname, :Domainname, :User, :AttachStdin, :AttachStdout, :AttachStderr, :ExposedPorts, :Tty, :OpenStdin, :StdinOnce, :Env, :Cmd, :HealthCheck, :ArgsEscaped, :Image, :Volumes, :WorkingDir, :Entrypoint, :NetworkDisabled, :MacAddress, :OnBuild, :Labels, :StopSignal, :StopTimeout, :Shell]
