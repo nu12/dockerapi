@@ -204,7 +204,7 @@ class Docker::API::Container < Docker::API::Base
         path = build_path("/containers/#{name}/logs", params)
 
         if [true, 1 ].include? params[:follow]
-            @connection.request(method: :get, path: path , response_block: block_given? ? block.call : default_streamer)
+            @connection.request(method: :get, path: path , response_block: block_given? ? block : default_streamer)
         else
             @connection.get(path)
         end
@@ -220,7 +220,7 @@ class Docker::API::Container < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param &block: Replace the default output to stdout behavior.
     def attach name, params = {}, &block
-        @connection.request(method: :post, path: build_path("/containers/#{name}/attach", params) , response_block: block_given? ? block.call : default_streamer)
+        @connection.request(method: :post, path: build_path("/containers/#{name}/attach", params) , response_block: block_given? ? block : default_streamer)
     end
 
     ##
@@ -247,7 +247,7 @@ class Docker::API::Container < Docker::API::Base
     def stats name, params = {}, &block
         path = build_path("/containers/#{name}/stats", params)
         if [true, 1 ].include? params[:stream]
-            @connection.request(method: :get, path: path , response_block: block_given? ? block.call : default_streamer)
+            @connection.request(method: :get, path: path , response_block: block_given? ? block : default_streamer)
         else
             @connection.get(path)
         end
@@ -265,7 +265,7 @@ class Docker::API::Container < Docker::API::Base
     def export name, path, &block
         response = self.details(name)
         return response unless response.status == 200
-        @connection.request(method: :get, path: "/containers/#{name}/export" , response_block: block_given? ? block.call : default_writer(path))
+        @connection.request(method: :get, path: "/containers/#{name}/export" , response_block: block_given? ? block : default_writer(path))
     end
 
     ##
@@ -285,7 +285,7 @@ class Docker::API::Container < Docker::API::Base
         return response unless response.status == 200 
         
         file = File.open( File.expand_path( path ) , "wb")
-        response = @connection.request(method: :get, path: build_path("/containers/#{name}/archive", params) , response_block: block_given? ? block.call : lambda { |chunk, remaining_bytes, total_bytes| file.write(chunk) })
+        response = @connection.request(method: :get, path: build_path("/containers/#{name}/archive", params) , response_block: block_given? ? block : lambda { |chunk, remaining_bytes, total_bytes| file.write(chunk) })
         file.close
         response
     end

@@ -36,7 +36,7 @@ class Docker::API::Task < Docker::API::Base
         path = build_path("/tasks/#{name}/logs", params)
 
         if [true, 1 ].include? params[:follow]
-            @connection.request(method: :get, path: path , response_block: block_given? ? block.call : default_streamer)
+            @connection.request(method: :get, path: path , response_block: block_given? ? block : default_streamer)
         else
             @connection.get(path)
         end
