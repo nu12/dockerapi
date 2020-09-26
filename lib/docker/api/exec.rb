@@ -26,7 +26,7 @@ class Docker::API::Exec < Docker::API::Base
     # @param &block: Replace the default output to stdout behavior.
     def start name, body = {}, &block
         @connection.request(method: :post, path: "/exec/#{name}/start", headers: {"Content-Type": "application/json"},  body: body.to_json, 
-            response_block: block_given? ? block.call : default_streamer )
+            response_block: block_given? ? block : default_streamer )
     end
 
     ##

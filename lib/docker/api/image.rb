@@ -105,7 +105,7 @@ class Docker::API::Image < Docker::API::Base
     # @param path [String]: Path to the exported file.
     # @param &block: Replace the default file writing behavior.
     def export name, path, &block
-        @connection.request(method: :get, path: build_path("/images/#{name}/get") , response_block: block_given? ? block.call : default_writer(path))
+        @connection.request(method: :get, path: build_path("/images/#{name}/get") , response_block: block_given? ? block : default_writer(path))
     end
 
     ##
@@ -158,7 +158,7 @@ class Docker::API::Image < Docker::API::Base
     # @param authentication [Hash]: Authentication parameters.
     # @param &block: Replace the default output to stdout behavior.
     def create params = {}, authentication = {}, &block
-        request = {method: :post, path: build_path("/images/create", params), response_block: block_given? ? block.call : default_streamer }
+        request = {method: :post, path: build_path("/images/create", params), response_block: block_given? ? block : default_streamer }
         if params.has_key? :fromSrc and !params[:fromSrc].match(/^(http|https)/) # then it's using a tar file
             path = params[:fromSrc]
             params[:fromSrc] = "-"
@@ -186,7 +186,7 @@ class Docker::API::Image < Docker::API::Base
         headers.merge!({"X-Registry-Config": auth_encoder(authentication) }) if authentication.keys.size > 0
 
         if path == nil and params.has_key? :remote
-            response = @connection.request(method: :post, path: build_path("/build", params), headers: headers, response_block: block_given? ? block.call : default_streamer)
+            response = @connection.request(method: :post, path: build_path("/build", params), headers: headers, response_block: block_given? ? block : default_streamer)
         else
             default_reader(path, build_path("/build", params), headers)
         end

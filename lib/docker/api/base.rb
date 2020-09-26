@@ -46,7 +46,7 @@ class Docker::API::Base
     # @param &block: Replace the default output to stdout behavior.
     def default_reader path, url, header = {"Content-Type" => "application/x-tar"}, &block
         file = File.open(File.expand_path(path), "r")
-        response = @connection.request(method: :post, path: url , headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s}, response_block: block_given? ? block.call : default_streamer )
+        response = @connection.request(method: :post, path: url , headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s}, response_block: block_given? ? block : default_streamer )
         file.close
         response
     end

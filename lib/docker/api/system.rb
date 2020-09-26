@@ -23,7 +23,7 @@ class Docker::API::System < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param &block: Replace the default output to stdout behavior.
     def events params = {}, &block
-        @connection.request(method: :get, path: build_path("/events", params), response_block: block_given? ? block.call : default_streamer )
+        @connection.request(method: :get, path: build_path("/events", params), response_block: block_given? ? block : default_streamer )
     end
 
     ##
