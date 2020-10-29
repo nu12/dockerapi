@@ -21,6 +21,7 @@ Interact with Docker API directly from Ruby code. Comprehensive implementation (
   * [Requests](#requests)
   * [Response](#response)
   * [Error handling](#error-handling)
+  * [Blocks](#blocks)
 * [Development](#development)
 * [Contributing](#contributing)
 * [License](#license)
@@ -533,29 +534,37 @@ response.success?
 
 To completely skip the validation process, add `:skip_validation => true` in the hash to be validated.
 
+### Blocks
+
+Some methods can receive a block to alter the default execution:
+* Docker::API::Container#logs
+* Docker::API::Container#attach
+* Docker::API::Container#stats
+* Docker::API::Container#export
+* Docker::API::Container#get_archive
+* Docker::API::Image#create
+* Docker::API::Image#build
+* Docker::API::Image#export
+* Docker::API::System#event
+* Docker::API::Exec#start
+* Docker::API::Task#logs
+
+Example:
+```ruby
+=> image = Docker::API::Image.new
+
+=> image.create(fromImage: "nginx:alpine") do | chunk, bytes_remaining, bytes_total | 
+        p chunk.to_s 
+    end
+```
+
+The default blocks can be found in `Docker::API::Base`.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-### Road to 1.0.0
-
-| Class | Tests | Implementation | Refactoring |
-|---|---|---|---|
-| Image | Ok | Ok | Ok |
-| Container | Ok | Ok | Ok |
-| Volume | Ok | Ok | Ok |
-| Network | Ok | Ok | Ok |
-| System | Ok | Ok | Ok |
-| Exec | Ok | Ok | Ok |
-| Swarm | Ok | Ok | Ok |
-| Node | Ok | Ok | Ok |
-| Service | Ok | Ok | Ok |
-| Task | Ok | Ok | Ok |
-| Secret | Ok | Ok | Ok |
-| Config | Ok | Ok | 8/14 |
-| Plugin | Ok | Ok | 8/14 |
 
 ## Contributing
 

@@ -1,3 +1,7 @@
+# 0.17.0
+
+New block execution introduced in [PR#1](https://github.com/nu12/dockerapi/pull/1).
+
 # 0.16.0
 
 `Docker::API::Task#logs` method can now receive a block to replace standard output to stdout behavior.
