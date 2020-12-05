@@ -21,8 +21,11 @@ class Docker::API::Image < Docker::API::Base
     # @see https://docs.docker.com/engine/api/v1.40/#tag/Distribution
     #
     # @param name [String]: The ID or name of the image.
-    def distribution name
-        @connection.get("/distribution/#{name}/json")
+    # @param authentication [Hash]: Authentication parameters.
+    def distribution name, authentication = {}
+        request = {method: :get, path: "/distribution/#{name}/json"}
+        request[:headers] = {"X-Registry-Auth" => auth_encoder(authentication)} if authentication.any?
+        @connection.request(request)
     end
 
     ##
