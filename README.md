@@ -78,6 +78,7 @@ image.details("image")
 
 # Return image digest and platform information by contacting the registry.
 image.distribution("image")
+image.distribution("image", {username: "janedoe", password: "password"}) # private repository
 
 # History
 image.history("image")
@@ -94,7 +95,7 @@ image.tag("current:tag", repo: "new", tag: "tag")
 # Push image
 image.push("repo:tag") # to dockerhub
 image.push("localhost:5000/repo:tag") # to local registry
-image.push("private/repo", {tag: "tag"}, {username: "janedoe", password: "password"} # to private repository
+image.push("private/repo", {tag: "tag"}, {username: "janedoe", password: "password"}) # to private repository
 
 # Remove image
 image.remove("image")
