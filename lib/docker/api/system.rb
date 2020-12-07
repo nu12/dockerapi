@@ -45,7 +45,7 @@ class Docker::API::System < Docker::API::Base
     end
 
     ##
-    # Returns the version of Docker that is running and various information about the system that Docker is running on.
+    # Return the version of Docker that is running and various information about the system that Docker is running on.
     #
     # Docker API: GET /version
     # @see https://docs.docker.com/engine/api/v1.40/#operation/SystemVersion

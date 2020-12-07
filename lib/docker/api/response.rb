@@ -14,7 +14,7 @@ class Docker::API::Response < Excon::Response
     end
 
     ##
-    # Returns true if Response status is in 200..204 range.
+    # Return true if Response status is in 200..204 range.
     def success?
         (200..204).include? @status
     end
@@ -22,7 +22,7 @@ class Docker::API::Response < Excon::Response
     private
 
     ##
-    # Creates a json from Response data attribute.
+    # Create a json from Response data attribute.
     #
     # @params data [String]: String to be converted in json.
     def parse_json data

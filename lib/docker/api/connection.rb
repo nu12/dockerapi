@@ -6,7 +6,7 @@ class Docker::API::Connection
     end
 
     ##
-    # Calls an Excon request and returns a Docker::API::Response object.
+    # Call an Excon request and returns a Docker::API::Response object.
     #
     # @param params [Hash]: Request parameters.
     def request params
@@ -14,7 +14,7 @@ class Docker::API::Connection
     end
     
     ##
-    # Creates an Excon connection.
+    # Create an Excon connection.
     #
     # @param url [String]: URL for the connection.
     # @param params [String]: Additional parameters.

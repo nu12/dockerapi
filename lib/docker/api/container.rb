@@ -4,7 +4,7 @@
 class Docker::API::Container < Docker::API::Base
 
     ##
-    # Returns a list of containers.
+    # Return a list of containers.
     #
     # Docker API: GET /containers/json
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ContainerList

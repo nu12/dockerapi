@@ -16,7 +16,7 @@ class Docker::API::Exec < Docker::API::Base
     end
 
     ##
-    # Starts a previously set up exec instance.
+    # Start a previously set up exec instance.
     #
     # Docker API: POST /exec/{id}/start
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ExecStart

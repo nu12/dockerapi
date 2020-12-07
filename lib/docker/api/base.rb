@@ -3,7 +3,7 @@
 class Docker::API::Base
     
     ##
-    # Creates new object and sets the validation to happen automatically when method parameters include "params" or "body".
+    # Create new object and sets the validation to happen automatically when method parameters include "params" or "body".
     #
     # @param connection [Docker::API::Connection]: Connection to be used.
     def initialize connection = nil
@@ -15,7 +15,7 @@ class Docker::API::Base
     private
 
     ##
-    # Outputs to stdout.
+    # Output to stdout.
     def default_streamer
         streamer = lambda do |chunk, remaining_bytes, total_bytes|
             p chunk.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?') if Docker::API::PRINT_TO_STDOUT
@@ -24,7 +24,7 @@ class Docker::API::Base
     end
 
     ##
-    # Writes file.
+    # Write file to disk.
     #
     # @param path [String]: Path to the file to be writen.
     def default_writer path
@@ -38,7 +38,7 @@ class Docker::API::Base
     end
 
     ##
-    # Reads file.
+    # Read file from disk.
     #
     # @param path [String]: Path to the file to be read.
     # @param url [String]: Endpoint URL where the file is going to be sent.
@@ -52,7 +52,7 @@ class Docker::API::Base
     end
 
     ##
-    # Encodes the authentication parameters.
+    # Encode authentication parameters.
     #
     # @param authentication [Hash]: Parameters to be encoded.
     def auth_encoder(authentication)
@@ -60,7 +60,7 @@ class Docker::API::Base
     end
 
     ##
-    # Validates a Hash object comparing its keys with a given Array of permitted values. Raise an error if the validation fail.
+    # Validate a Hash object comparing its keys with a given Array of permitted values. Raise an error if the validation fail.
     #
     # @param error [Error]: Error to be raised of the validation fail.
     # @param permitted [Array]: List of permitted keys.
@@ -72,7 +72,7 @@ class Docker::API::Base
     end
 
     ##
-    # Converts Ruby Hash into URL query parameters.
+    # Convert Ruby Hash into URL query parameters.
     #
     # In general, query parameters' format is "key=value", but if "value" is another Hash, it should change to a json syntax {key:value}.
     #
@@ -84,7 +84,7 @@ class Docker::API::Base
     end
 
     ##
-    # Builds an URL string using the base path and a set of parameters.
+    # Build an URL string using the base path and a set of parameters.
     #
     # @param path [String]: Base URL string.
     # @param hash [Hash]: Hash object to be appended to the URL as query parameters.
@@ -93,7 +93,7 @@ class Docker::API::Base
     end
 
     ##
-    # Sets the validation to happen automatically when method parameters include "params" or "body".
+    # Set the validation to happen automatically when method parameters include "params" or "body".
     def set_automated_validation
         (self.methods - Object.methods).each do |method|
             params_index = method(method).parameters.map{|ar| ar[1]}.index(:params)

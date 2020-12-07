@@ -40,7 +40,7 @@ class Docker::API::Image < Docker::API::Base
     end
 
     ##
-    # Returns a list of images on the server. Note that it uses a different, smaller representation of an image than inspecting a single image.
+    # Return a list of images on the server. Note that it uses a different, smaller representation of an image than inspecting a single image.
     #
     # Docker API: GET /images/json
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageList
