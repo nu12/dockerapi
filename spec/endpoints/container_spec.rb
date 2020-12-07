@@ -148,7 +148,7 @@ RSpec.describe Docker::API::Container do
                 it { expect(subject.top(name).json).to be_kind_of(Hash) }
                 it { expect(subject.top("doesn-exist").status).to be(404) }
                 it { expect(subject.top(name,  {ps_args: "aux"} ).status).to be(200) }
-                it { expect(subject.top(name,  {ps_args: "ef"} ).status).to be(200) }
+                it { expect(subject.top(name,  {ps_args: "-ef"} ).status).to be(200) }
                 it { expect{subject.top(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
             end
 
