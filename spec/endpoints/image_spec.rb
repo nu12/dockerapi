@@ -194,10 +194,8 @@ RSpec.describe Docker::API::Image do
         original = "registry:2.7.0"
         local = "localhost:5000/janedoe/test:latest"
         before(:all) do
-            # Download image
             described_class.new.create(fromImage: original)
 
-            # Create container
             container = Docker::API::Container.new
             container.create( {name: "registry"}, {
                 Image: original, 
@@ -215,42 +213,37 @@ RSpec.describe Docker::API::Image do
 
                 ],
             })
-            # Start container
             container.start("registry")
 
-            # Create local repository
             described_class.new.tag(original, repo: local)
         end
+
+        describe ".push" do
+            it { expect(subject.push(local, {}, {username: "janedoe", password: "password"}).status).to eq(200) }
+            it { expect(subject.push(local, {}, {username: "janedoe", password: "password"}).json.last[:aux][:Size]).to be > 0 }
+            it { expect(subject.push(local, {}, {username: "janedoe", password: "wrong-password"}).status).to eq(200) }
+            it { expect(subject.push(local, {}, {username: "janedoe", password: "wrong-password"}).json.last[:error]).to match(/(unauthorized: authentication required)/) }
+        end
+
+        describe ".create" do
+            it { expect(subject.create({fromImage: local}, {username: "janedoe", password: "password"}).status).to eq(200) }
+            it { expect(subject.create({fromImage: "localhost:5000/janedoe/doesnt-exist:latest"}, {username: "janedoe", password: "password"}).status).to eq(404) }
+            it { expect(subject.create({fromImage: local}, {username: "janedoe", password: "wrong-password"}).status).to eq(500) }
+        end
         
-        #Image#push
-            # Right credential
-            # Wrong credential
-        it { expect(subject.push(local, {}, {username: "janedoe", password: "password"}).status).to eq(200) }
-        it { expect(subject.push(local, {}, {username: "janedoe", password: "password"}).json.last[:aux][:Size]).to be > 0 }
-        it { expect(subject.push(local, {}, {username: "janedoe", password: "wrong-password"}).status).to eq(200) }
-        it { expect(subject.push(local, {}, {username: "janedoe", password: "wrong-password"}).json.last[:error]).to match(/(unauthorized: authentication required)/) }
+        describe ".distribute" do
+            it { expect(subject.distribution(local, {username: "janedoe", password: "password"}).status).to eq(200) }
+            it { expect(subject.distribution("localhost:5000/janedoe/doesnt-exist:latest", {username: "janedoe", password: "password"}).status).to eq(404) }
+            it { expect(subject.distribution(local, {username: "janedoe", password: "wrong-password"}).status).to eq(401) }
+        end
         
-        #Image#build
-            # Right credential
-            # Wrong credential
-        #Image#create
-            # Right credential
-                # Unexisting repo
-            # Wrong credential
-        #Image#distribution
-            # Right credential
-                # Unexisting repo
-            # Wrong credential
-    
         after(:all) do
             container = Docker::API::Container.new
-            # Stop container
             container.stop("registry")
-            # Remove container
             container.remove("registry")
-            # Remove image
+            
             described_class.new.remove(original)
-            # Remove volumes
+            
             Docker::API::Volume.new.prune
         end
         
