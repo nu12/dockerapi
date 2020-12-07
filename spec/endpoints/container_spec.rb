@@ -246,8 +246,8 @@ RSpec.describe Docker::API::Container do
             it do
                 expect(subject.update(name,
                  {
-                    Memory: 8000000,
-                    CpuShares: 2,
+                    #Memory: 8000000,
+                    #CpuShares: 2,
                     RestartPolicy: {
                         Name: "unless-stopped"
                     }
