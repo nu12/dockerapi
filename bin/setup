@@ -18,5 +18,13 @@ then
 else
     echo "Running bundle install"
     bundle install
+
+    echo "Creating self-signed certificate to use in tests"
+    openssl req -newkey rsa:2048 -nodes -keyout resources/registry_authentication/registry_auth.key -x509 -days 365 -out resources/registry_authentication/registry_auth.crt -subj "/C=CL/ST=Santiago/L=Santiago/O=dockerapi/OU=dockerapi/CN=dockerapi"
+
+    echo "Creating htpasswd file to use in tests"
+    docker run --rm --entrypoint htpasswd registry:2.7.0 -Bbn janedoe password > resources/registry_authentication/htpasswd
+    docker image rm registry:2.7.0
     echo "Run this script as root for further configurations"
 fi
+

@@ -9,3 +9,7 @@
 
 # rspec failure tracking
 .rspec_status
+
+resources/registry_authentication/*.key
+resources/registry_authentication/*.crt
+resources/registry_authentication/htpasswd
