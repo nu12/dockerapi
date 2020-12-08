@@ -189,4 +189,63 @@ RSpec.describe Docker::API::Image do
         it { expect(subject.distribution(image).status).to eq(200) }
         it { expect(subject.distribution("doesn-exist").status).to eq(403) }
     end
+
+    describe "authentication" do  
+        original = "registry:2.7.0"
+        local = "localhost:5000/janedoe/test:latest"
+        before(:all) do
+            described_class.new.create(fromImage: original)
+
+            container = Docker::API::Container.new
+            container.create( {name: "registry"}, {
+                Image: original, 
+                HostConfig: {
+                    PortBindings: {"5000/tcp": [ {HostIp: "0.0.0.0", HostPort: "5000"} ] }, 
+                    Binds: [
+                        "#{File.expand_path(File.dirname(__FILE__))}/../../resources/registry_authentication:/auth",
+                        "#{File.expand_path(File.dirname(__FILE__))}/../../resources/registry_authentication:/certs"]},
+                Env: [
+                    "REGISTRY_AUTH=htpasswd", 
+                    "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm",
+                    "REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd",
+                    "REGISTRY_HTTP_TLS_CERTIFICATE=/certs/registry_auth.crt",
+                    "REGISTRY_HTTP_TLS_KEY=/certs/registry_auth.key",
+
+                ],
+            })
+            container.start("registry")
+
+            described_class.new.tag(original, repo: local)
+        end
+
+        describe ".push" do
+            it { expect(subject.push(local, {}, {username: "janedoe", password: "password"}).status).to eq(200) }
+            it { expect(subject.push(local, {}, {username: "janedoe", password: "password"}).json.last[:aux][:Size]).to be > 0 }
+            it { expect(subject.push(local, {}, {username: "janedoe", password: "wrong-password"}).status).to eq(200) }
+            it { expect(subject.push(local, {}, {username: "janedoe", password: "wrong-password"}).json.last[:error]).to match(/(unauthorized: authentication required)/) }
+        end
+
+        describe ".create" do
+            it { expect(subject.create({fromImage: local}, {username: "janedoe", password: "password"}).status).to eq(200) }
+            it { expect(subject.create({fromImage: "localhost:5000/janedoe/doesnt-exist:latest"}, {username: "janedoe", password: "password"}).status).to eq(404) }
+            it { expect(subject.create({fromImage: local}, {username: "janedoe", password: "wrong-password"}).status).to eq(500) }
+        end
+        
+        describe ".distribute" do
+            it { expect(subject.distribution(local, {username: "janedoe", password: "password"}).status).to eq(200) }
+            it { expect(subject.distribution("localhost:5000/janedoe/doesnt-exist:latest", {username: "janedoe", password: "password"}).status).to eq(404) }
+            it { expect(subject.distribution(local, {username: "janedoe", password: "wrong-password"}).status).to eq(401) }
+        end
+        
+        after(:all) do
+            container = Docker::API::Container.new
+            container.stop("registry")
+            container.remove("registry")
+            
+            described_class.new.remove(original)
+            
+            Docker::API::Volume.new.prune
+        end
+        
+    end
 end
