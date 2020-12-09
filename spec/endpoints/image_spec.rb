@@ -218,6 +218,8 @@ RSpec.describe Docker::API::Image do
             described_class.new.tag(original, repo: local)
         end
 
+        it { expect(Docker::API::Container.new.list.json.size).to be > 0 }
+
         describe ".push" do
             it { expect(subject.push(local, {}, {username: "janedoe", password: "password"}).status).to eq(200) }
             it { expect(subject.push(local, {}, {username: "janedoe", password: "password"}).json.last[:aux][:Size]).to be > 0 }

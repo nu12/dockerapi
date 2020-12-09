@@ -102,7 +102,7 @@ RSpec.describe Docker::API::Plugin do
 
         describe ".push" do
             it { expect(subject.push(myplugin).status).to eq(200) }
-            it { expect(subject.push(myplugin).body).to match(/(requested access to the resource is denied)/) }
+            it { expect(subject.push(myplugin).json.last[:error]).not_to be(nil) }
             it { expect(subject.push("doesn-exist").status).to eq(404) }
         end
     end
