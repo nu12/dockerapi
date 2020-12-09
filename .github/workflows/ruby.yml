@@ -35,40 +35,58 @@ jobs:
       run: rspec spec/misc/*.rb
     - name: Test Image
       run: rspec spec/endpoints/image_spec.rb
+      if: always()
     - name: Cleanup 1/6
       run: docker container rm -f $(docker container ls -q -a) && docker image prune -a -f
+      if: always()
     - name: Test Container
       run: rspec spec/endpoints/container_spec.rb
+      if: always()
     - name: Cleanup 2/6
       run: docker container rm -f $(docker container ls -q -a) && docker image prune -a -f
+      if: always()
     - name: Test Volume
       run: rspec spec/endpoints/volume_spec.rb
+      if: always()
     - name: Cleanup 3/6
       run: docker container rm -f $(docker container ls -q -a) && docker image prune -a -f
+      if: always()
     - name: Test Network
       run: rspec spec/endpoints/network_spec.rb
+      if: always()
     - name: Cleanup 4/6
       run: docker container rm -f $(docker container ls -q -a) && docker image prune -a -f
+      if: always()
     - name: Test System
       run: rspec spec/endpoints/system_spec.rb
+      if: always()
     - name: Cleanup 5/6
       run: docker container rm -f $(docker container ls -q -a) && docker image prune -a -f
+      if: always()
     - name: Test Exec
       run: rspec spec/endpoints/exec_spec.rb
+      if: always()
     - name: Cleanup 6/6
       run: docker container rm -f $(docker container ls -q -a) && docker image prune -a -f
+      if: always()
     - name: Test Swarm
       run: rspec spec/endpoints/swarm_spec.rb
+      if: always()
     - name: Test Node
       run: rspec spec/endpoints/node_spec.rb
+      if: always()
     - name: Test Service
       run: rspec spec/endpoints/service_spec.rb
+      if: always()
     - name: Test Task
       run: rspec spec/endpoints/task_spec.rb
+      if: always()
     - name: Test Secret
       run: rspec spec/endpoints/secret_spec.rb
+      if: always()
     - name: Test Config
       run: rspec spec/endpoints/config_spec.rb
+      if: always()
     - name: Test Plugin
       run: rspec spec/endpoints/plugin_spec.rb
-
+      if: always()
