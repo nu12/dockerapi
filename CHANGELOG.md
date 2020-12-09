@@ -1,6 +1,14 @@
+# 0.18.0
+
+Method `Docker::API::Image#distribution` now accepts authentication parameters. Feature introduced in [PR#3](https://github.com/nu12/dockerapi/pull/3)
+
+Contributors: @zarqman
+
 # 0.17.0
 
 New block execution introduced in [PR#1](https://github.com/nu12/dockerapi/pull/1).
+
+Contributors: @zarqman
 
 # 0.16.0
 
