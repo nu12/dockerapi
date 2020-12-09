@@ -30,7 +30,7 @@ jobs:
     - name: Install Docker
       run: curl https://get.docker.com | sh
     - name: Install dependencies
-      run: bin/setup && sudo bin/setup && ls resources/registry_authentication/ && ls -la && echo $PWD
+      run: bin/setup && sudo bin/setup && ls resources/registry_authentication/ && cat resources/registry_authentication/htpasswd
     - name: Test misc
       run: rspec spec/misc/*.rb
     - name: Test Image
