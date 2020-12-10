@@ -30,45 +30,38 @@ jobs:
     - name: Install Docker
       run: curl https://get.docker.com | sh
     - name: Install dependencies
-      run: bin/setup && sudo bin/setup && ls resources/registry_authentication/ && cat resources/registry_authentication/htpasswd
+      run: |
+        bin/setup 
+        sudo bin/setup
     - name: Test misc
       run: rspec spec/misc/*.rb
     - name: Test Image
-      run: rspec spec/endpoints/image_spec.rb
-      if: always()
+      run: rspec spec/endpoints/image_spec.rb:1
+    - name: Test Image authentication
+      run: rspec spec/endpoints/image_spec.rb:194
+      continue-on-error: true
     - name: Test Container
       run: rspec spec/endpoints/container_spec.rb
-      if: always()
     - name: Test Volume
       run: rspec spec/endpoints/volume_spec.rb
-      if: always()
     - name: Test Network
       run: rspec spec/endpoints/network_spec.rb
-      if: always()
     - name: Test System
       run: rspec spec/endpoints/system_spec.rb
-      if: always()
     - name: Test Exec
       run: rspec spec/endpoints/exec_spec.rb
-      if: always()
     - name: Test Swarm
       run: rspec spec/endpoints/swarm_spec.rb
-      if: always()
     - name: Test Node
       run: rspec spec/endpoints/node_spec.rb
-      if: always()
     - name: Test Service
       run: rspec spec/endpoints/service_spec.rb
-      if: always()
     - name: Test Task
       run: rspec spec/endpoints/task_spec.rb
-      if: always()
     - name: Test Secret
       run: rspec spec/endpoints/secret_spec.rb
-      if: always()
     - name: Test Config
       run: rspec spec/endpoints/config_spec.rb
-      if: always()
     - name: Test Plugin
       run: rspec spec/endpoints/plugin_spec.rb
-      if: always()
+  

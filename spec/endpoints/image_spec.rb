@@ -189,7 +189,11 @@ RSpec.describe Docker::API::Image do
         it { expect(subject.distribution(image).status).to eq(200) }
         it { expect(subject.distribution("doesn-exist").status).to eq(403) }
     end
+end
 
+RSpec.describe Docker::API::Image do
+    subject { described_class.new }
+    
     describe "authentication" do  
         original = "registry:2.7.0"
         local = "localhost:5000/janedoe/test:latest"
@@ -216,6 +220,8 @@ RSpec.describe Docker::API::Image do
             container.start("registry")
 
             described_class.new.tag(original, repo: local)
+
+            Docker::API::PRINT_RESPONSE_TO_STDOUT = true
         end
 
         it { expect(Docker::API::Container.new.list.json.size).to be > 0 }
@@ -240,6 +246,8 @@ RSpec.describe Docker::API::Image do
         end
         
         after(:all) do
+            Docker::API::PRINT_RESPONSE_TO_STDOUT = false
+
             container = Docker::API::Container.new
             container.stop("registry")
             container.remove("registry")
