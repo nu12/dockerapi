@@ -30,6 +30,10 @@ module Docker
     PRINT_TO_STDOUT = true
 
     ##
+    # This variable controls output verbosity.
+    PRINT_RESPONSE_TO_STDOUT = false
+
+    ##
     # Valid values for parameter validations.
     VALID_PARAMS = {
       "Docker::API::Image" => {

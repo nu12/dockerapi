@@ -44,7 +44,7 @@ RSpec.describe Docker::API::Container do
                  {
                     Image: image, 
                     HostConfig: {
-                        Memory: 6000000,
+                        #Memory: 6000000,
                         PortBindings: {
                             "80/tcp": [ {HostIp: "0.0.0.0", HostPort: "80"} ]
                         }
