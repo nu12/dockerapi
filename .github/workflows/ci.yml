@@ -5,11 +5,9 @@
 # This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
 # For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
 
-name: Ruby
+name: CI
 
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -39,7 +37,7 @@ jobs:
       run: rspec spec/endpoints/image_spec.rb:1
     - name: Test Image authentication
       run: rspec spec/endpoints/image_spec.rb:194
-      continue-on-error: true
+      #continue-on-error: true
     - name: Test Container
       run: rspec spec/endpoints/container_spec.rb
     - name: Test Volume

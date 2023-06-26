@@ -63,7 +63,7 @@ RSpec.describe Docker::API::Image do
             it { expect(subject.history("doesn-exist").status).to eq(404) }
         end
         describe ".tag" do
-            it { expect(subject.tag(image).status).to eq(500) }
+            it { expect(subject.tag(image).status).to eq(200) }
             it { expect(subject.tag(image, repo: "dockerapi/tag:1").status).to eq(201) }
             it { expect(subject.tag(image, repo: "dockerapi/tag", tag: "2").status).to eq(201) }
             it { expect(subject.tag("doesn-exist", repo: "dockerapi/tag").status).to eq(404) }
