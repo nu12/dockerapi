@@ -54,8 +54,8 @@ module Docker
         "details" => [:size],
         "top" => [:ps_args],
         "start" => [:detachKeys],
-        "stop" => [:t],
-        "restart" => [:t],
+        "stop" => [:signal, :t],
+        "restart" => [:signal, :t],
         "kill" => [:signal],
         "wait" => [:condition],
         "rename" => [:name],
@@ -64,10 +64,10 @@ module Docker
         "remove" => [:v, :force, :link],
         "logs" => [:follow, :stdout, :stderr, :since, :until, :timestamps, :tail],
         "attach" => [:detachKeys, :logs, :stream, :stdin, :stdout, :stderr],
-        "stats" => [:stream],
+        "stats" => [:stream, "one-shot"],
         "get_archive" => [:path],
         "put_archive" => [:path, :noOverwriteDirNonDir, :copyUIDGID],
-        "create" => [:name]
+        "create" => [:name, :platform]
       },
       "Docker::API::Volume" => {
         "list" => [:filters],
@@ -130,7 +130,7 @@ module Docker
       },
       "Docker::API::Container" => {
         "create" => [:Hostname,:Domainname,:User,:AttachStdin,:AttachStdout,:AttachStderr,:ExposedPorts,:Tty,:OpenStdin,:StdinOnce,:Env,:Cmd,:HealthCheck,:ArgsEscaped,:Image,:Volumes,:WorkingDir,:Entrypoint,:NetworkDisabled,:MacAddress,:OnBuild,:Labels,:StopSignal,:StopTimeout,:Shell,:HostConfig,:NetworkingConfig],
-        "update" => [:CpuShares, :Memory, :CgroupParent, :BlkioWeight, :BlkioWeightDevice, :BlkioWeightReadBps, :BlkioWeightWriteBps, :BlkioWeightReadOps, :BlkioWeightWriteOps, :CpuPeriod, :CpuQuota, :CpuRealtimePeriod, :CpuRealtimeRuntime, :CpusetCpus, :CpusetMems, :Devices, :DeviceCgroupRules, :DeviceRequest, :Kernel, :Memory, :KernelMemoryTCP, :MemoryReservation, :MemorySwap, :MemorySwappiness, :NanoCPUs, :OomKillDisable, :Init, :PidsLimit, :ULimits, :CpuCount, :CpuPercent, :IOMaximumIOps, :IOMaximumBandwidth, :RestartPolicy]
+        "update" => [:CpuShares, :Memory, :CgroupParent, :BlkioWeight, :BlkioWeightDevice, :BlkioDeviceReadBps, :BlkioDeviceWriteBps, :BlkioDeviceReadIOps, :BlkioDeviceWriteIOps, :CpuPeriod, :CpuQuota, :CpuRealtimePeriod, :CpuRealtimeRuntime, :CpusetCpus, :CpusetMems, :Devices, :DeviceCgroupRules, :DeviceRequest, :Memory, :KernelMemoryTCP, :MemoryReservation, :MemorySwap, :MemorySwappiness, :NanoCPUs, :OomKillDisable, :Init, :PidsLimit, :ULimits, :CpuCount, :CpuPercent, :IOMaximumIOps, :IOMaximumBandwidth, :RestartPolicy]
       },
       "Docker::API::Volume" => {
         "create" => [:Name, :Driver, :DriverOpts, :Labels]
