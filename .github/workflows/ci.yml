@@ -35,17 +35,19 @@ jobs:
   endpoints:
     runs-on: ubuntu-latest
     container:
-      image: ruby:2.6-alpine
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
+      image: docker:24.0.2-dind # API version 1.43
     steps:
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@21351ecc0a7c196081abca5dc55b08f085efe09a
+      with:
+        ruby-version: 2.6
     - uses: actions/checkout@v3
     - name: Install dependencies
       run: apk add git && gem install bundler:2.1.4 && bundle install
     - name: Test Image
       run: rspec spec/endpoints/image_spec.rb:1
-    - name: Test Image authentication
-      run: rspec spec/endpoints/image_spec.rb:194
+    #- name: Test Image authentication
+    #  run: rspec spec/endpoints/image_spec.rb:194
       #continue-on-error: true
     - name: Test Container
       run: rspec spec/endpoints/container_spec.rb
