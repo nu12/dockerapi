@@ -29,6 +29,9 @@ jobs:
       run: |
         bin/setup 
         sudo bin/setup
+    - uses: actions/checkout@v3
+    - name: Test misc
+      run: rspec spec/misc/*.rb
   endpoints:
     runs-on: ubuntu-latest
     container:
@@ -37,8 +40,8 @@ jobs:
         - /var/run/docker.sock:/var/run/docker.sock
     steps:
     - uses: actions/checkout@v3
-    - name: Test misc
-      run: rspec spec/misc/*.rb
+    - name: Install dependencies
+      run: bundle install
     - name: Test Image
       run: rspec spec/endpoints/image_spec.rb:1
     - name: Test Image authentication
