@@ -34,8 +34,6 @@ jobs:
       run: rspec spec/misc/*.rb
   endpoints:
     runs-on: ubuntu-latest
-    container:
-      image: docker:24.0.2-dind # API version 1.43
     steps:
     - name: Set up Ruby
       uses: ruby/setup-ruby@21351ecc0a7c196081abca5dc55b08f085efe09a
@@ -43,7 +41,7 @@ jobs:
         ruby-version: 2.6
     - uses: actions/checkout@v3
     - name: Install dependencies
-      run: apk add git && gem install bundler:2.1.4 && bundle install
+      run: gem install bundler:2.1.4 && bundle install
     - name: Test Image
       run: rspec spec/endpoints/image_spec.rb:1
     #- name: Test Image authentication
