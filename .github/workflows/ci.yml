@@ -12,10 +12,8 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
-
+  misc:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
@@ -31,6 +29,14 @@ jobs:
       run: |
         bin/setup 
         sudo bin/setup
+  endpoints:
+    runs-on: ubuntu-latest
+    container:
+      image: ruby:2.6-alpine
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+    steps:
+    - uses: actions/checkout@v3
     - name: Test misc
       run: rspec spec/misc/*.rb
     - name: Test Image
