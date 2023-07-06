@@ -31,6 +31,7 @@ RSpec.describe Docker::API::Image do
             describe "status code" do
                 it { expect(subject.list.status).to eq(200) }
                 it { expect(subject.list(all: true).status).to eq(200) }
+                it { expect(subject.list(all: true, "shared-size": true).status).to eq(200) }
                 it { expect(subject.list(digests: true).status).to eq(200) }
                 it { expect(subject.list(all: true, digests: true).status).to eq(200) }
                 it { expect(subject.list(all: true, filters: {dangling: {"true": true}}).status).to eq(200) }
@@ -41,6 +42,7 @@ RSpec.describe Docker::API::Image do
             end
             describe "request path" do
                 it { expect(subject.list(all: true).path).to eq("/images/json?all=true") }
+                it { expect(subject.list(all: true, "shared-size": true).path).to eq("/images/json?all=true&shared-size=true") }
                 it { expect(subject.list(digests: true).path).to eq("/images/json?digests=true") }
                 it { expect(subject.list(all: true, digests: true).path).to eq("/images/json?all=true&digests=true") }
                 it { expect(subject.list(all: true, filters: {dangling: {"true": true}}).path).to eq("/images/json?all=true&filters={\"dangling\":{\"true\":true}}") }

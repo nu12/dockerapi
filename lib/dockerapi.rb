@@ -39,14 +39,14 @@ module Docker
       "Docker::API::Image" => {
         "build" => [:dockerfile, :t, :extrahosts, :remote, :q, :nocache, :cachefrom, :pull, :rm, :forcerm, :memory, :memswap, :cpushares, :cpusetcpus, :cpuperiod, :cpuquota, :buildargs, :shmsize, :squash, :labels, :networkmode, :platform, :target, :outputs],
         "prune" => [:filters],
-        "list" => [:all, :filters, :digests],
+        "list" => [:all, :filters, "shared-size", :digests],
         "search" => [:term, :limit, :filters],
         "tag" => [:repo, :tag],
         "remove" => [:force, :noprune],
         "import" => [:quiet],
         "push" => [:tag],
         "commit" => [:container, :repo, :tag, :comment, :author, :pause, :changes],
-        "create" => [:fromImage, :fromSrc, :repo, :tag, :message, :platform],
+        "create" => [:fromImage, :fromSrc, :repo, :tag, :message, :changes, :platform],
         "delete_cache" => [:all, "keep-storage", :filters]
       },
       "Docker::API::Container" => {
