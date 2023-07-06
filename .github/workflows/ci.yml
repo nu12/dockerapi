@@ -41,7 +41,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install dependencies
-      run: gem install bundler:2.1.4 && bundle install
+      run: apk add git && gem install bundler:2.1.4 && bundle install
     - name: Test Image
       run: rspec spec/endpoints/image_spec.rb:1
     - name: Test Image authentication
