@@ -12,10 +12,17 @@ on:
     branches: [ master ]
 
 jobs:
-  ci:
+  test:
+
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
+    - name: Install SVU
+      run: echo 'deb [trusted=yes] https://apt.fury.io/caarlos0/ /' | sudo tee /etc/apt/sources.list.d/caarlos0.list && sudo apt update -y && sudo apt install svu -y
+    - name: Check version
+      run: |
+        [ $(svu n) != $(rake version | tr -d '"') ] && echo "Need to update version.rb file to $(svu n). Exiting... ";exit 1
     - name: Set up Ruby
     # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
     # change this to (see https://github.com/ruby/setup-ruby#versioning):
@@ -25,14 +32,39 @@ jobs:
         ruby-version: 2.6
     - name: Install Docker
       run: curl https://get.docker.com | sh
-    - name: Setup docker
+    - name: Install dependencies
       run: |
         bin/setup 
         sudo bin/setup
-    - name: Run tests
-      run: rspec
-    - name: Install SVU
-      run: echo 'deb [trusted=yes] https://apt.fury.io/caarlos0/ /' | sudo tee /etc/apt/sources.list.d/caarlos0.list && sudo apt update -y && sudo apt install svu -y
-    - name: Check version
-      run: |
-        [ $(svu n) != $(rake version | tr -d '"') ] && echo "Need to update version.rb file to $(svu n). Exiting... ";exit 1
+    - name: Test misc
+      run: rspec spec/misc/*.rb
+    - name: Test Image
+      run: rspec spec/endpoints/image_spec.rb:1
+    - name: Test Image authentication
+      run: rspec spec/endpoints/image_spec.rb:196
+      #continue-on-error: true
+    - name: Test Container
+      run: rspec spec/endpoints/container_spec.rb
+    - name: Test Volume
+      run: rspec spec/endpoints/volume_spec.rb
+    - name: Test Network
+      run: rspec spec/endpoints/network_spec.rb
+    - name: Test System
+      run: rspec spec/endpoints/system_spec.rb
+    - name: Test Exec
+      run: rspec spec/endpoints/exec_spec.rb
+    - name: Test Swarm
+      run: rspec spec/endpoints/swarm_spec.rb
+    - name: Test Node
+      run: rspec spec/endpoints/node_spec.rb
+    - name: Test Service
+      run: rspec spec/endpoints/service_spec.rb
+    - name: Test Task
+      run: rspec spec/endpoints/task_spec.rb
+    - name: Test Secret
+      run: rspec spec/endpoints/secret_spec.rb
+    - name: Test Config
+      run: rspec spec/endpoints/config_spec.rb
+    - name: Test Plugin
+      run: rspec spec/endpoints/plugin_spec.rb
+  
