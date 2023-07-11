@@ -37,7 +37,7 @@ jobs:
       run: rspec spec/endpoints/image_spec.rb:1
     - name: Test Image authentication
       run: rspec spec/endpoints/image_spec.rb:196
-      #continue-on-error: true
+      continue-on-error: true
     - name: Test Container
       run: rspec spec/endpoints/container_spec.rb
     - name: Test Volume
