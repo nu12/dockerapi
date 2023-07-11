@@ -12,7 +12,7 @@ on:
     branches: [ master ]
 
 jobs:
-  unit-tests:
+  ci:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -31,13 +31,8 @@ jobs:
         sudo bin/setup
     - name: Run tests
       run: rspec
-    
-  version:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
     - name: Install SVU
       run: echo 'deb [trusted=yes] https://apt.fury.io/caarlos0/ /' | sudo tee /etc/apt/sources.list.d/caarlos0.list && sudo apt update -y && sudo apt install svu -y
     - name: Check version
       run: |
-        [ $(svu n) != $(rake version | tr -d '"') ] && echo "Need to update version.rb file. Exiting... ";exit 1
+        [ $(svu n) != $(rake version | tr -d '"') ] && echo "Need to update version.rb file to $(svu n). Exiting... ";exit 1
