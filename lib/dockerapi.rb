@@ -39,14 +39,14 @@ module Docker
       "Docker::API::Image" => {
         "build" => [:dockerfile, :t, :extrahosts, :remote, :q, :nocache, :cachefrom, :pull, :rm, :forcerm, :memory, :memswap, :cpushares, :cpusetcpus, :cpuperiod, :cpuquota, :buildargs, :shmsize, :squash, :labels, :networkmode, :platform, :target, :outputs],
         "prune" => [:filters],
-        "list" => [:all, :filters, :digests],
+        "list" => [:all, :filters, "shared-size", :digests],
         "search" => [:term, :limit, :filters],
         "tag" => [:repo, :tag],
         "remove" => [:force, :noprune],
         "import" => [:quiet],
         "push" => [:tag],
         "commit" => [:container, :repo, :tag, :comment, :author, :pause, :changes],
-        "create" => [:fromImage, :fromSrc, :repo, :tag, :message, :platform],
+        "create" => [:fromImage, :fromSrc, :repo, :tag, :message, :changes, :platform],
         "delete_cache" => [:all, "keep-storage", :filters]
       },
       "Docker::API::Container" => {
@@ -54,8 +54,8 @@ module Docker
         "details" => [:size],
         "top" => [:ps_args],
         "start" => [:detachKeys],
-        "stop" => [:t],
-        "restart" => [:t],
+        "stop" => [:signal, :t],
+        "restart" => [:signal, :t],
         "kill" => [:signal],
         "wait" => [:condition],
         "rename" => [:name],
@@ -64,10 +64,10 @@ module Docker
         "remove" => [:v, :force, :link],
         "logs" => [:follow, :stdout, :stderr, :since, :until, :timestamps, :tail],
         "attach" => [:detachKeys, :logs, :stream, :stdin, :stdout, :stderr],
-        "stats" => [:stream],
+        "stats" => [:stream, "one-shot"],
         "get_archive" => [:path],
         "put_archive" => [:path, :noOverwriteDirNonDir, :copyUIDGID],
-        "create" => [:name]
+        "create" => [:name, :platform]
       },
       "Docker::API::Volume" => {
         "list" => [:filters],
@@ -80,7 +80,8 @@ module Docker
         "prune" => [:filters]
       },
       "Docker::API::System" => {
-        "events" => [:since, :until, :filters]
+        "events" => [:since, :until, :filters],
+        "df" => [:type]
       },
       "Docker::API::Exec" => {
         "resize" => [:w, :h]
@@ -95,7 +96,7 @@ module Docker
         "delete" => [:force]
       },
       "Docker::API::Service" => {
-        "list" => [:filters],
+        "list" => [:filters, :status],
         "update" => [:version, :registryAuthFrom, :rollback],
         "details" => [:insertDefaults],
         "logs" => [:details, :follow, :stdout, :stderr, :since, :timestamps, :tail]
@@ -130,10 +131,10 @@ module Docker
       },
       "Docker::API::Container" => {
         "create" => [:Hostname,:Domainname,:User,:AttachStdin,:AttachStdout,:AttachStderr,:ExposedPorts,:Tty,:OpenStdin,:StdinOnce,:Env,:Cmd,:HealthCheck,:ArgsEscaped,:Image,:Volumes,:WorkingDir,:Entrypoint,:NetworkDisabled,:MacAddress,:OnBuild,:Labels,:StopSignal,:StopTimeout,:Shell,:HostConfig,:NetworkingConfig],
-        "update" => [:CpuShares, :Memory, :CgroupParent, :BlkioWeight, :BlkioWeightDevice, :BlkioWeightReadBps, :BlkioWeightWriteBps, :BlkioWeightReadOps, :BlkioWeightWriteOps, :CpuPeriod, :CpuQuota, :CpuRealtimePeriod, :CpuRealtimeRuntime, :CpusetCpus, :CpusetMems, :Devices, :DeviceCgroupRules, :DeviceRequest, :Kernel, :Memory, :KernelMemoryTCP, :MemoryReservation, :MemorySwap, :MemorySwappiness, :NanoCPUs, :OomKillDisable, :Init, :PidsLimit, :ULimits, :CpuCount, :CpuPercent, :IOMaximumIOps, :IOMaximumBandwidth, :RestartPolicy]
+        "update" => [:CpuShares, :Memory, :CgroupParent, :BlkioWeight, :BlkioWeightDevice, :BlkioDeviceReadBps, :BlkioDeviceWriteBps, :BlkioDeviceReadIOps, :BlkioDeviceWriteIOps, :CpuPeriod, :CpuQuota, :CpuRealtimePeriod, :CpuRealtimeRuntime, :CpusetCpus, :CpusetMems, :Devices, :DeviceCgroupRules, :DeviceRequest, :Memory, :KernelMemoryTCP, :MemoryReservation, :MemorySwap, :MemorySwappiness, :NanoCPUs, :OomKillDisable, :Init, :PidsLimit, :ULimits, :CpuCount, :CpuPercent, :IOMaximumIOps, :IOMaximumBandwidth, :RestartPolicy]
       },
       "Docker::API::Volume" => {
-        "create" => [:Name, :Driver, :DriverOpts, :Labels]
+        "create" => [:Name, :Driver, :DriverOpts, :Labels, :ClusterVolumeSpec]
       },
       "Docker::API::Network" => {
         "create" => [:Name, :CheckDuplicate, :Driver, :Internal, :Attachable, :Ingress, :IPAM, :EnableIPv6, :Options, :Labels],
@@ -144,8 +145,8 @@ module Docker
         "auth" => [:username, :password, :email, :serveraddress, :identitytoken]
       },
       "Docker::API::Exec" => {
-        "create" => [:AttachStdin, :AttachStdout, :AttachStderr, :DetachKeys, :Tty, :Env, :Cmd, :Privileged, :User, :WorkingDir],
-        "start" => [:Detach, :Tty]
+        "create" => [:AttachStdin, :AttachStdout, :AttachStderr, :ConsoleSize, :DetachKeys, :Tty, :Env, :Cmd, :Privileged, :User, :WorkingDir],
+        "start" => [:Detach, :Tty, :ConsoleSize]
       },
       "Docker::API::Swarm" => {
         "init" => [:ListenAddr, :AdvertiseAddr, :DataPathAddr, :DataPathPort, :DefaultAddrPool, :ForceNewCluster, :SubnetSize, :Spec],
@@ -166,7 +167,7 @@ module Docker
       },
       "Docker::API::Config" => {
         "create" => [:Name, :Labels, :Data, :Templating],
-        "update" => [:Name, :Labels, :Data, :Driver, :Templating]
+        "update" => [:Name, :Labels, :Data, :Templating]
       }
     }
     

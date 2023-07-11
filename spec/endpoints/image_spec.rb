@@ -31,6 +31,7 @@ RSpec.describe Docker::API::Image do
             describe "status code" do
                 it { expect(subject.list.status).to eq(200) }
                 it { expect(subject.list(all: true).status).to eq(200) }
+                it { expect(subject.list(all: true, "shared-size": true).status).to eq(200) }
                 it { expect(subject.list(digests: true).status).to eq(200) }
                 it { expect(subject.list(all: true, digests: true).status).to eq(200) }
                 it { expect(subject.list(all: true, filters: {dangling: {"true": true}}).status).to eq(200) }
@@ -41,6 +42,7 @@ RSpec.describe Docker::API::Image do
             end
             describe "request path" do
                 it { expect(subject.list(all: true).path).to eq("/images/json?all=true") }
+                it { expect(subject.list(all: true, "shared-size": true).path).to eq("/images/json?all=true&shared-size=true") }
                 it { expect(subject.list(digests: true).path).to eq("/images/json?digests=true") }
                 it { expect(subject.list(all: true, digests: true).path).to eq("/images/json?all=true&digests=true") }
                 it { expect(subject.list(all: true, filters: {dangling: {"true": true}}).path).to eq("/images/json?all=true&filters={\"dangling\":{\"true\":true}}") }
@@ -63,7 +65,7 @@ RSpec.describe Docker::API::Image do
             it { expect(subject.history("doesn-exist").status).to eq(404) }
         end
         describe ".tag" do
-            it { expect(subject.tag(image).status).to eq(500) }
+            it { expect(subject.tag(image).status).to eq(200) }
             it { expect(subject.tag(image, repo: "dockerapi/tag:1").status).to eq(201) }
             it { expect(subject.tag(image, repo: "dockerapi/tag", tag: "2").status).to eq(201) }
             it { expect(subject.tag("doesn-exist", repo: "dockerapi/tag").status).to eq(404) }

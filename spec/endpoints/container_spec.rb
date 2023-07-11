@@ -33,11 +33,18 @@ RSpec.describe Docker::API::Container do
             it { expect(subject.status).to eq(201) }
             it { expect(id).not_to be(nil) }
             it { expect(described_class.new.remove(id).success?).to eq(true) }
+            
+        end
+        context "still no name given" do
+            it { expect(subject.create( {platform: "os/no-arch"}, {Image: image}).status).to eq(404) }
         end
 
         after(:each) { described_class.new.remove(name) }
-        it { expect{subject.create( {name: name},  {invalid: "invalid"})}.to raise_error(Docker::API::InvalidRequestBody) }
-        it { expect(subject.create( {name: name},  {Image: image}).status).to eq(201) }
+        it { expect{subject.create( {name: name}, {invalid: "invalid"})}.to raise_error(Docker::API::InvalidRequestBody) }
+        it { expect{subject.create( {name: name, invalid: "invalid"}, {Image: image})}.to raise_error(Docker::API::InvalidParameter) }
+        it { expect(subject.create( {name: name, platform: "linux/amd64"}, {Image: image}).status).to eq(201) }
+        it { expect(subject.create( {name: name, platform: "os/no-arch"}, {Image: image}).status).to eq(404) }
+        it { expect(subject.create( {name: name}, {Image: image}).status).to eq(201) }
         it do
             response = subject.create(                    
                  {name: name}, 
@@ -105,8 +112,10 @@ RSpec.describe Docker::API::Container do
 
             describe ".stop" do
                 it { expect(subject.stop(name).status).to be(204) }
-                it { expect(subject.stop("doesn-exist").status).to be(404) }
+                it { expect(subject.stop(name, {t: 1}).status).to be(204) }
+                it { expect(subject.stop(name, {signal: "SIGINT"}).status).to be(204) }
                 it { expect{subject.stop(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
+                it { expect(subject.stop("doesn-exist").status).to be(404) }
                 it do
                     subject.stop(name)
                     expect(subject.stop(name).status).to be(304)
@@ -129,6 +138,7 @@ RSpec.describe Docker::API::Container do
                 it { expect(subject.restart(name).status).to be(204) }
                 it { expect(subject.restart("doesn-exist").status).to be(404) }
                 it { expect(subject.restart(name,  {t: 2}).status).to eq(204) }
+                it { expect(subject.restart(name,  {signal: "SIGINT"}).status).to eq(204) }
                 it { expect(subject.restart(name,  {t: 2}).path).to eq("/containers/#{name}/restart?t=2") }
                 it { expect{subject.restart(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
             end
@@ -227,6 +237,8 @@ RSpec.describe Docker::API::Container do
             #TODO: implement test to stream response
             it { expect(subject.stats(name, {stream: false}).status).to eq(200) }
             it { expect(subject.stats(name, {stream: false}).body).not_to be(nil) }
+            it { expect(subject.stats(name, {stream: false, "one-shot": true}).status).to eq(200) }
+            it { expect(subject.stats(name, {stream: false, "one-shot": true}).body).not_to be(nil) }
             it { expect(subject.stats("doesn-exist", {stream: false}).status).to eq(404) }
             it { expect{subject.stats(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
         end
