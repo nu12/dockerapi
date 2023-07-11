@@ -46,5 +46,8 @@ RSpec.describe Docker::API::System do
         it { expect(subject.df.success?).to eq(true) }
         it { expect(subject.df.json).to be_kind_of(Hash) }
         it { expect(subject.df.path).to eq("/system/df") }
+        it { expect{subject.df(invalid: "true")}.to raise_error(Docker::API::InvalidParameter) }
+        it { expect{subject.df(type: "container")}.not_to raise_error }
+        it { expect(subject.df(type: "container").path).to eq("/system/df?type=container" )}
     end
 end

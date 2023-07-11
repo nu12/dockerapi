@@ -21,6 +21,7 @@ RSpec.describe Docker::API::Service do
     
         describe ".list" do
             it { expect(subject.list.status).to eq(200) }
+            it { expect(subject.list(status:true).status).to eq(200) }
             it { expect(subject.list(filters: {id: ["9mnpnzenvg8p8tdbtq4wvbkcz"]}).status).to eq(200) }
             it { expect(subject.list(filters: {label: ["key=value"]}).status).to eq(200) }
             it { expect(subject.list(filters: {mode: ["replicated", "global"]}).status).to eq(200) }

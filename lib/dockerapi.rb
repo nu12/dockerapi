@@ -80,7 +80,8 @@ module Docker
         "prune" => [:filters]
       },
       "Docker::API::System" => {
-        "events" => [:since, :until, :filters]
+        "events" => [:since, :until, :filters],
+        "df" => [:type]
       },
       "Docker::API::Exec" => {
         "resize" => [:w, :h]
@@ -95,7 +96,7 @@ module Docker
         "delete" => [:force]
       },
       "Docker::API::Service" => {
-        "list" => [:filters],
+        "list" => [:filters, :status],
         "update" => [:version, :registryAuthFrom, :rollback],
         "details" => [:insertDefaults],
         "logs" => [:details, :follow, :stdout, :stderr, :since, :timestamps, :tail]
@@ -133,7 +134,7 @@ module Docker
         "update" => [:CpuShares, :Memory, :CgroupParent, :BlkioWeight, :BlkioWeightDevice, :BlkioDeviceReadBps, :BlkioDeviceWriteBps, :BlkioDeviceReadIOps, :BlkioDeviceWriteIOps, :CpuPeriod, :CpuQuota, :CpuRealtimePeriod, :CpuRealtimeRuntime, :CpusetCpus, :CpusetMems, :Devices, :DeviceCgroupRules, :DeviceRequest, :Memory, :KernelMemoryTCP, :MemoryReservation, :MemorySwap, :MemorySwappiness, :NanoCPUs, :OomKillDisable, :Init, :PidsLimit, :ULimits, :CpuCount, :CpuPercent, :IOMaximumIOps, :IOMaximumBandwidth, :RestartPolicy]
       },
       "Docker::API::Volume" => {
-        "create" => [:Name, :Driver, :DriverOpts, :Labels]
+        "create" => [:Name, :Driver, :DriverOpts, :Labels, :ClusterVolumeSpec]
       },
       "Docker::API::Network" => {
         "create" => [:Name, :CheckDuplicate, :Driver, :Internal, :Attachable, :Ingress, :IPAM, :EnableIPv6, :Options, :Labels],
@@ -144,8 +145,8 @@ module Docker
         "auth" => [:username, :password, :email, :serveraddress, :identitytoken]
       },
       "Docker::API::Exec" => {
-        "create" => [:AttachStdin, :AttachStdout, :AttachStderr, :DetachKeys, :Tty, :Env, :Cmd, :Privileged, :User, :WorkingDir],
-        "start" => [:Detach, :Tty]
+        "create" => [:AttachStdin, :AttachStdout, :AttachStderr, :ConsoleSize, :DetachKeys, :Tty, :Env, :Cmd, :Privileged, :User, :WorkingDir],
+        "start" => [:Detach, :Tty, :ConsoleSize]
       },
       "Docker::API::Swarm" => {
         "init" => [:ListenAddr, :AdvertiseAddr, :DataPathAddr, :DataPathPort, :DefaultAddrPool, :ForceNewCluster, :SubnetSize, :Spec],
@@ -166,7 +167,7 @@ module Docker
       },
       "Docker::API::Config" => {
         "create" => [:Name, :Labels, :Data, :Templating],
-        "update" => [:Name, :Labels, :Data, :Driver, :Templating]
+        "update" => [:Name, :Labels, :Data, :Templating]
       }
     }
     

@@ -58,8 +58,8 @@ class Docker::API::System < Docker::API::Base
     #
     # Docker API: GET /system/df
     # @see https://docs.docker.com/engine/api/v1.40/#operation/SystemDataUsage
-    def df
-        @connection.get("/system/df")
+    def df params = {}
+        @connection.get(build_path("/system/df", params))
     end
                 
 end
