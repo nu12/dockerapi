@@ -37,7 +37,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install SVU
-      run: echo 'deb [trusted=yes] https://apt.fury.io/caarlos0/ /' | tee /etc/apt/sources.list.d/caarlos0.list && apt update -y && apt install svu -y
+      run: echo 'deb [trusted=yes] https://apt.fury.io/caarlos0/ /' | sudo tee /etc/apt/sources.list.d/caarlos0.list && sudo apt update -y && sudo apt install svu -y
     - name: Check version
       run: |
         [ $(svu n) != $(rake version | tr -d '"') ] && echo "Need to update version.rb file. Exiting... ";exit 1
