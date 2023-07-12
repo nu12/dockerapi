@@ -9,7 +9,7 @@ name: CD
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   release:
