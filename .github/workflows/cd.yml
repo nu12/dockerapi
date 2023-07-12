@@ -25,9 +25,12 @@ jobs:
       with:
         ruby-version: 2.6
     - name: Setup API key
-      run echo "${{ secrets.RUBYGEM_API }} | base64 -d > ~/.local/share/gem/credentials"
+      run: echo "${{ secrets.RUBYGEM_API }} | base64 -d > ~/.local/share/gem/credentials"
     - name: Release
       run: |
         TAG=$(rake version | tr -d '"')
-        rake release
+        git tag $TAG
+        git push --tags
         gh release create $TAG --generate-notes
+        rake build
+        gem push pkg/*
