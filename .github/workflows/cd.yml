@@ -26,6 +26,7 @@ jobs:
         ruby-version: 2.6
     - name: Setup API key
       run: |
+        mkdir -p ~/.local/share/gem/
         echo "${{ secrets.RUBYGEM_API }}" | base64 -d > ~/.local/share/gem/credentials
     - name: Release
       run: |
