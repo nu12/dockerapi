@@ -31,8 +31,9 @@ jobs:
         echo "${{ secrets.RUBYGEM_API }}" | base64 -d > ~/.local/share/gem/credentials
     - name: Release
       run: |
-        TAG=$(rake version | tr -d '"')
         bundle install
+        TAG=$(bundle exec rake version | tr -d '"')
+  
         git tag $TAG
         git push --tags
         gh release create $TAG --generate-notes
