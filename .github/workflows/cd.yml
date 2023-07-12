@@ -28,6 +28,7 @@ jobs:
         ruby-version: 2.6
     - name: Release
       run: |
+        gem update --system 3.2.3
         bundle install
         TAG=$(bundle exec rake version | tr -d '"')
   
