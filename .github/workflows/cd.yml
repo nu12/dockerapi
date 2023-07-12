@@ -36,5 +36,5 @@ jobs:
         git tag $TAG
         git push --tags
         gh release create $TAG --generate-notes
-        rake build
+        bundle exec rake build
         gem push pkg/*
