@@ -223,7 +223,7 @@ RSpec.describe Docker::API::Image do
 
             described_class.new.tag(original, repo: local)
 
-            Docker::API::PRINT_RESPONSE_TO_STDOUT = true
+            Docker::API.print_response_to_stdout = true
         end
 
         it { expect(Docker::API::Container.new.list.json.size).to be > 0 }
@@ -248,7 +248,7 @@ RSpec.describe Docker::API::Image do
         end
         
         after(:all) do
-            Docker::API::PRINT_RESPONSE_TO_STDOUT = false
+            Docker::API.print_response_to_stdout = false
 
             container = Docker::API::Container.new
             container.stop("registry")

@@ -11,7 +11,7 @@ class Docker::API::Connection
     # @param params [Hash]: Request parameters.
     def request params
         response = Docker::API::Response.new(@connection.request(params).data)
-        p response if Docker::API::PRINT_RESPONSE_TO_STDOUT 
+        p response if Docker::API.print_response_to_stdout 
         response
     end
     

@@ -1,9 +1,9 @@
 require "bundler/setup"
 require "dockerapi"
 
-Docker::API::PRINT_TO_STDOUT = false
+Docker::API.print_to_stdout = false
 
-Docker::API::PRINT_RESPONSE_TO_STDOUT = false
+Docker::API.print_response_to_stdout = false
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

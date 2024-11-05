@@ -18,7 +18,7 @@ class Docker::API::Base
     # Output to stdout.
     def default_streamer
         streamer = lambda do |chunk, remaining_bytes, total_bytes|
-            p chunk.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?') if Docker::API::PRINT_TO_STDOUT
+            p chunk.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '?') if Docker::API.print_to_stdout
         end
         streamer
     end
