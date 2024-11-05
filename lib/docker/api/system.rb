@@ -32,7 +32,7 @@ class Docker::API::System < Docker::API::Base
     # Docker API: GET /_ping
     # @see https://docs.docker.com/engine/api/v1.40/#operation/SystemPing
     def ping
-        @connection.get("/_ping")
+        @connection.get(build_path("/_ping"))
     end
 
     ##
@@ -41,7 +41,7 @@ class Docker::API::System < Docker::API::Base
     # Docker API: GET /info
     # @see https://docs.docker.com/engine/api/v1.40/#operation/SystemInfo
     def info
-        @connection.get("/info")
+        @connection.get(build_path("/info"))
     end
 
     ##
@@ -50,7 +50,7 @@ class Docker::API::System < Docker::API::Base
     # Docker API: GET /version
     # @see https://docs.docker.com/engine/api/v1.40/#operation/SystemVersion
     def version
-        @connection.get("/version")
+        @connection.get(build_path("/version"))
     end
 
     ##

@@ -21,7 +21,7 @@ RSpec.describe Docker::API::Network do
     end
 
     describe ".create" do 
-        it { expect(subject.create.status).to eq(500) }
+        it { expect(subject.create.status).to eq(400) }
         it do 
             expect(subject.create( 
                 Name: "rspec-network",

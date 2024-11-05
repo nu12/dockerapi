@@ -20,9 +20,9 @@ RSpec.describe Docker::API::Container do
         end
 
         describe "request path" do
-            it { expect(subject.list( { all: true, filters: {name: {"#{name}": true}} } ).path).to eq("/containers/json?all=true&filters={\"name\":{\"#{name}\":true}}") }
-            it { expect(subject.list( { all: true, filters: {exited: {"0": true} } } ).path).to eq("/containers/json?all=true&filters={\"exited\":{\"0\":true}}") }
-            it { expect(subject.list( { all: true, filters: {status: ["running"] } } ).path).to eq("/containers/json?all=true&filters={\"status\":[\"running\"]}") }
+            it { expect(subject.list( { all: true, filters: {name: {"#{name}": true}} } ).path).to eq("/v#{Docker::API::API_VERSION}/containers/json?all=true&filters={\"name\":{\"#{name}\":true}}") }
+            it { expect(subject.list( { all: true, filters: {exited: {"0": true} } } ).path).to eq("/v#{Docker::API::API_VERSION}/containers/json?all=true&filters={\"exited\":{\"0\":true}}") }
+            it { expect(subject.list( { all: true, filters: {status: ["running"] } } ).path).to eq("/v#{Docker::API::API_VERSION}/containers/json?all=true&filters={\"status\":[\"running\"]}") }
         end
     end
 
@@ -98,7 +98,7 @@ RSpec.describe Docker::API::Container do
             it { expect(subject.start(name).status).to eq(204 )}
             it { expect(subject.start("doesn-exist").status).to eq(404 )}
             it { expect(subject.start(name,  {detachKeys: "ctrl-c"}).status).to eq(204 )}
-            it { expect(subject.start(name,  {detachKeys: "ctrl-c"}).path).to eq("/containers/#{name}/start?detachKeys=ctrl-c" )}
+            it { expect(subject.start(name,  {detachKeys: "ctrl-c"}).path).to eq("/v#{Docker::API::API_VERSION}/containers/#{name}/start?detachKeys=ctrl-c" )}
             it { expect{subject.start(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter )}
             it do 
                 subject.start(name)
@@ -126,7 +126,7 @@ RSpec.describe Docker::API::Container do
                 it { expect(subject.kill(name).status).to be(204) }
                 it { expect(subject.kill("doesn-exist").status).to be(404) }
                 it { expect(subject.kill(name,  {signal: "SIGKILL"}).status).to eq(204) }
-                it { expect(subject.kill(name,  {signal: "SIGKILL"}).path).to eq("/containers/#{name}/kill?signal=SIGKILL") }
+                it { expect(subject.kill(name,  {signal: "SIGKILL"}).path).to eq("/v#{Docker::API::API_VERSION}/containers/#{name}/kill?signal=SIGKILL") }
                 it { expect{subject.kill(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
                 it do 
                     subject.stop(name)
@@ -139,7 +139,7 @@ RSpec.describe Docker::API::Container do
                 it { expect(subject.restart("doesn-exist").status).to be(404) }
                 it { expect(subject.restart(name,  {t: 2}).status).to eq(204) }
                 it { expect(subject.restart(name,  {signal: "SIGINT"}).status).to eq(204) }
-                it { expect(subject.restart(name,  {t: 2}).path).to eq("/containers/#{name}/restart?t=2") }
+                it { expect(subject.restart(name,  {t: 2}).path).to eq("/v#{Docker::API::API_VERSION}/containers/#{name}/restart?t=2") }
                 it { expect{subject.restart(name,  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
             end
 
