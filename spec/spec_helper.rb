@@ -16,3 +16,11 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+def get_api_ip_address
+  
+  Socket.ip_address_list.each do |addr|
+    return addr.ip_address if addr.ipv4? && !addr.ipv4_loopback? && addr.ip_address =~ /\A\d{1,3}(\.\d{1,3}){3}\z/
+  end
+
+end

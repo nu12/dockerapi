@@ -25,7 +25,7 @@ class Docker::API::Node < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param body [Hash]: Request body to be sent as json.
     def update name, params = {}, body = {}
-        @connection.request(method: :post, path: build_path("nodes/#{name}/update", params), headers: {"Content-Type": "application/json"}, body: body.to_json)
+        @connection.request(method: :post, path: build_path("/nodes/#{name}/update", params), headers: {"Content-Type": "application/json"}, body: body.to_json)
     end
 
     ##
