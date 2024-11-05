@@ -174,10 +174,10 @@ RSpec.describe Docker::API::Image do
         it { expect(subject.build("resources/build.tar.xz", q: true, rm: false).status).to eq(200) }
         it { expect(subject.build("resources/build.tar.xz", memory: 4000000, rm: true, forcerm:true).status).to eq(200) }
         it { expect(subject.build("resources/build.tar.xz", memory: 4000000, rm: true, forcerm:true, pull:true).status).to eq(200) }
-        it { expect(subject.build(nil, remote: "https://github.com/nu12/dockerapi/blob/master/resources/build.tar.xz?raw=true").status).to eq(200) }
+        it { expect(subject.build(nil, remote: "https://github.com/nu12/dockerapi/raw/refs/heads/main/resources/build.tar.xz").status).to eq(200) }
         it { expect(subject.build(nil, remote: "https://raw.githubusercontent.com/nu12/dockerapi/master/resources/Dockerfile").status).to eq(200) }
         it { expect{subject.build("resources/build.tar.xz", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
-        it { expect{subject.build(nil, remote: "https://github.com/nu12/dockerapi/blob/master/resources/build.tar.xz?raw=true", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
+        it { expect{subject.build(nil, remote: "https://github.com/nu12/dockerapi/raw/refs/heads/main/resources/build.tar.xz", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
         it { expect{subject.build(nil, invalid: "invalid", skip_validation: true)}.to raise_error(Docker::API::Error) }
     end
 
