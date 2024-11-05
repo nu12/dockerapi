@@ -89,6 +89,7 @@ class Docker::API::Base
     # @param path [String]: Base URL string.
     # @param hash [Hash]: Hash object to be appended to the URL as query parameters.
     def build_path path, params = {}
+        path = "/v#{Docker::API::API_VERSION}#{path}"
         params.size > 0 ? [path, hash_to_params(params)].join("?") : path
     end
 

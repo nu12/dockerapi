@@ -10,7 +10,7 @@ RSpec.describe Docker::API::System do
     describe ".ping" do
         it { expect(subject).to respond_to(:ping) }
         it { expect(subject.ping.status).to eq(200) }
-        it { expect(subject.ping.path).to eq("/_ping") }
+        it { expect(subject.ping.path).to eq("/v#{Docker::API::API_VERSION}/_ping") }
     end
 
     describe ".info" do
@@ -18,7 +18,7 @@ RSpec.describe Docker::API::System do
         it { expect(subject.info.status).to eq(200) }
         it { expect(subject.info.success?).to eq(true) }
         it { expect(subject.info.json).to be_kind_of(Hash) }
-        it { expect(subject.info.path).to eq("/info") }
+        it { expect(subject.info.path).to eq("/v#{Docker::API::API_VERSION}/info") }
     end
 
     describe ".version" do
@@ -26,7 +26,7 @@ RSpec.describe Docker::API::System do
         it { expect(subject.version.status).to eq(200) }
         it { expect(subject.version.success?).to eq(true) }
         it { expect(subject.version.json).to be_kind_of(Hash) }
-        it { expect(subject.version.path).to eq("/version") }
+        it { expect(subject.version.path).to eq("/v#{Docker::API::API_VERSION}/version") }
     end
 
     describe ".events" do
@@ -35,7 +35,7 @@ RSpec.describe Docker::API::System do
         it { expect(described_class.new).to respond_to(:events) }
         it { expect(subject.status).to eq(200) }
         it { expect(subject.success?).to eq(true) }
-        it { expect(subject.path).to eq("/events?until=#{now}") }
+        it { expect(subject.path).to eq("/v#{Docker::API::API_VERSION}/events?until=#{now}") }
         it { expect{described_class.new.events(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
         it { expect{described_class.new.events(invalid: true, skip_validation: false)}.to raise_error(Docker::API::InvalidParameter) }
     end
@@ -45,9 +45,9 @@ RSpec.describe Docker::API::System do
         it { expect(subject.df.status).to eq(200) }
         it { expect(subject.df.success?).to eq(true) }
         it { expect(subject.df.json).to be_kind_of(Hash) }
-        it { expect(subject.df.path).to eq("/system/df") }
+        it { expect(subject.df.path).to eq("/v#{Docker::API::API_VERSION}/system/df") }
         it { expect{subject.df(invalid: "true")}.to raise_error(Docker::API::InvalidParameter) }
         it { expect{subject.df(type: "container")}.not_to raise_error }
-        it { expect(subject.df(type: "container").path).to eq("/system/df?type=container" )}
+        it { expect(subject.df(type: "container").path).to eq("/v#{Docker::API::API_VERSION}/system/df?type=container" )}
     end
 end

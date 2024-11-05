@@ -10,9 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
-      uses: ruby/setup-ruby@21351ecc0a7c196081abca5dc55b08f085efe09a
+      uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.6
+        ruby-version: 3.3
     - name: Install Docker
       run: curl https://get.docker.com | sh
     - name: Install dependencies

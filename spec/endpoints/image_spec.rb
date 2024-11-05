@@ -41,16 +41,16 @@ RSpec.describe Docker::API::Image do
                 it { expect(subject.list(all: true, filters: {since: {"#{image}": true}}).status).to eq(200) }
             end
             describe "request path" do
-                it { expect(subject.list(all: true).path).to eq("/images/json?all=true") }
-                it { expect(subject.list(all: true, "shared-size": true).path).to eq("/images/json?all=true&shared-size=true") }
-                it { expect(subject.list(digests: true).path).to eq("/images/json?digests=true") }
-                it { expect(subject.list(all: true, digests: true).path).to eq("/images/json?all=true&digests=true") }
-                it { expect(subject.list(all: true, filters: {dangling: {"true": true}}).path).to eq("/images/json?all=true&filters={\"dangling\":{\"true\":true}}") }
-                it { expect(subject.list(all: true, filters: {label: {"label-here": true}}).path).to eq("/images/json?all=true&filters={\"label\":{\"label-here\":true}}") }
-                it { expect(subject.list(all: true, filters: {reference: {"#{image}": true}}).path).to eq("/images/json?all=true&filters={\"reference\":{\"#{image}\":true}}") }
-                it { expect(subject.list(all: true, filters: {before: {"#{image}": true}}).path).to eq("/images/json?all=true&filters={\"before\":{\"#{image}\":true}}") }
-                it { expect(subject.list(all: true, filters: {since: {"#{image}": true}}).path).to eq("/images/json?all=true&filters={\"since\":{\"#{image}\":true}}") }
-                it { expect(subject.list(all: true, invalid: true, skip_validation: true).path).to eq("/images/json?all=true&invalid=true") }
+                it { expect(subject.list(all: true).path).to eq("/v#{Docker::API::API_VERSION}/images/json?all=true") }
+                it { expect(subject.list(all: true, "shared-size": true).path).to eq("/v#{Docker::API::API_VERSION}/images/json?all=true&shared-size=true") }
+                it { expect(subject.list(digests: true).path).to eq("/v#{Docker::API::API_VERSION}/images/json?digests=true") }
+                it { expect(subject.list(all: true, digests: true).path).to eq("/v#{Docker::API::API_VERSION}/images/json?all=true&digests=true") }
+                it { expect(subject.list(all: true, filters: {dangling: {"true": true}}).path).to eq("/v#{Docker::API::API_VERSION}/images/json?all=true&filters={\"dangling\":{\"true\":true}}") }
+                it { expect(subject.list(all: true, filters: {label: {"label-here": true}}).path).to eq("/v#{Docker::API::API_VERSION}/images/json?all=true&filters={\"label\":{\"label-here\":true}}") }
+                it { expect(subject.list(all: true, filters: {reference: {"#{image}": true}}).path).to eq("/v#{Docker::API::API_VERSION}/images/json?all=true&filters={\"reference\":{\"#{image}\":true}}") }
+                it { expect(subject.list(all: true, filters: {before: {"#{image}": true}}).path).to eq("/v#{Docker::API::API_VERSION}/images/json?all=true&filters={\"before\":{\"#{image}\":true}}") }
+                it { expect(subject.list(all: true, filters: {since: {"#{image}": true}}).path).to eq("/v#{Docker::API::API_VERSION}/images/json?all=true&filters={\"since\":{\"#{image}\":true}}") }
+                it { expect(subject.list(all: true, invalid: true, skip_validation: true).path).to eq("/v#{Docker::API::API_VERSION}/images/json?all=true&invalid=true") }
             end
             it { expect{subject.list(invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
         end
@@ -159,11 +159,11 @@ RSpec.describe Docker::API::Image do
             it { expect(subject.prune(filters: {label: {"LABEL": true}, dangling: {"1": true}}).status).to eq(200) }
         end
         describe "request path" do 
-            it { expect(subject.prune(filters: {dangling: {"true": true}}).path).to eq("/images/prune?filters={\"dangling\":{\"true\":true}}") }
-            it { expect(subject.prune(filters: {dangling: {"1": true}}).path).to eq("/images/prune?filters={\"dangling\":{\"1\":true}}") }
-            it { expect(subject.prune(filters: {until: {"10m": true}}).path).to eq("/images/prune?filters={\"until\":{\"10m\":true}}") }
-            it { expect(subject.prune(filters: {label: {"LABEL": true}}).path).to eq("/images/prune?filters={\"label\":{\"LABEL\":true}}") }
-            it { expect(subject.prune(filters: {label: {"LABEL": true}, dangling: {"1": true}}).path).to eq("/images/prune?filters={\"label\":{\"LABEL\":true},\"dangling\":{\"1\":true}}") }
+            it { expect(subject.prune(filters: {dangling: {"true": true}}).path).to eq("/v#{Docker::API::API_VERSION}/images/prune?filters={\"dangling\":{\"true\":true}}") }
+            it { expect(subject.prune(filters: {dangling: {"1": true}}).path).to eq("/v#{Docker::API::API_VERSION}/images/prune?filters={\"dangling\":{\"1\":true}}") }
+            it { expect(subject.prune(filters: {until: {"10m": true}}).path).to eq("/v#{Docker::API::API_VERSION}/images/prune?filters={\"until\":{\"10m\":true}}") }
+            it { expect(subject.prune(filters: {label: {"LABEL": true}}).path).to eq("/v#{Docker::API::API_VERSION}/images/prune?filters={\"label\":{\"LABEL\":true}}") }
+            it { expect(subject.prune(filters: {label: {"LABEL": true}, dangling: {"1": true}}).path).to eq("/v#{Docker::API::API_VERSION}/images/prune?filters={\"label\":{\"LABEL\":true},\"dangling\":{\"1\":true}}") }
         end
         it { expect{subject.prune( invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
     end

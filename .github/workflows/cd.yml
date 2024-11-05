@@ -1,7 +1,8 @@
 name: CD
 on:
   push:
-    branches: [ main ]
+    tags:
+      - 'v*.*.*'
 
 jobs:
   release:
@@ -12,9 +13,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up Ruby
-      uses: ruby/setup-ruby@21351ecc0a7c196081abca5dc55b08f085efe09a
+      uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.6
+        ruby-version: 3.3
     - name: Setup to RubyGems
       run: |
         mkdir -p $HOME/.gem
