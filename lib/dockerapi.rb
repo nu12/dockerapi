@@ -43,6 +43,7 @@ module Docker
     def self.print_response_to_stdout=(bool)
       @@print_response_to_stdout = bool
     end
+    self.print_response_to_stdout = false
 
     ##
     # Valid values for parameter validations.
