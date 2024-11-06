@@ -27,11 +27,23 @@ module Docker
 
     ##
     # This variable controls output verbosity.
-    PRINT_TO_STDOUT = true
+    def self.print_to_stdout
+      @@print_to_stdout
+    end
+    def self.print_to_stdout=(bool)
+      @@print_to_stdout = bool
+    end
+    self.print_to_stdout = true
 
     ##
     # This variable controls output verbosity.
-    PRINT_RESPONSE_TO_STDOUT = false
+    def self.print_response_to_stdout
+      @@print_response_to_stdout
+    end
+    def self.print_response_to_stdout=(bool)
+      @@print_response_to_stdout = bool
+    end
+    self.print_response_to_stdout = false
 
     ##
     # Valid values for parameter validations.

@@ -24,7 +24,7 @@ jobs:
         printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
     - name: Install dependencies
       run: |
-        gem update --system 3.2.3
+        gem update --system 3.5.11
         bundle install
     - name: Release
       run: |

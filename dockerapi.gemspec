@@ -10,11 +10,11 @@ Gem::Specification.new do |spec|
   spec.description   = "Interact with Docker API directly from Ruby code. Comprehensive implementation (all available endpoints), no local Docker installation required, easily manipulated http responses."
   spec.homepage      = "https://github.com/nu12/dockerapi"
   spec.license       = "MIT"
-  spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
+  spec.required_ruby_version = ">= 3.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/nu12/dockerapi.git"
-  spec.metadata["changelog_uri"] = "https://github.com/nu12/dockerapi/blob/master/CHANGELOG.md"
+  spec.metadata["changelog_uri"] = "https://github.com/nu12/dockerapi/blob/main/CHANGELOG.md"
   spec.metadata["documentation_uri"] = "https://www.rubydoc.info/gems/dockerapi"
 
   # Specify which files should be added to the gem when it is released.
@@ -26,5 +26,6 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency("excon", "~> 0.79")
+  spec.add_dependency("base64")
+  spec.add_dependency("excon", ">= 0.97", "< 2")
 end

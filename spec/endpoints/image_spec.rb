@@ -17,7 +17,7 @@ RSpec.describe Docker::API::Image do
             it { expect(subject.create(fromSrc: path, repo: image, message: "Imported with dockerapi").status).to eq(200) }
         end
         context "from remote tar file" do
-            let(:url) { "https://github.com/nu12/dockerapi/blob/master/resources/busybox.tar?raw=true" }
+            let(:url) { "https://github.com/nu12/dockerapi/raw/refs/heads/main/resources/busybox.tar" }
             it { expect(subject.create(fromSrc: url).status).to eq(200) }
             it { expect(subject.create(fromSrc: url, repo: image, message: "Imported with dockerapi").status).to eq(200) }
             it { expect(subject.create(fromSrc: "http://404").status).to eq(500) }
@@ -175,7 +175,7 @@ RSpec.describe Docker::API::Image do
         it { expect(subject.build("resources/build.tar.xz", memory: 4000000, rm: true, forcerm:true).status).to eq(200) }
         it { expect(subject.build("resources/build.tar.xz", memory: 4000000, rm: true, forcerm:true, pull:true).status).to eq(200) }
         it { expect(subject.build(nil, remote: "https://github.com/nu12/dockerapi/raw/refs/heads/main/resources/build.tar.xz").status).to eq(200) }
-        it { expect(subject.build(nil, remote: "https://raw.githubusercontent.com/nu12/dockerapi/master/resources/Dockerfile").status).to eq(200) }
+        it { expect(subject.build(nil, remote: "https://raw.githubusercontent.com/nu12/dockerapi/main/resources/Dockerfile").status).to eq(200) }
         it { expect{subject.build("resources/build.tar.xz", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
         it { expect{subject.build(nil, remote: "https://github.com/nu12/dockerapi/raw/refs/heads/main/resources/build.tar.xz", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
         it { expect{subject.build(nil, invalid: "invalid", skip_validation: true)}.to raise_error(Docker::API::Error) }
@@ -223,7 +223,7 @@ RSpec.describe Docker::API::Image do
 
             described_class.new.tag(original, repo: local)
 
-            Docker::API::PRINT_RESPONSE_TO_STDOUT = true
+            Docker::API.print_response_to_stdout = true
         end
 
         it { expect(Docker::API::Container.new.list.json.size).to be > 0 }
@@ -248,7 +248,7 @@ RSpec.describe Docker::API::Image do
         end
         
         after(:all) do
-            Docker::API::PRINT_RESPONSE_TO_STDOUT = false
+            Docker::API.print_response_to_stdout = false
 
             container = Docker::API::Container.new
             container.stop("registry")
