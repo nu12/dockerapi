@@ -8,10 +8,11 @@ if [ $USER == 'root' ]
 then
     echo "Enabling TCP port 2375 for external connection to Docker"
     echo '{"hosts": ["tcp://0.0.0.0:2375", "unix:///var/run/docker.sock"]}' > /etc/docker/daemon.json
-    mkdir -p /etc/systemd/system/docker.service.d
-    echo '[Service]' > /etc/systemd/system/docker.service.d/override.conf
-    echo 'ExecStart=' >> /etc/systemd/system/docker.service.d/override.conf
-    echo 'ExecStart=/usr/bin/dockerd' >> /etc/systemd/system/docker.service.d/override.conf
+    echo '[Unit]' > /etc/systemd/system/docker.service
+    echo 'Description=Docker' >> /etc/systemd/system/docker.service
+    echo '[Service]' >> /etc/systemd/system/docker.service
+    echo 'ExecStart=' >> /etc/systemd/system/docker.service
+    echo 'ExecStart=/usr/bin/docker' >> /etc/systemd/system/docker.service
     systemctl daemon-reload
     systemctl restart docker.service
     echo "Done!"
