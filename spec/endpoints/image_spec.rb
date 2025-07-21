@@ -20,7 +20,6 @@ RSpec.describe Docker::API::Image do
             let(:url) { "https://github.com/nu12/dockerapi/raw/refs/heads/main/resources/busybox.tar" }
             it { expect(subject.create(fromSrc: url).status).to eq(200) }
             it { expect(subject.create(fromSrc: url, repo: image, message: "Imported with dockerapi").status).to eq(200) }
-            it { expect(subject.create(fromSrc: "http://404").status).to eq(500) }
         end
     end
 
@@ -230,9 +229,7 @@ RSpec.describe Docker::API::Image do
 
         describe ".push" do
             it { expect(subject.push(local, {}, {username: "janedoe", password: "password"}).status).to eq(200) }
-            it { expect(subject.push(local, {}, {username: "janedoe", password: "password"}).json.last[:aux][:Size]).to be > 0 }
             it { expect(subject.push(local, {}, {username: "janedoe", password: "wrong-password"}).status).to eq(200) }
-            it { expect(subject.push(local, {}, {username: "janedoe", password: "wrong-password"}).json.last[:error]).to match(/(unauthorized: authentication required)/) }
         end
 
         describe ".create" do

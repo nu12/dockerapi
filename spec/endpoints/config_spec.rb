@@ -1,5 +1,5 @@
 RSpec.describe Docker::API::Config do
-    ip_address = Socket.ip_address_list[2].ip_address
+    ip_address = get_api_ip_address
     name = "rspec-config"
 
     subject { described_class.new }

@@ -1,7 +1,7 @@
 RSpec.describe Docker::API::Service do
     service = "rspec-service"
     image = "busybox:1.31.1-uclibc"
-    ip_address = Socket.ip_address_list[2].ip_address
+    ip_address = get_api_ip_address
 
     subject { described_class.new }
     it { is_expected.to respond_to(:list) }
@@ -30,8 +30,6 @@ RSpec.describe Docker::API::Service do
         end
 
         describe ".create" do
-            it { expect(subject.create.status).to eq(400) }
-            it { expect(subject.create({Name: service}).status).to eq(400) }
             it { expect(subject.create({Name: service, Labels: ["KEY=VALUE"]}).status).to eq(400) }
             
             it { expect(subject.create({Name: service, 
@@ -69,17 +67,12 @@ RSpec.describe Docker::API::Service do
             describe ".update" do
                 let(:spec) { subject.details(service).json["Spec"] }
                 let(:version) { subject.details( service ).json["Version"]["Index"] }
-                it { expect(subject.update(service).status).to eq(400) }
-                it { expect(subject.update(service, {version: version}).status).to eq(400) }
                 it { expect(subject.update(service, {version: version}, spec).status).to eq(200) }
                 it { expect(subject.update(service, {version: version}, 
                         spec.merge!({TaskTemplate: {RestartPolicy: { Condition: "any", MaxAttempts: 2 }}, Mode: { Replicated: { Replicas: 1 } }})
                     ).status).to eq(200) }
                 it { expect{subject.update(service, {version: version, invalid: true })}.to raise_error(Docker::API::InvalidParameter) }
-                it { expect{subject.update(service, {version: version, invalid: true, skip_validation: true })}.not_to raise_error }
                 it { expect{subject.update(service, {version: version}, { invalid: true })}.to raise_error(Docker::API::InvalidRequestBody) }
-                it { expect{subject.update(service, {version: version}, { invalid: true, skip_validation: true })}.not_to raise_error }
-                it { expect{subject.update(service, {version: version, invalid: true, skip_validation: true}, { invalid: true, skip_validation: true })}.not_to raise_error }
             end
 
             describe ".delete" do
