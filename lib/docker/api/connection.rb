@@ -11,6 +11,7 @@ class Docker::API::Connection
     # @param params [Hash]: Request parameters.
     def request params
         response = Docker::API::Response.new(@connection.request(params).data)
+        response.request_params = params
         p response if Docker::API.print_response_to_stdout 
         response
     end
@@ -20,9 +21,9 @@ class Docker::API::Connection
     #
     # @param url [String]: URL for the connection.
     # @param params [String]: Additional parameters.
-    def initialize url = nil, params = nil
-        return @connection = Excon.new('unix:///', {socket: '/var/run/docker.sock'}) unless url
-        @connection = Excon.new(url, params || {})
+    def initialize url = nil, params = {}
+        return @connection = Excon.new('unix:///', params.merge({socket: '/var/run/docker.sock'})) unless url
+        @connection = Excon.new(url, params)
     end
 
 end

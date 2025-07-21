@@ -17,10 +17,6 @@ RSpec.configure do |config|
   end
 end
 
-def get_api_ip_address
-  
-  Socket.ip_address_list.each do |addr|
-    return addr.ip_address if addr.ipv4? && addr.ipv4_loopback? 
-  end
-
+def stub_connection  
+  return Docker::API::Connection.new('http://127.0.0.1:2375', {mock: true})
 end
