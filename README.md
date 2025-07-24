@@ -143,6 +143,29 @@ container = Docker::API::Container.new
 # Create container
 container.create( {name: "nginx"}, {Image: "nginx:latest", HostConfig: {PortBindings: {"80/tcp": [ {HostIp: "0.0.0.0", HostPort: "80"} ]}}})
 
+# A more complex container creation
+container.create(                    
+    {name: "nginx"}, 
+    {
+        Image: "nginx:latest", 
+        HostConfig: {
+            PortBindings: {
+                "80/tcp": [ {HostIp: "0.0.0.0", HostPort: "80"} ]
+            }
+        },
+        Env: ["DOCKER=nice", "DOCKERAPI=awesome"],
+        Cmd: ["echo", "hello from test"],
+        Entrypoint: ["sh"],
+        NetworkingConfig: { 
+            EndpointsConfig: {
+                EndpointSettings: {
+                    IPAddress: "192.172.0.100"
+                }
+            }
+        }
+    }
+)
+
 # Start container
 container.start("nginx")
 
