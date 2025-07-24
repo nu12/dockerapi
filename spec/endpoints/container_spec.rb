@@ -25,12 +25,12 @@ RSpec.describe Docker::API::Container do
     it { is_expected.to respond_to(:put_archive) }
 
     context "with stubs" do 
+        before(:all) {Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :port => 2375 }, {  }) }
+        after(:all) { Excon.stubs.clear }
+
         describe ".list" do
-            before(:all) do     
-                Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :port => 2375 }, { }) 
-                Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :get, :path => '/v1.43/containers/json', :port => 2375 }, {headers: {'Content-Type': 'application/json'}, body: '[]', status: 200 }) 
-            end
-            after(:all) { Excon.stubs.clear }
+            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :get, :port => 2375 }, {headers: {'Content-Type': 'application/json'}, body: '[]', status: 200 })  }
+            after(:all) { Excon.unstub({ :method => :get }) }
             it { expect(subject.list.json).to be_kind_of(Array) }
             it { expect(subject.list( { all: true, filters: {name: {"test": true}} } ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/json?all=true&filters={\"name\":{\"test\":true}}") }
             it { expect(subject.list( { all: true, filters: {exited: {"0": true} } } ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/json?all=true&filters={\"exited\":{\"0\":true}}") }
@@ -39,9 +39,6 @@ RSpec.describe Docker::API::Container do
         end
 
         describe ".create" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { status: 201 }) }
-            after(:all) { Excon.stubs.clear }
-
             it { expect(subject.create({name: "dockerapi", platform: "linux/amd64"}, {Image: "nginx"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/create?name=dockerapi&platform=linux/amd64") }
             it { expect(subject.create({name: "dockerapi", platform: "linux/amd64"}, {Image: "nginx"}).request_params[:method]).to eq(:post) }
             it { expect(subject.create({name: "dockerapi", platform: "linux/amd64"}, {Image: "nginx"}).request_params[:body]).to eq('{"Image":"nginx"}') }
@@ -50,9 +47,6 @@ RSpec.describe Docker::API::Container do
         end
 
         describe ".remove" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :delete, :port => 2375 }, { status: 204 }) }
-            after(:all) { Excon.stubs.clear }
-
             it { expect(subject.remove("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi") }
             it { expect(subject.remove("dockerapi").request_params[:method]).to eq(:delete) }
             it { expect(subject.remove("dockerapi").request_params[:body]).to eq(nil) }
@@ -62,9 +56,6 @@ RSpec.describe Docker::API::Container do
         end
 
         describe ".start" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { status: 204 }) }
-            after(:all) { Excon.stubs.clear }
-
             it { expect(subject.start("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/start") }
             it { expect(subject.start("dockerapi", {detachKeys: "ctrl-c"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/start?detachKeys=ctrl-c") }
             it { expect(subject.start("dockerapi").request_params[:method]).to eq(:post) }
@@ -73,9 +64,6 @@ RSpec.describe Docker::API::Container do
         end
 
         describe ".stop" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { status: 204 }) }
-            after(:all) { Excon.stubs.clear }
-
             it { expect(subject.stop("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/stop") }
             it { expect(subject.stop("dockerapi", {signal: "SIGINT"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/stop?signal=SIGINT") }
             it { expect(subject.stop("dockerapi").request_params[:method]).to eq(:post) }
@@ -84,9 +72,6 @@ RSpec.describe Docker::API::Container do
         end
 
         describe ".kill" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { status: 204 }) }
-            after(:all) { Excon.stubs.clear }
-
             it { expect(subject.kill("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/kill") }
             it { expect(subject.kill("dockerapi", {signal: "SIGINT"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/kill?signal=SIGINT") }
             it { expect(subject.kill("dockerapi").request_params[:method]).to eq(:post) }
@@ -95,9 +80,6 @@ RSpec.describe Docker::API::Container do
         end
 
         describe ".restart" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { status: 204 }) }
-            after(:all) { Excon.stubs.clear }
-
             it { expect(subject.restart("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/restart") }
             it { expect(subject.restart("dockerapi", {signal: "SIGINT"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/restart?signal=SIGINT") }
             it { expect(subject.restart("dockerapi").request_params[:method]).to eq(:post) }
@@ -106,22 +88,16 @@ RSpec.describe Docker::API::Container do
         end
 
         describe ".pause" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { status: 204 }) }
-            after(:all) { Excon.stubs.clear }
-
             it { expect(subject.pause("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/pause") }
         end
 
         describe ".unpause" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { status: 204 }) }
-            after(:all) { Excon.stubs.clear }
-
             it { expect(subject.unpause("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/unpause") }
         end
 
         describe ".top" do
             before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :get, :port => 2375 }, { headers: {'Content-Type': 'application/json'}, body: '{}', status: 200 }) }
-            after(:all) { Excon.stubs.clear }
+            after(:all) { Excon.unstub({ :method => :get }) }
 
             it { expect(subject.top("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/top") }
             it { expect(subject.top("dockerapi").request_params[:method]).to eq(:get) }
@@ -131,33 +107,24 @@ RSpec.describe Docker::API::Container do
         end
 
         describe ".wait" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, {  status: 200 }) }
-            after(:all) { Excon.stubs.clear }
-
             it { expect(subject.wait("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/wait") }
             it { expect(subject.wait("dockerapi").request_params[:method]).to eq(:post) }
             it { expect(subject.wait("dockerapi").request_params[:body]).to eq(nil) } 
         end
 
         describe ".get_archive" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :port => 2375 }, {  status: 200 }) }
-            after(:all) { Excon.stubs.clear }
             it { expect(subject.get_archive("dockerapi", "~/archive.tar", { path: "/usr/share/nginx/html/" }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/archive?path=/usr/share/nginx/html/") }
             it { expect(subject.get_archive("dockerapi", "~/archive.tar", { path: "/usr/share/nginx/html/" }).request_params[:method]).to eq(:get) }
             it { expect(subject.get_archive("dockerapi", "~/archive.tar", { path: "/usr/share/nginx/html/" }).request_params[:body]).to eq(nil) }
         end
 
         describe ".put_archive" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :put, :port => 2375 }, { status: 200 }) }
-            after(:all) { Excon.stubs.clear }
             it { expect(subject.put_archive("dockerapi", "~/archive.tar", { path: "/home" }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/archive?path=/home") }
             it { expect(subject.put_archive("dockerapi", "~/archive.tar", { path: "/home" }).request_params[:method]).to eq(:put) }
             it { expect(subject.put_archive("dockerapi", "~/archive.tar", { path: "/home" }).request_params[:body]).to eq(nil) }
         end
 
         describe ".resize" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { status: 200 }) }
-            after(:all) { Excon.stubs.clear }
             it { expect(subject.resize("dockerapi",  {h: 100, w: 100}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/resize?h=100&w=100") }
             it { expect(subject.resize("dockerapi",  {h: 100, w: 100}).request_params[:method]).to eq(:post) }
             it { expect(subject.resize("dockerapi",  {h: 100, w: 100}).request_params[:body]).to eq(nil) }
@@ -166,7 +133,7 @@ RSpec.describe Docker::API::Container do
 
         describe ".details" do
             before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :get, :port => 2375 }, { headers: {'Content-Type': 'application/json'}, body: '{"Name":"/dockerapi"}', status: 200 }) }
-            after(:all) { Excon.stubs.clear }
+            after(:all) { Excon.unstub({ :method => :get }) }
             it { expect(subject.details("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/json") }
             it { expect(subject.details("dockerapi", {size: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/json?size=true") }
             it { expect(subject.details("dockerapi").request_params[:method]).to eq(:get) }
@@ -175,8 +142,6 @@ RSpec.describe Docker::API::Container do
         end
 
         describe ".logs" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :get, :port => 2375 }, { status: 200 }) }
-            after(:all) { Excon.stubs.clear }
             it { expect(subject.logs("dockerapi",  {stdout: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/logs?stdout=true") }
             it { expect(subject.logs("dockerapi",  {stderr: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/logs?stderr=true") }
             it { expect(subject.logs("dockerapi",  {follow: false, stdout: true, stderr: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/logs?follow=false&stdout=true&stderr=true") }
@@ -189,7 +154,7 @@ RSpec.describe Docker::API::Container do
 
         describe ".changes" do
             before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :get, :port => 2375 }, { headers: {'Content-Type': 'application/json'}, body: '[]', status: 200 }) }
-            after(:all) { Excon.stubs.clear }
+            after(:all) { Excon.unstub({ :method => :get }) }
             it { expect(subject.changes("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/changes") }
             it { expect(subject.changes("dockerapi").request_params[:method]).to eq(:get) }
             it { expect(subject.changes("dockerapi").request_params[:body]).to eq(nil) }
@@ -197,8 +162,6 @@ RSpec.describe Docker::API::Container do
         end
 
         describe ".stats" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :get, :port => 2375 }, { status: 200 }) }
-            after(:all) { Excon.stubs.clear }
             it { expect(subject.stats("dockerapi", {stream: false}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/stats?stream=false") }
             it { expect(subject.stats("dockerapi", {stream: false}).request_params[:method]).to eq(:get) }
             it { expect(subject.stats("dockerapi", {stream: false}).request_params[:body]).to eq(nil) }
@@ -208,7 +171,7 @@ RSpec.describe Docker::API::Container do
         describe ".export" do
             before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :get, :port => 2375 }, { headers: {'Content-Type': 'text'}, body: 'a', status: 200 }) }
             after(:all) do 
-                Excon.stubs.clear 
+                Excon.unstub({ :method => :get })
                 File.delete(File.expand_path("~/exported_container"))
             end
             it { expect{File.open(File.expand_path("~/exported_container"))}.to raise_error(Errno::ENOENT) }
@@ -217,27 +180,19 @@ RSpec.describe Docker::API::Container do
         end
 
         describe ".update" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { status: 200 }) }
-            after(:all) { Excon.stubs.clear }
-            
             it { expect(subject.update("dockerapi", {RestartPolicy: {Name: "unless-stopped"}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/update") }
             it { expect(subject.update("dockerapi", {RestartPolicy: {Name: "unless-stopped"}}).request_params[:method]).to eq(:post) }
             it { expect(subject.update("dockerapi", {RestartPolicy: {Name: "unless-stopped"}}).request_params[:body]).to eq('{"RestartPolicy":{"Name":"unless-stopped"}}') }
             it { expect{subject.update("dockerapi", {invalid: "invalid"})}.to raise_error(Docker::API::InvalidRequestBody) }    
-              
         end
 
         describe ".rename" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { status: 204 }) }
-            after(:all) { Excon.stubs.clear }
             it { expect(subject.rename("dockerapi", {name: "new_name"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/rename?name=new_name") }
             it { expect(subject.rename("dockerapi", {name: "new_name"}).request_params[:method]).to eq(:post) }
             it { expect(subject.rename("dockerapi", {name: "new_name"}).request_params[:body]).to eq(nil) }
         end
 
         describe ".attach" do
-            before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { status: 200 }) }
-            after(:all) { Excon.stubs.clear }
             it { expect(subject.attach("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/attach") }
             it { expect(subject.attach("dockerapi").request_params[:method]).to eq(:post) }
             it { expect(subject.attach("dockerapi").request_params[:body]).to eq(nil) }
@@ -246,7 +201,7 @@ RSpec.describe Docker::API::Container do
 
         describe ".prune" do
             before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :post, :port => 2375 }, { headers: {'Content-Type': 'application/json'}, body: '{}', status: 200 }) }
-            after(:all) { Excon.stubs.clear }
+            after(:all) { Excon.unstub({ :method => :post }) }
 
             it { expect(subject.prune.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/prune") }
             it { expect(subject.prune.request_params[:method]).to eq(:post) }
