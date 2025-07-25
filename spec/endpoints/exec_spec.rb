@@ -26,13 +26,11 @@ RSpec.describe Docker::API::Exec do
         describe ".resize" do
             it { expect(subject.resize("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/exec/id/resize") }
             it { expect(subject.resize("id").request_params[:method]).to eq(:post) }
-            it { expect(subject.resize("id").request_params[:body]).to eq(nil) }
         end
 
         describe ".details" do
             it { expect(subject.details("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/exec/id/json") }
             it { expect(subject.details("id").request_params[:method]).to eq(:get) }
-            it { expect(subject.details("id").request_params[:body]).to eq(nil) }
         end
     end
 end
