@@ -28,31 +28,31 @@ RSpec.describe Docker::API::Config do
         describe ".create" do
             it { expect(subject.create.request_params[:path]).to eq('/v1.43/configs/create') }
             it { expect(subject.create.request_params[:method]).to eq(:post) }
-            it { expect(subject.create(Name: name).request_params[:body]).to eq('{"Name":"rspec-config"}') }
-            it { expect(subject.create({Name: name,Labels: {foo: "bar"}, Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}).request_params[:body]).to eq('{"Name":"rspec-config","Labels":{"foo":"bar"},"Data":"VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}') }
+            it { expect(subject.create(Name: "rspec-config").request_params[:body]).to eq('{"Name":"rspec-config"}') }
+            it { expect(subject.create({Name: "rspec-config",Labels: {foo: "bar"}, Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}).request_params[:body]).to eq('{"Name":"rspec-config","Labels":{"foo":"bar"},"Data":"VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}') }
             it { expect{subject.create(invalid: true)}.to raise_error(Docker::API::InvalidRequestBody) }
         end
 
         describe ".details" do
-            it { expect(subject.details(name).request_params[:path]).to eq('/v1.43/configs/rspec-config') }
-            it { expect(subject.details(name).request_params[:method]).to eq(:get) }
-            it { expect(subject.details(name).json["ID"]).not_to be(nil) }
-            it { expect(subject.details(name).json["Version"]["Index"]).not_to be(nil) }
+            it { expect(subject.details("rspec-config").request_params[:path]).to eq('/v1.43/configs/rspec-config') }
+            it { expect(subject.details("rspec-config").request_params[:method]).to eq(:get) }
+            it { expect(subject.details("rspec-config").json["ID"]).not_to be(nil) }
+            it { expect(subject.details("rspec-config").json["Version"]["Index"]).not_to be(nil) }
         end
 
         describe ".update" do
-            let(:version) { subject.details(name).json["Version"]["Index"] }
-            let(:spec) { subject.details(name).json["Spec"] }
+            let(:version) { subject.details("rspec-config").json["Version"]["Index"] }
+            let(:spec) { subject.details("rspec-config").json["Spec"] }
 
-            it { expect(subject.update(name, {version: version}, spec).request_params[:path]).to eq('/v1.43/v1.43/configs/rspec-config/update?version=abc') }
-            it { expect(subject.update(name, {version: version}, spec).request_params[:method]).to eq(:post) }
-            it { expect{subject.update(name, invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect{subject.update(name, {version: version}, {invalid: true})}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect(subject.update("rspec-config", {version: version}, spec).request_params[:path]).to eq('/v1.43/v1.43/configs/rspec-config/update?version=abc') }
+            it { expect(subject.update("rspec-config", {version: version}, spec).request_params[:method]).to eq(:post) }
+            it { expect{subject.update("rspec-config", invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.update("rspec-config", {version: version}, {invalid: true})}.to raise_error(Docker::API::InvalidRequestBody) }
         end
 
         describe ".delete" do
-            it { expect(subject.delete(name).request_params[:path]).to eq('/v1.43/configs/rspec-config') }
-            it { expect(subject.delete(name).request_params[:method]).to eq(:delete) }
+            it { expect(subject.delete("rspec-config").request_params[:path]).to eq('/v1.43/configs/rspec-config') }
+            it { expect(subject.delete("rspec-config").request_params[:method]).to eq(:delete) }
         end
     end
 end

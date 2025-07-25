@@ -12,7 +12,7 @@ class Docker::API::Exec < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param body [Hash]: Request body to be sent as json.
     def create name, body = {}
-        @connection.request(method: :post, path: "/containers/#{name}/exec", headers: {"Content-Type": "application/json"}, body: body.to_json )
+        @connection.request(method: :post, path: build_path("/containers/#{name}/exec"), headers: {"Content-Type": "application/json"}, body: body.to_json )
     end
 
     ##
@@ -25,7 +25,7 @@ class Docker::API::Exec < Docker::API::Base
     # @param body [Hash]: Request body to be sent as json.
     # @param &block: Replace the default output to stdout behavior.
     def start name, body = {}, &block
-        @connection.request(method: :post, path: "/exec/#{name}/start", headers: {"Content-Type": "application/json"},  body: body.to_json, 
+        @connection.request(method: :post, path: build_path("/exec/#{name}/start"), headers: {"Content-Type": "application/json"},  body: body.to_json, 
             response_block: block_given? ? block : default_streamer )
     end
 
@@ -49,7 +49,7 @@ class Docker::API::Exec < Docker::API::Base
     #
     # @param name [String]: Exec instance ID.
     def details name
-        @connection.get("/exec/#{name}/json")
+        @connection.get(build_path("/exec/#{name}/json"))
     end
 
 end
