@@ -48,6 +48,6 @@ class Docker::API::Node < Docker::API::Base
     #
     # @param name [String]: The ID or name of the node.
     def details name
-        @connection.get("/nodes/#{name}")
+        @connection.get(build_path("/nodes/#{name}"))
     end
 end
