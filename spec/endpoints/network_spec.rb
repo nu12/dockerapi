@@ -37,7 +37,7 @@ RSpec.describe Docker::API::Network do
             it { expect(subject.create( Name: "rspec-network",CheckDuplicate: true,Driver: "bridge",Internal: true,Attachable: true,EnableIPv6: false).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/networks/create") }
             it { expect(subject.create( Name: "rspec-network",CheckDuplicate: true,Driver: "bridge",Internal: true,Attachable: true,EnableIPv6: false).request_params[:method]).to eq(:post) }
             it { expect(subject.create( Name: "rspec-network",CheckDuplicate: true,Driver: "bridge",Internal: true,Attachable: true,EnableIPv6: false).request_params[:body]).to eq("{\"Name\":\"rspec-network\",\"CheckDuplicate\":true,\"Driver\":\"bridge\",\"Internal\":true,\"Attachable\":true,\"EnableIPv6\":false}") }
-            it { expect(subject.create( Name: "rspec-network",CheckDuplicate: true,Driver: "bridge",Internal: true,Attachable: true,EnableIPv6: false).request_params[:headers][:"Content-Type"]).to eq("application/json") }
+            it { expect(subject.create( Name: "rspec-network",CheckDuplicate: true,Driver: "bridge",Internal: true,Attachable: true,EnableIPv6: false).request_params[:headers]["Content-Type"]).to eq("application/json") }
             it { expect{subject.create( invalid: true )}.to raise_error(Docker::API::InvalidRequestBody) }
         end
 
@@ -45,7 +45,7 @@ RSpec.describe Docker::API::Network do
             it { expect(subject.connect("rspec-network", Container: "rspec-container").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/networks/rspec-network/connect") }
             it { expect(subject.connect("rspec-network", Container: "rspec-container").request_params[:method]).to eq(:post) }
             it { expect(subject.connect("rspec-network", Container: "rspec-container").request_params[:body]).to eq("{\"Container\":\"rspec-container\"}") }
-            it { expect(subject.connect("rspec-network", Container: "rspec-container").request_params[:headers][:"Content-Type"]).to eq("application/json") }
+            it { expect(subject.connect("rspec-network", Container: "rspec-container").request_params[:headers]["Content-Type"]).to eq("application/json") }
             it { expect{subject.connect( "rspec-network",  invalid: true )}.to raise_error(Docker::API::InvalidRequestBody) }
         end
 
@@ -53,7 +53,7 @@ RSpec.describe Docker::API::Network do
             it { expect(subject.disconnect("rspec-network", Container: "rspec-container").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/networks/rspec-network/disconnect") }
             it { expect(subject.disconnect("rspec-network", Container: "rspec-container").request_params[:method]).to eq(:post) }
             it { expect(subject.disconnect("rspec-network", Container: "rspec-container").request_params[:body]).to eq("{\"Container\":\"rspec-container\"}") }
-            it { expect(subject.disconnect("rspec-network", Container: "rspec-container").request_params[:headers][:"Content-Type"]).to eq("application/json") }
+            it { expect(subject.disconnect("rspec-network", Container: "rspec-container").request_params[:headers]["Content-Type"]).to eq("application/json") }
             it { expect{subject.disconnect( "rspec-network",  invalid: true )}.to raise_error(Docker::API::InvalidRequestBody) }
         end
 

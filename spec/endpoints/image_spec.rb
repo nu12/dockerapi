@@ -157,7 +157,7 @@ RSpec.describe Docker::API::Image do
 
             it { expect(subject.build("build.tar.xz").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/build") }
             it { expect(subject.build("build.tar.xz").request_params[:method]).to eq(:post) }
-            it { expect(subject.build("build.tar.xz").request_params[:headers][:"Content-type"]).to eq("application/x-tar") }
+            it { expect(subject.build("build.tar.xz").request_params[:headers]["Content-type"]).to eq("application/x-tar") }
             it { expect(subject.build("build.tar.xz", q: true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/build?q=true") }
             it { expect(subject.build("build.tar.xz", q: true, rm: false).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/build?q=true&rm=false") }
             it { expect(subject.build("build.tar.xz", memory: 4000000, rm: true, forcerm:true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/build?memory=4000000&rm=true&forcerm=true") }

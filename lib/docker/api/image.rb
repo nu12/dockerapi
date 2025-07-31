@@ -185,7 +185,7 @@ class Docker::API::Image < Docker::API::Base
     def build path, params = {}, authentication = {}, &block
         raise Docker::API::Error.new("Expected path or params[:remote]") unless path || params[:remote] 
 
-        headers = {"Content-type": "application/x-tar"}
+        headers = {"Content-type" => "application/x-tar"}
         headers.merge!({"X-Registry-Config": auth_encoder(authentication) }) if authentication.any?
 
         if path == nil and params.has_key? :remote

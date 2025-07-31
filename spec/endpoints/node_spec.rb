@@ -30,7 +30,7 @@ RSpec.describe Docker::API::Node do
             it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "drain" }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id/update?version=version") }
             it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "pause" }).request_params[:method]).to eq(:post) }
             it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "active" }).request_params[:body]).to eq("{\"Role\":\"manager\",\"Availability\":\"active\"}") }
-            it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "drain" }).request_params[:headers][:"Content-Type"]).to eq("application/json") }
+            it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "drain" }).request_params[:headers]["Content-Type"]).to eq("application/json") }
             it { expect(subject.update("id", {version: "version"}, {Name: "node-name", Role: "manager", Availability: "active" }).request_params[:body]).to eq("{\"Name\":\"node-name\",\"Role\":\"manager\",\"Availability\":\"active\"}") }
             it { expect(subject.update("id", {version: "version"}, {Labels: {"KEY": "VALUE"}, Role: "manager", Availability: "active" }).request_params[:body]).to eq("{\"Labels\":{\"KEY\":\"VALUE\"},\"Role\":\"manager\",\"Availability\":\"active\"}") }
             it { expect{subject.update("id", {invalid: true}, {})}.to raise_error(Docker::API::InvalidParameter) }
