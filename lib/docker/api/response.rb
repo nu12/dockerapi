@@ -2,6 +2,7 @@
 # Reponse class.
 class Docker::API::Response < Excon::Response
     attr_reader(:json, :path)
+    attr_accessor(:request_params)
 
     ##
     # Initialize a new Response object.

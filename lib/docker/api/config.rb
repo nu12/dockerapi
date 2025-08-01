@@ -24,7 +24,7 @@ class Docker::API::Config < Docker::API::Base
     #
     # @param body [Hash]: Request body to be sent as json.
     def create body = {}
-        @connection.request(method: :post, path: "/configs/create", headers: {"Content-Type": "application/json"}, body: body.to_json)
+        @connection.request(method: :post, path: "/v#{Docker::API::API_VERSION}/configs/create", headers: {"Content-Type": "application/json"}, body: body.to_json)
     end
 
     # Inspect a config
@@ -35,7 +35,7 @@ class Docker::API::Config < Docker::API::Base
     #
     # @param name [String]: The ID or name of the config.
     def details name
-        @connection.get("/configs/#{name}")
+        @connection.get("/v#{Docker::API::API_VERSION}/configs/#{name}")
     end
 
     # Update a config
@@ -50,7 +50,7 @@ class Docker::API::Config < Docker::API::Base
     #
     # @param body [Hash]: Request body to be sent as json.
     def update name, params = {}, body = {}
-        @connection.request(method: :post, path: build_path("/configs/#{name}/update",params), headers: {"Content-Type": "application/json"}, body: body.to_json)
+        @connection.request(method: :post, path: build_path("/v#{Docker::API::API_VERSION}/configs/#{name}/update",params), headers: {"Content-Type": "application/json"}, body: body.to_json)
     end
 
     # Delete a config
@@ -61,6 +61,6 @@ class Docker::API::Config < Docker::API::Base
     #
     # @param name [String]: The ID or name of the config.
     def delete name
-        @connection.delete("/configs/#{name}")
+        @connection.delete("/v#{Docker::API::API_VERSION}/configs/#{name}")
     end
 end

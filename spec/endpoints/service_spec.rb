@@ -1,84 +1,69 @@
 RSpec.describe Docker::API::Service do
-    service = "rspec-service"
-    image = "busybox:1.31.1-uclibc"
-    ip_address = get_api_ip_address
-
     subject { described_class.new }
+
     it { is_expected.to respond_to(:list) }
     it { is_expected.to respond_to(:details) }
     it { is_expected.to respond_to(:create) }
     it { is_expected.to respond_to(:delete) }
     it { is_expected.to respond_to(:update) }
     it { is_expected.to respond_to(:logs) }
-    it { expect(subject.list.status).to eq(503) }
 
-    context "having a swarm cluster" do
-        before(:all) { Docker::API::Swarm.new.init({AdvertiseAddr: "#{ip_address}:2377", ListenAddr: "0.0.0.0:4567"}) }
-        after(:all) do 
-            Docker::API::Swarm.new.leave(force: true) 
-            Docker::API::Image.new.prune(filters: {dangling: {"true": true}})
-        end
+    context "with stubs" do 
+        before(:all) {Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :port => 2375 }, {  }) }
+        after(:all) { Excon.stubs.clear }
     
         describe ".list" do
-            it { expect(subject.list.status).to eq(200) }
-            it { expect(subject.list(status:true).status).to eq(200) }
-            it { expect(subject.list(filters: {id: ["9mnpnzenvg8p8tdbtq4wvbkcz"]}).status).to eq(200) }
-            it { expect(subject.list(filters: {label: ["key=value"]}).status).to eq(200) }
-            it { expect(subject.list(filters: {mode: ["replicated", "global"]}).status).to eq(200) }
-            it { expect(subject.list(filters: {name: ["service-name"]}).status).to eq(200) }
+            it { expect(subject.list.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services") }
+            it { expect(subject.list.request_params[:method]).to eq(:get) }
+            it { expect(subject.list(status:true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services?status=true") }
+            it { expect(subject.list(filters: {id: ["9mnpnzenvg8p8tdbtq4wvbkcz"]}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services?filters={\"id\":[\"9mnpnzenvg8p8tdbtq4wvbkcz\"]}") }
+            it { expect(subject.list(filters: {label: ["key=value"]}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services?filters={\"label\":[\"key=value\"]}") }
+            it { expect(subject.list(filters: {mode: ["replicated", "global"]}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services?filters={\"mode\":[\"replicated\",\"global\"]}") }
+            it { expect(subject.list(filters: {name: ["service-name"]}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services?filters={\"name\":[\"service-name\"]}") }
             it { expect{subject.list(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
         end
 
         describe ".create" do
-            it { expect(subject.create({Name: service, Labels: ["KEY=VALUE"]}).status).to eq(400) }
-            
-            it { expect(subject.create({Name: service, 
-                TaskTemplate: {ContainerSpec: { Image: image }},
-                Mode: { Replicated: { Replicas: 2 } },
-                EndpointSpec: { Ports: [
-                    {Protocol: "tcp", PublishedPort: 8080, TargetPort: 80}
-                ] }
-            }).status).to eq(201) }
-
-            it { expect(subject.create({Name: service, TaskTemplate: {ContainerSpec: { Image: image }}}).status).to eq(409) }
+            it { expect(subject.create({Name: "dockerapi", TaskTemplate: {ContainerSpec: { Image: "busybox:1.31.1-uclibc" }},Mode: { Replicated: { Replicas: 2 } },EndpointSpec: { Ports: [{Protocol: "tcp", PublishedPort: 8080, TargetPort: 80}] }}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/create") }
+            it { expect(subject.create({Name: "dockerapi", TaskTemplate: {ContainerSpec: { Image: "busybox:1.31.1-uclibc" }},Mode: { Replicated: { Replicas: 2 } },EndpointSpec: { Ports: [{Protocol: "tcp", PublishedPort: 8080, TargetPort: 80}] }}).request_params[:method]).to eq(:post) }
+            it { expect(subject.create({Name: "dockerapi", TaskTemplate: {ContainerSpec: { Image: "busybox:1.31.1-uclibc" }},Mode: { Replicated: { Replicas: 2 } },EndpointSpec: { Ports: [{Protocol: "tcp", PublishedPort: 8080, TargetPort: 80}] }}).request_params[:body]).to eq("{\"Name\":\"dockerapi\",\"TaskTemplate\":{\"ContainerSpec\":{\"Image\":\"busybox:1.31.1-uclibc\"}},\"Mode\":{\"Replicated\":{\"Replicas\":2}},\"EndpointSpec\":{\"Ports\":[{\"Protocol\":\"tcp\",\"PublishedPort\":8080,\"TargetPort\":80}]}}") }
+            it { expect(subject.create({Name: "dockerapi", TaskTemplate: {ContainerSpec: { Image: "busybox:1.31.1-uclibc" }},Mode: { Replicated: { Replicas: 2 } },EndpointSpec: { Ports: [{Protocol: "tcp", PublishedPort: 8080, TargetPort: 80}] }}).request_params[:headers]["Content-Type"]).to eq("application/json") }
+            it { expect(subject.create({Name: "dockerapi", TaskTemplate: {ContainerSpec: { Image: "busybox:1.31.1-uclibc" }},Mode: { Replicated: { Replicas: 2 } },EndpointSpec: { Ports: [{Protocol: "tcp", PublishedPort: 8080, TargetPort: 80}] }}, {username: "janedoe", password: "password"}).request_params[:headers]["X-Registry-Auth"]).to eq("eyJ1c2VybmFtZSI6ImphbmVkb2UiLCJwYXNzd29yZCI6InBhc3N3b3JkIn0=") }
             it { expect{subject.create({ invalid: true })}.to raise_error(Docker::API::InvalidRequestBody) }
         end
 
-        context "after .create" do
-            describe ".details" do
-                it { expect(subject.details( service ).status).to eq(200) }
-                it { expect(subject.details( service, insertDefaults: true ).status).to eq(200) }
-                it { expect(subject.details( "doesn-exist" ).status).to eq(404) }
-                it { expect{subject.details( service, invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
-            end
-
-            describe ".logs" do
-                it { expect(subject.logs( service ).status).to eq(500) }
-                it { expect(subject.logs( service, details: true ).status).to eq(500) }
-                it { expect(subject.logs( service, details: true, stdout: true ).status).to eq(200) }
-                it { expect(subject.logs( service, details: true, stderr: true ).status).to eq(200) }
-                it { expect(subject.logs( service, since: 0, stdout: true ).status).to eq(200) }
-                it { expect(subject.logs( service, timestamps: 0, stdout: true ).status).to eq(200) }
-                it { expect(subject.logs( service, tail: 10, stdout: true ).status).to eq(200) }
-                it { expect(subject.logs( service, tail: "all", stdout: true ).status).to eq(200) }
-                it { expect{subject.details( service, invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
-            end
-
-            describe ".update" do
-                let(:spec) { subject.details(service).json["Spec"] }
-                let(:version) { subject.details( service ).json["Version"]["Index"] }
-                it { expect(subject.update(service, {version: version}, spec).status).to eq(200) }
-                it { expect(subject.update(service, {version: version}, 
-                        spec.merge!({TaskTemplate: {RestartPolicy: { Condition: "any", MaxAttempts: 2 }}, Mode: { Replicated: { Replicas: 1 } }})
-                    ).status).to eq(200) }
-                it { expect{subject.update(service, {version: version, invalid: true })}.to raise_error(Docker::API::InvalidParameter) }
-                it { expect{subject.update(service, {version: version}, { invalid: true })}.to raise_error(Docker::API::InvalidRequestBody) }
-            end
-
-            describe ".delete" do
-                it { expect(subject.delete(service).status).to eq(200) }
-                it { expect(subject.delete(service).status).to eq(404) }
-            end
+        describe ".details" do
+            it { expect(subject.details( "dockerapi" ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi") }
+            it { expect(subject.details( "dockerapi" ).request_params[:method]).to eq(:get) }
+            it { expect(subject.details( "dockerapi", insertDefaults: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi?insertDefaults=true") }
+            it { expect{subject.details( "dockerapi", invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
         end
+
+        describe ".logs" do
+            it { expect(subject.logs( "dockerapi", details: true, stdout: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi/logs?details=true&stdout=true") }
+            it { expect(subject.logs( "dockerapi", details: true, stdout: true ).request_params[:method]).to eq(:get) }
+            it { expect(subject.logs( "dockerapi", details: true, stderr: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi/logs?details=true&stderr=true") }
+            it { expect(subject.logs( "dockerapi", since: 0, stdout: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi/logs?since=0&stdout=true") }
+            it { expect(subject.logs( "dockerapi", timestamps: 0, stdout: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi/logs?timestamps=0&stdout=true") }
+            it { expect(subject.logs( "dockerapi", tail: 10, stdout: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi/logs?tail=10&stdout=true") }
+            it { expect(subject.logs( "dockerapi", tail: "all", stdout: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi/logs?tail=all&stdout=true") }
+            it { expect{subject.details( "dockerapi", invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
+        end
+
+        describe ".update" do
+            it { expect(subject.update("dockerapi", {version: "version"}, {}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi/update?version=version") }
+            it { expect(subject.update("dockerapi", {version: "version"}, {}).request_params[:method]).to eq(:post) }
+            it { expect(subject.update("dockerapi", {version: "version"}, {}).request_params[:headers]["Content-Type"]).to eq("application/json") }
+            it { expect(subject.update("dockerapi", {version: "version"}, {}, {username: "janedoe", password: "password"}).request_params[:headers]["X-Registry-Auth"]).to eq("eyJ1c2VybmFtZSI6ImphbmVkb2UiLCJwYXNzd29yZCI6InBhc3N3b3JkIn0=") }
+            it { expect(subject.update("dockerapi", {version: "version"}, {}.merge!({TaskTemplate: {RestartPolicy: { Condition: "any", MaxAttempts: 2 }}, Mode: { Replicated: { Replicas: 1 } }})).request_params[:body]).to eq("{\"TaskTemplate\":{\"RestartPolicy\":{\"Condition\":\"any\",\"MaxAttempts\":2}},\"Mode\":{\"Replicated\":{\"Replicas\":1}}}") }
+            it { expect{subject.update("dockerapi", {version: "version", invalid: true })}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.update("dockerapi", {version: "version"}, { invalid: true })}.to raise_error(Docker::API::InvalidRequestBody) }
+        end
+
+        describe ".delete" do
+            it { expect(subject.delete("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi") }
+            it { expect(subject.delete("dockerapi").request_params[:method]).to eq(:delete) }
+        end
+        
     end
 end

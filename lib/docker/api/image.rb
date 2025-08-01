@@ -11,7 +11,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param name [String]: The ID or name of the image.
     def details name
-        @connection.get("/images/#{name}/json")
+        @connection.get(build_path("/images/#{name}/json"))
     end
 
     ##
@@ -23,7 +23,7 @@ class Docker::API::Image < Docker::API::Base
     # @param name [String]: The ID or name of the image.
     # @param authentication [Hash]: Authentication parameters.
     def distribution name, authentication = {}
-        request = {method: :get, path: "/distribution/#{name}/json"}
+        request = {method: :get, path: build_path("/distribution/#{name}/json")}
         request[:headers] = {"X-Registry-Auth" => auth_encoder(authentication)} if authentication.any?
         @connection.request(request)
     end
@@ -36,7 +36,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param name [String]: The ID or name of the image.
     def history name
-        @connection.get("/images/#{name}/history")
+        @connection.get(build_path("/images/#{name}/history"))
     end
 
     ##
@@ -146,7 +146,7 @@ class Docker::API::Image < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param body [Hash]: Request body to be sent as json.
     def commit params = {}, body = {}
-        container = Docker::API::Container.new.details(params[:container])
+        container = Docker::API::Container.new(@connection).details(params[:container])
         return container if [404, 301].include? container.status
         @connection.request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: container.json["Config"].merge(body).to_json)
     end
@@ -185,7 +185,7 @@ class Docker::API::Image < Docker::API::Base
     def build path, params = {}, authentication = {}, &block
         raise Docker::API::Error.new("Expected path or params[:remote]") unless path || params[:remote] 
 
-        headers = {"Content-type": "application/x-tar"}
+        headers = {"Content-type" => "application/x-tar"}
         headers.merge!({"X-Registry-Config": auth_encoder(authentication) }) if authentication.any?
 
         if path == nil and params.has_key? :remote

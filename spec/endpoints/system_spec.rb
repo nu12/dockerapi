@@ -1,53 +1,60 @@
 RSpec.describe Docker::API::System do
-    subject { described_class.new } 
-    describe ".auth" do
-        it { expect(subject).to respond_to(:auth) }
-        it { expect{subject.auth(username: "", password: "", email: "", serveraddress: "", identitytoken: "")}.not_to raise_error }
-        it { expect{subject.auth(invalid: true)}.to raise_error(Docker::API::InvalidRequestBody) }
-        it { expect{subject.auth(invalid: true, skip_validation: true)}.not_to raise_error }
-    end
+    subject { described_class.new(stub_connection) } 
 
-    describe ".ping" do
-        it { expect(subject).to respond_to(:ping) }
-        it { expect(subject.ping.status).to eq(200) }
-        it { expect(subject.ping.path).to eq("/v#{Docker::API::API_VERSION}/_ping") }
-    end
+    it { is_expected.to respond_to(:auth) }
+    it { is_expected.to respond_to(:ping) }
+    it { is_expected.to respond_to(:info) }
+    it { is_expected.to respond_to(:version) }
+    it { is_expected.to respond_to(:events) }
+    it { is_expected.to respond_to(:df) }
+    
+    context "with stubs" do 
+        before(:all) {Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :port => 2375 }, {  }) }
+        after(:all) { Excon.stubs.clear }
 
-    describe ".info" do
-        it { expect(subject).to respond_to(:info) }
-        it { expect(subject.info.status).to eq(200) }
-        it { expect(subject.info.success?).to eq(true) }
-        it { expect(subject.info.json).to be_kind_of(Hash) }
-        it { expect(subject.info.path).to eq("/v#{Docker::API::API_VERSION}/info") }
-    end
+        describe ".auth" do
+            it { expect(subject.auth(username: "janedoe", password: "password", email: "janedow@email.com", serveraddress: "docker.io", identitytoken: "token").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/auth") }
+            it { expect(subject.auth(username: "janedoe", password: "password", email: "janedow@email.com", serveraddress: "docker.io", identitytoken: "token").request_params[:method]).to eq(:post) }
+            it { expect(subject.auth(username: "janedoe", password: "password", email: "janedow@email.com", serveraddress: "docker.io", identitytoken: "token").request_params[:body]).to eq("{\"username\":\"janedoe\",\"password\":\"password\",\"email\":\"janedow@email.com\",\"serveraddress\":\"docker.io\",\"identitytoken\":\"token\"}") }
+            it { expect(subject.auth(username: "janedoe", password: "password", email: "janedow@email.com", serveraddress: "docker.io", identitytoken: "token").request_params[:headers]["Content-Type"]).to eq("application/json") }
+            it { expect{subject.auth(username: "janedoe", password: "password", email: "janedow@email.com", serveraddress: "docker.io", identitytoken: "token")}.not_to raise_error }
+            it { expect{subject.auth(invalid: true)}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect{subject.auth(invalid: true, skip_validation: true)}.not_to raise_error }
+        end
 
-    describe ".version" do
-        it { expect(subject).to respond_to(:version) }
-        it { expect(subject.version.status).to eq(200) }
-        it { expect(subject.version.success?).to eq(true) }
-        it { expect(subject.version.json).to be_kind_of(Hash) }
-        it { expect(subject.version.path).to eq("/v#{Docker::API::API_VERSION}/version") }
-    end
+        describe ".ping" do
+            it { expect(subject.ping.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/_ping") }
+            it { expect(subject.ping.request_params[:method]).to eq(:get) }
+        end
 
-    describe ".events" do
-        let(:now) { Time.now.to_i }
-        subject { described_class.new.events(until: now ) }
-        it { expect(described_class.new).to respond_to(:events) }
-        it { expect(subject.status).to eq(200) }
-        it { expect(subject.success?).to eq(true) }
-        it { expect(subject.path).to eq("/v#{Docker::API::API_VERSION}/events?until=#{now}") }
-        it { expect{described_class.new.events(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
-        it { expect{described_class.new.events(invalid: true, skip_validation: false)}.to raise_error(Docker::API::InvalidParameter) }
-    end
+        describe ".info" do
+            it { expect(subject.info.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/info") }
+            it { expect(subject.info.request_params[:method]).to eq(:get) }
+        end
 
-    describe ".df" do
-        it { expect(subject).to respond_to(:df) }
-        it { expect(subject.df.status).to eq(200) }
-        it { expect(subject.df.success?).to eq(true) }
-        it { expect(subject.df.json).to be_kind_of(Hash) }
-        it { expect(subject.df.path).to eq("/v#{Docker::API::API_VERSION}/system/df") }
-        it { expect{subject.df(invalid: "true")}.to raise_error(Docker::API::InvalidParameter) }
-        it { expect{subject.df(type: "container")}.not_to raise_error }
-        it { expect(subject.df(type: "container").path).to eq("/v#{Docker::API::API_VERSION}/system/df?type=container" )}
+        describe ".version" do
+            it { expect(subject.version.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/version") }
+            it { expect(subject.version.request_params[:method]).to eq(:get) }
+        end
+
+        describe ".events" do
+            let(:now) { Time.now.to_i }
+            subject { described_class.new.events(until: now ) }
+            it { expect(described_class.new).to respond_to(:events) }
+            it { expect(subject.status).to eq(200) }
+            it { expect(subject.success?).to eq(true) }
+            it { expect(subject.path).to eq("/v#{Docker::API::API_VERSION}/events?until=#{now}") }
+            it { expect{described_class.new.events(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{described_class.new.events(invalid: true, skip_validation: false)}.to raise_error(Docker::API::InvalidParameter) }
+        end
+
+        describe ".df" do
+            it { expect(subject.df.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/system/df") }
+            it { expect(subject.df.request_params[:method]).to eq(:get) }
+            it { expect(subject.df(type: "container").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/system/df?type=container" )}
+            it { expect{subject.df(invalid: "true")}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.df(type: "container")}.not_to raise_error }
+            
+        end
     end
 end

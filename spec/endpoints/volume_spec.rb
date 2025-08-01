@@ -1,55 +1,50 @@
 RSpec.describe Docker::API::Volume do
-    volume = "rspec-volume"
+    subject { described_class.new(stub_connection) }
 
-    subject { described_class.new }
+    it { is_expected.to respond_to(:list) }
+    it { is_expected.to respond_to(:create) }
+    it { is_expected.to respond_to(:details) }
+    it { is_expected.to respond_to(:remove) }
+    it { is_expected.to respond_to(:prune) }
 
-    describe ".list" do
-        it { expect(subject.list.status).to eq(200) }
-        it { expect(subject.list(filters: {dangling: {"true": true}}).status).to eq(200) }
-        it { expect(subject.list(filters: {driver: {"local": true}}).status).to eq(200) }
-        it { expect(subject.list(filters: {name: {"bridge": true}}).status).to eq(200) }
-        it { expect{subject.list( invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
-        it { expect(subject.list(filters: {invalid: {"true": true}}).status).to eq(400) }
-    end
+    context "with stubs" do 
+        before(:all) {Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :port => 2375 }, {  }) }
+        after(:all) { Excon.stubs.clear }
 
-    describe ".create" do
-        context "no name given" do
-            subject { described_class.new.create }
-            it { expect(subject.status).to eq(201) }
-            it { expect(subject.json["Name"]).not_to eq(nil) }
+        describe ".list" do
+            it { expect(subject.list.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes") }
+            it { expect(subject.list.request_params[:method]).to eq(:get) }
+            it { expect(subject.list(filters: {dangling: {"true": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes?filters={\"dangling\":{\"true\":true}}") }
+            it { expect(subject.list(filters: {driver: {"local": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes?filters={\"driver\":{\"local\":true}}") }
+            it { expect(subject.list(filters: {name: {"bridge": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes?filters={\"name\":{\"bridge\":true}}") }
+            it { expect{subject.list( invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
         end
-        it { expect(subject.create(Name: volume, Driver: "local").status).to eq(201) }
-        it { expect{subject.create( invalid: true )}.to raise_error(Docker::API::InvalidRequestBody) }
-    end
 
-    describe ".details" do
-        it { expect(subject.details(volume).status).to eq(200) }
-        it { expect(subject.details("doesn-exist").status).to eq(404) }    
-    end
-
-    describe ".remove" do
-        before(:each) { subject.create(Name: volume, Driver: "local") }
-        context "with container attached" do
-            before(:all) do
-                Docker::API::Image.new.create(fromImage: "busybox:1.31.1-uclibc")
-                Docker::API::Container.new.create({name: "rspec-container"}, {Image: "busybox:1.31.1-uclibc", HostConfig: {Binds: ["#{volume}:/home"]}})
-            end
-            after(:all) do
-                Docker::API::Container.new.remove("rspec-container")
-                Docker::API::Image.new.remove("busybox:1.31.1-uclibc")
-            end
-            it { expect(subject.remove(volume).status).to eq(409) }
-            it { expect(subject.remove(volume, force: true).status).to eq(409) }
+        describe ".create" do
+            it { expect(subject.create(Name: "dockerapi", Driver: "local").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes/create") }
+            it { expect(subject.create(Name: "dockerapi", Driver: "local").request_params[:method]).to eq(:post) }
+            it { expect(subject.create(Name: "dockerapi", Driver: "local").request_params[:body]).to eq("{\"Name\":\"dockerapi\",\"Driver\":\"local\"}") }
+            it { expect(subject.create(Name: "dockerapi", Driver: "local").request_params[:headers]["Content-Type"]).to eq("application/json") }
+            it { expect{subject.create( invalid: true )}.to raise_error(Docker::API::InvalidRequestBody) }
         end
-        it { expect(subject.remove(volume).status).to eq(204) }
-        it { expect(subject.remove("doesn-exist").status).to eq(404) }
-        it { expect{subject.remove( volume, invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
-    end
 
-    describe ".prune" do
-        it { expect(subject.prune.status).to eq(200) }
-        it { expect(subject.prune( filters: {label: {"key": true}} ).status).to eq(200) }
-        it { expect(subject.prune( filters: {label: {"key=value": true}} ).status).to eq(200) }
-        it { expect{subject.prune( invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
+        describe ".details" do
+            it { expect(subject.details("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes/dockerapi") }
+            it { expect(subject.details("dockerapi").request_params[:method]).to eq(:get) }
+        end
+
+        describe ".remove" do
+            it { expect(subject.remove("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes/dockerapi") }
+            it { expect(subject.remove("dockerapi").request_params[:method]).to eq(:delete) }
+            it { expect{subject.remove( "dockerapi", invalid: true )}.to raise_error(Docker::API::InvalidParameter) } 
+        end
+
+        describe ".prune" do
+            it { expect(subject.prune.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes/prune") }
+            it { expect(subject.prune.request_params[:method]).to eq(:post) }
+            it { expect(subject.prune( filters: {label: {"key": true}} ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes/prune?filters={\"label\":{\"key\":true}}") }
+            it { expect(subject.prune( filters: {label: {"key=value": true}} ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes/prune?filters={\"label\":{\"key=value\":true}}") }
+            it { expect{subject.prune( invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
+        end
     end
 end

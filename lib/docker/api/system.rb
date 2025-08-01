@@ -11,7 +11,7 @@ class Docker::API::System < Docker::API::Base
     #
     # @param body [Hash]: Request body to be sent as json.
     def auth body = {}
-        @connection.request(method: :post, path: "/auth", headers: { "Content-Type" => "application/json" }, body: body.to_json)
+        @connection.request(method: :post, path: build_path("/auth"), headers: { "Content-Type" => "application/json" }, body: body.to_json)
     end
 
     ##

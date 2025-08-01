@@ -1,55 +1,36 @@
 RSpec.describe Docker::API::Exec do
-    image = "busybox:1.31.1-uclibc"
-    container = "rspec-container"
+    subject { described_class.new(stub_connection) }
 
-    # A running container is needed
+    it { is_expected.to respond_to(:create) }
+    it { is_expected.to respond_to(:start) }
+    it { is_expected.to respond_to(:resize) }
+    it { is_expected.to respond_to(:details) }
 
-    before(:all) do
-        Docker::API::Image.new.create(fromImage: image)
-        Docker::API::Container.new.create({name: container}, {Image: image, Cmd: ["tail","-f","/dev/null"]})
-        Docker::API::Container.new.start(container)
-    end
+    context "with stubs" do 
+        before(:all) {Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :port => 2375 }, {  }) }
+        after(:all) { Excon.stubs.clear }
 
-    after(:all) do
-        Docker::API::Container.new.stop(container)
-        Docker::API::Container.new.remove(container)
-        Docker::API::Image.new.remove(image)
-    end
-
-    describe ".create" do
-        it { expect(described_class.new.create(container).status).to eq(400) }
-        it { expect(described_class.new.create("doesn-exist", Cmd: ["ls", "-l"]).status).to eq(404) }
-        it do 
-            Docker::API::Container.new.pause(container)
-            expect(described_class.new.create(container, Cmd: ["ls", "-l"]).status).to eq(409)
+        describe ".create" do
+            it { expect(subject.create("dockerapi", Cmd: ["ls", "-l"]).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/exec") }
+            it { expect(subject.create("dockerapi", Cmd: ["ls", "-l"]).request_params[:method]).to eq(:post) }
+            it { expect(subject.create("dockerapi", Cmd: ["ls", "-l"]).request_params[:body]).to eq('{"Cmd":["ls","-l"]}') }
+            it { expect(subject.create("dockerapi", AttachStdout:true, WorkingDir: "/etc", Cmd: ["ls", "-l"]).request_params[:body]).to eq('{"AttachStdout":true,"WorkingDir":"/etc","Cmd":["ls","-l"]}') }
         end
 
-        subject do 
-            Docker::API::Container.new.unpause(container)
-            described_class.new.create(container, Cmd: ["ls", "-l"])         
-        end
-        it { expect(subject.status).to eq(201) }
-        it { expect(subject.json).not_to be(nil) }
-        it { expect(subject.json["Id"]).not_to be(nil) }
-        
-    end
-    context "after .create" do 
-        subject { described_class.new.create(container, AttachStdout:true, WorkingDir: "/etc", Cmd: ["ls", "-l"]) }
         describe ".start" do
-            it { expect(described_class.new.start(subject.json["Id"]).status).to eq(200) }
-            it { expect(described_class.new.start("doesn-exist").status).to eq(404) }
-        end
-    
-        describe ".resize" do
-            #it { expect(described_class.resize(subject.json["Id"], h:100, w:100).status).to eq(201) }
-            it { expect(described_class.new.resize(subject.json["Id"]).status).to eq(400) }
-            it { expect(described_class.new.resize("doesn-exist", h:100, w:100).status).to eq(404) }
-        end
-    
-        describe ".details" do
-            it { expect(described_class.new.details(subject.json["Id"]).status).to eq(200) }
-            it { expect(described_class.new.details("doesn-exist").status).to eq(404) }
+            it { expect(subject.start("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/exec/id/start") }
+            it { expect(subject.start("id").request_params[:method]).to eq(:post) }
+            it { expect(subject.start("id").request_params[:body]).to eq("{}") }
         end
 
+        describe ".resize" do
+            it { expect(subject.resize("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/exec/id/resize") }
+            it { expect(subject.resize("id").request_params[:method]).to eq(:post) }
+        end
+
+        describe ".details" do
+            it { expect(subject.details("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/exec/id/json") }
+            it { expect(subject.details("id").request_params[:method]).to eq(:get) }
+        end
     end
 end

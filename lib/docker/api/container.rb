@@ -46,7 +46,7 @@ class Docker::API::Container < Docker::API::Base
     #
     # @param name [String]: The ID or name of the container.
     def changes name
-        @connection.get("/containers/#{name}/changes")
+        @connection.get(build_path("/containers/#{name}/changes"))
     end
 
     ##
@@ -118,7 +118,8 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param body [Hash]: Request body to be sent as json.
     def update name, body = {}
-        @connection.request(method: :post, path: "/containers/#{name}/update", headers: {"Content-Type": "application/json"}, body: body.to_json)
+        
+        @connection.request(method: :post, path: build_path("/containers/#{name}/update"), headers: {"Content-Type": "application/json"}, body: body.to_json)
     end
 
     ##
@@ -164,7 +165,7 @@ class Docker::API::Container < Docker::API::Base
     #
     # @param name [String]: The ID or name of the container.
     def pause name
-        @connection.post("/containers/#{name}/pause")
+        @connection.post(build_path("/containers/#{name}/pause"))
     end
 
     ##
@@ -175,7 +176,7 @@ class Docker::API::Container < Docker::API::Base
     #
     # @param name [String]: The ID or name of the container.
     def unpause name
-        @connection.post("/containers/#{name}/unpause")
+        @connection.post(build_path("/containers/#{name}/unpause"))
     end
 
     ##

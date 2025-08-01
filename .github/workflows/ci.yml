@@ -13,41 +13,7 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.3
-    - name: Install Docker
-      run: curl https://get.docker.com | sh
     - name: Install dependencies
-      run: |
-        bin/setup 
-        sudo bin/setup
-    - name: Test misc
-      run: rspec spec/misc/*.rb
-    - name: Test Image
-      run: rspec spec/endpoints/image_spec.rb:1
-    - name: Test Image authentication
-      run: rspec spec/endpoints/image_spec.rb:196
-      continue-on-error: true
-    - name: Test Container
-      run: rspec spec/endpoints/container_spec.rb
-    - name: Test Volume
-      run: rspec spec/endpoints/volume_spec.rb
-    - name: Test Network
-      run: rspec spec/endpoints/network_spec.rb
-    - name: Test System
-      run: rspec spec/endpoints/system_spec.rb
-    - name: Test Exec
-      run: rspec spec/endpoints/exec_spec.rb
-    - name: Test Swarm
-      run: rspec spec/endpoints/swarm_spec.rb
-    - name: Test Node
-      run: rspec spec/endpoints/node_spec.rb
-    - name: Test Service
-      run: rspec spec/endpoints/service_spec.rb
-    - name: Test Task
-      run: rspec spec/endpoints/task_spec.rb
-    - name: Test Secret
-      run: rspec spec/endpoints/secret_spec.rb
-    - name: Test Config
-      run: rspec spec/endpoints/config_spec.rb
-    - name: Test Plugin
-      run: rspec spec/endpoints/plugin_spec.rb
-  
+      run: bundle install
+    - name: Run unit tests
+      run: rspec

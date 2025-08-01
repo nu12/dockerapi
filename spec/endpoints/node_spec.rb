@@ -1,57 +1,47 @@
 RSpec.describe Docker::API::Node do
-    ip_address = get_api_ip_address
-    subject { described_class.new }
+    subject { described_class.new(stub_connection) }
+
     it { is_expected.to respond_to(:list) }
     it { is_expected.to respond_to(:details) }
     it { is_expected.to respond_to(:delete) }
     it { is_expected.to respond_to(:update) }
-    it { expect(subject.list.status).to eq(503) }
 
-    context "having a swarm cluster" do
-        before(:all) { Docker::API::Swarm.new.init({AdvertiseAddr: "#{ip_address}:2377", ListenAddr: "0.0.0.0:4567"}) }
-        after(:all) { Docker::API::Swarm.new.leave(force: true) }
-        let(:id) { Docker::API::Node.new.list.json.first["ID"] }
-        
+    context "with stubs" do 
+        before(:all) {Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :port => 2375 }, {  }) }
+        after(:all) { Excon.stubs.clear }
+
         describe ".list" do
-            it { expect(subject.list.status).to eq(200) }
-            it { expect(subject.list(filters: {label: ["key=value"]}).status).to eq(200) }
-            it { expect(subject.list(filters: {"node.label": ["key=value"]}).status).to eq(200) }
-            it { expect(subject.list(filters: {membership: {"accepted": true}}).status).to eq(200) }
-            it { expect(subject.list(filters: {membership: {"pending": true}}).status).to eq(200) }
-            it { expect(subject.list(filters: {name: {"node_name": true}}).status).to eq(200) }
+            it { expect(subject.list.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes") }
+            it { expect(subject.list.request_params[:method]).to eq(:get) }
+            it { expect(subject.list(filters: {label: ["key=value"]}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"label\":[\"key=value\"]}") }
+            it { expect(subject.list(filters: {"node.label": ["key=value"]}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"node.label\":[\"key=value\"]}") }
+            it { expect(subject.list(filters: {membership: {"accepted": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"membership\":{\"accepted\":true}}") }
+            it { expect(subject.list(filters: {membership: {"pending": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"membership\":{\"pending\":true}}") }
+            it { expect(subject.list(filters: {name: {"node_name": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"name\":{\"node_name\":true}}") }
             it { expect{subject.list(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
         end
     
         describe ".details" do
-            it { expect(subject.details(id).status).to eq(200) }
-            it { expect(subject.details("doesn-exist").status).to eq(404) }
+            it { expect(subject.details("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id") }
+            it { expect(subject.details("id").request_params[:method]).to eq(:get) }
         end
 
         describe ".update" do
-            let(:version) { Docker::API::Node.new.list.json.first["Version"]["Index"] }
-
-            it { expect(subject.update(id, {version: version}, {Role: "manager", Availability: "drain" }).status).to eq(200) }
-            it { expect(subject.update(id, {version: version}, {Role: "manager", Availability: "pause" }).status).to eq(200) }
-            it { expect(subject.update(id, {version: version}, {Role: "manager", Availability: "active" }).status).to eq(200) }
-            it { expect(subject.update(id, {version: version}, {Role: "worker", Availability: "active" }).data[:body]).to match(/attempting to demote the last manager of the swarm/) }
-            it { expect(subject.update(id, {version: version}, {Name: "node-name", Role: "manager", Availability: "active" }).status).to eq(200) }
-            it { expect(subject.update(id, {version: version}, {Labels: {"KEY": "VALUE"}, Role: "manager", Availability: "active" }).status).to eq(200) }
-            it { expect(subject.update(id, {}, {Labels: {"KEY": "VALUE"}, Role: "manager", Availability: "active" }).status).to eq(400) }
-            it { expect(subject.update(id, {version: version}, {Name: "node-name" }).status).to eq(400) }
-            it { expect(subject.update(id, {version: version}, {Labels: {"KEY": "VALUE"}}).status).to eq(400) }
-            it { expect(subject.update(id, {version: version}, {Role: "manager"}).status).to eq(400) }
-            it { expect(subject.update(id, {version: version}, {Role: "worker"}).status).to eq(400) }
-            it { expect(subject.update(id, {version: version}, {Availability: "pause"}).status).to eq(400) }
-            it { expect(subject.update(id, {version: version}, {Availability: "drain"}).status).to eq(400) }
-            it { expect(subject.update(id, {version: version}, {Availability: "active"}).status).to eq(400) }
-            it { expect{subject.update(id, {invalid: true}, {})}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect{subject.update(id, {version: version}, {invalid: true})}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "drain" }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id/update?version=version") }
+            it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "pause" }).request_params[:method]).to eq(:post) }
+            it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "active" }).request_params[:body]).to eq("{\"Role\":\"manager\",\"Availability\":\"active\"}") }
+            it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "drain" }).request_params[:headers]["Content-Type"]).to eq("application/json") }
+            it { expect(subject.update("id", {version: "version"}, {Name: "node-name", Role: "manager", Availability: "active" }).request_params[:body]).to eq("{\"Name\":\"node-name\",\"Role\":\"manager\",\"Availability\":\"active\"}") }
+            it { expect(subject.update("id", {version: "version"}, {Labels: {"KEY": "VALUE"}, Role: "manager", Availability: "active" }).request_params[:body]).to eq("{\"Labels\":{\"KEY\":\"VALUE\"},\"Role\":\"manager\",\"Availability\":\"active\"}") }
+            it { expect{subject.update("id", {invalid: true}, {})}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.update("id", {version: "version"}, {invalid: true})}.to raise_error(Docker::API::InvalidRequestBody) }
         end    
     
         describe ".delete" do
-            it { expect(subject.delete(id).status).to eq(400) }
-            it { expect(subject.delete(id, force: true).status).to eq(400) }
-            it { expect{subject.delete(id, invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect(subject.delete("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id") }
+            it { expect(subject.delete("id").request_params[:method]).to eq(:delete) }
+            it { expect(subject.delete("id", force: true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id?force=true") }
+            it { expect{subject.delete("id", invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
         end
 
     end
