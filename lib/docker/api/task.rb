@@ -21,7 +21,7 @@ class Docker::API::Task < Docker::API::Base
     #
     # @param name [String]: The ID or name of the task.
     def details name
-        @connection.get("/tasks/#{name}")
+        @connection.get(build_path("/tasks/#{name}"))
     end
 
     # Get stdout and stderr logs from a task.
