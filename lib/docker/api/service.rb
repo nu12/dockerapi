@@ -22,9 +22,9 @@ class Docker::API::Service < Docker::API::Base
     # @param body [Hash]: Request body to be sent as json.
     # @param authentication [Hash]: Authentication parameters.
     def create body = {}, authentication = {}
-        headers = {"Content-Type": "application/json"}
+        headers = {"Content-Type" => "application/json"}
         headers.merge!({"X-Registry-Auth" => auth_encoder(authentication) }) if authentication.keys.size > 0
-        @connection.request(method: :post, path: "/services/create", headers: headers, body: body.to_json)
+        @connection.request(method: :post, path: build_path("/services/create"), headers: headers, body: body.to_json)
     end
 
     # Update a service
@@ -38,7 +38,7 @@ class Docker::API::Service < Docker::API::Base
     # @param authentication [Hash]:  Authentication parameters.
     def update name, params = {}, body = {}, authentication = {}
         # view https://github.com/docker/swarmkit/issues/1394#issuecomment-240850719
-        headers = {"Content-Type": "application/json"}
+        headers = {"Content-Type" => "application/json"}
         headers.merge!({"X-Registry-Auth" => auth_encoder(authentication) }) if authentication.keys.size > 0
         @connection.request(method: :post, path: build_path("/services/#{name}/update", params), headers: headers, body: body.to_json)
     end
@@ -72,6 +72,6 @@ class Docker::API::Service < Docker::API::Base
     #
     # @param name [String]: The ID or name of the service.
     def delete name
-        @connection.delete("/services/#{name}")
+        @connection.delete(build_path("/services/#{name}"))
     end
 end
