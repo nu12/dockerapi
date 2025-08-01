@@ -29,8 +29,6 @@ jobs:
     - name: Release
       run: |
         TAG=$(bundle exec rake version | tr -d '"')
-        git tag $TAG
-        git push --tags
         gh release create $TAG --generate-notes
         bundle exec rake build
         gem push pkg/*
