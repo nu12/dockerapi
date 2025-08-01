@@ -22,7 +22,7 @@ class Docker::API::Volume < Docker::API::Base
     #
     # @param name [String]: The ID or name of the volume.
     def details name
-        @connection.get("/volumes/#{name}")
+        @connection.get(build_path("/volumes/#{name}"))
     end
 
     ##
@@ -33,7 +33,7 @@ class Docker::API::Volume < Docker::API::Base
     #
     # @param body [Hash]: Request body to be sent as json.
     def create body = {}
-        @connection.request(method: :post, path: "/volumes/create", headers: {"Content-Type": "application/json"}, body: body.to_json)
+        @connection.request(method: :post, path: build_path("/volumes/create"), headers: {"Content-Type" => "application/json"}, body: body.to_json)
     end
 
     ##
