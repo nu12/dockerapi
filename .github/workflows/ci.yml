@@ -17,3 +17,7 @@ jobs:
       run: bundle install
     - name: Run unit tests
       run: rspec
+    - name: Install Docker
+      run: curl https://get.docker.com | sh
+    - name: Run E2E tests
+      run: rspec --tag e2e
