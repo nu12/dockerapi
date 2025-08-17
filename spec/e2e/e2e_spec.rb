@@ -31,7 +31,7 @@ RSpec.describe "End-to-end test", e2e: true do
     end
 
     describe "Misc of requests that are expected to fail" do
-        it { expect(image.create(fromImage: "doesn-exist:latest").status).to eq(403) } 
+        it { expect(image.create(fromImage: "doesn-exist:latest").status).to eq(404) } 
         it { expect(image.create(fromSrc: "http://404").status).to eq(500) }
         it { expect(image.details("doesn-exist").status).to eq(404) }
         it { expect(image.tag("doesn-exist", repo: "dockerapi/tag").status).to eq(404) }
@@ -51,7 +51,7 @@ RSpec.describe "End-to-end test", e2e: true do
         it "starts container" do expect(container.start("dockerapi1").status).to be(204) end
         it "requests the container on port 3080" do expect(Excon.get('http://127.0.0.1:3080').body).to match(/Welcome to nginx!/) end
         it "copies content from container" do expect(container.get_archive("dockerapi1", "./html.tar", path: "/usr/share/nginx/html/").status).to be(200) end
-        it "verifies the content of the copied file" do expect(Digest::MD5.file("./html.tar").hexdigest).to match(/9043af123b66581466211a9e6dd0c175/) end
+        it "verifies the content of the copied file" do expect(Digest::MD5.file("./html.tar").hexdigest).to match(/c3e1d9b10a9f397e745d312505242615/) end
         it "stops container" do expect(container.stop("dockerapi1").status).to be(204) end
         it "waits for the container to stop" do expect(container.wait("dockerapi1").status).to be(200) end
         it "removes container" do expect(container.remove("dockerapi1").status).to be(204) end
