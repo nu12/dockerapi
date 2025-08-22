@@ -1,7 +1,6 @@
 require "digest"
 
 RSpec.describe "End-to-end test", e2e: true do
-    let(:sha){ "nginx:sha256@94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268" }
     before(:all) do
         
     end
@@ -10,6 +9,7 @@ RSpec.describe "End-to-end test", e2e: true do
         Docker::API::Image.new.remove(image, force: true)
         File.delete("./html.tar")
     end
+    sha = "nginx:sha256@94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268"
     container = Docker::API::Container.new
     image = Docker::API::Image.new
     volume = Docker::API::Volume.new
