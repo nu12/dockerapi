@@ -1,5 +1,3 @@
-require "digest"
-
 RSpec.describe "End-to-end test", e2e: true do
     before(:all) do
         
