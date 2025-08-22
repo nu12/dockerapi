@@ -6,7 +6,7 @@ RSpec.describe "End-to-end test", e2e: true do
     end
     after(:all) do
         Docker::API::Image.new.remove("localhost/dockerapi", force: true)
-        Docker::API::Image.new.remove(image, force: true)
+        Docker::API::Image.new.remove(sha, force: true)
         File.delete("./html.tar")
     end
     sha = "nginx:sha256@94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268"
