@@ -7,6 +7,7 @@ RSpec.describe "End-to-end test", e2e: true do
         Docker::API::Image.new.remove("nginx@sha256:94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268", force: true)
         File.delete("./html.tar")
     end
+    config = Docker::API::Config.new
     container = Docker::API::Container.new
     image = Docker::API::Image.new
     volume = Docker::API::Volume.new
@@ -37,6 +38,32 @@ RSpec.describe "End-to-end test", e2e: true do
         it { expect(container.create( {platform: "os/no-arch"}, {Image: "image"}).status).to eq(404) }
         it { expect(container.start("doesn-exist").status).to eq(404 )}
         it { expect(container.remove("doesn-exist").status).to eq(404) }
+    end
+
+    describe "Invalid parameters and invalid bodies" do
+        it { expect(config.list(invalid: true, skip_validation: true).status).to be(503) }
+        it { expect(config.create(invalid: true, skip_validation: true).status).to be(503) }
+
+        it { expect(container.list({invalid: "invalid", skip_validation: true}).status).to be(200) }
+        it { expect(container.remove({invalid: "invalid", platform: "linux/amd64"}, {Image: "nginx", skip_validation: true}).status).to be(400) }
+        it { expect(container.create({name: "dockerapi", platform: "linux/amd64"}, {invalid: "invalid", skip_validation: true}).status).to be(400) }
+        it { expect(container.prune( {invalid: "invalid", skip_validation: true}).status).to be(400) }
+
+        describe "with a container" do
+            before(:all) { container.create({name: "dockerapi-rspec-e2e-container"}, {Image: "nginx:latest"}) }
+            after(:all) { container.remove("dockerapi-rspec-e2e-container", force: true) }
+            it { expect(container.start("dockerapi-rspec-e2e-container", {invalid: "invalid", skip_validation: true}).status).to be(400) }
+            it { expect(container.stop("dockerapi-rspec-e2e-container", {invalid: "invalid", skip_validation: true}).status).to be(400) }
+            it { expect(container.kill("dockerapi-rspec-e2e-container", {invalid: "invalid", skip_validation: true}).status).to be(400) }
+            it { expect(container.restart("dockerapi-rspec-e2e-container", {invalid: "invalid", skip_validation: true}).status).to be(400) }
+            it { expect(container.top("dockerapi-rspec-e2e-container",  {invalid_value: "invalid", skip_validation: true}).status).to be(400) }
+            it { expect(container.resize("dockerapi-rspec-e2e-container",  {invalid: "invalid", skip_validation: true}).status).to be(400) }
+            it { expect(container.details("dockerapi-rspec-e2e-container",  {invalid_value: "invalid", skip_validation: true}).status).to be(400) }
+            it { expect(container.logs("dockerapi-rspec-e2e-container",  {invalid_value: "invalid", skip_validation: true}).status).to be(400) }
+            it { expect(container.stats("dockerapi-rspec-e2e-container",  {invalid_value: "invalid", skip_validation: true}).status).to be(400) }
+            it { expect(container.update("dockerapi-rspec-e2e-container", {invalid: "invalid", skip_validation: true}).status).to be(400) }
+            it { expect(container.attach("dockerapi-rspec-e2e-container",  {invalid: "invalid", skip_validation: true}).status).to be(400) }
+        end
     end
     
     describe "Basic workflow" do 
