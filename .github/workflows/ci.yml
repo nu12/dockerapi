@@ -17,3 +17,5 @@ jobs:
       run: bundle install
     - name: Run unit tests
       run: rspec
+    - name: Run E2E tests
+      run: rspec --tag e2e

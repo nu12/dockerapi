@@ -39,13 +39,11 @@ RSpec.describe Docker::API::System do
 
         describe ".events" do
             let(:now) { Time.now.to_i }
-            subject { described_class.new.events(until: now ) }
-            it { expect(described_class.new).to respond_to(:events) }
-            it { expect(subject.status).to eq(200) }
-            it { expect(subject.success?).to eq(true) }
-            it { expect(subject.path).to eq("/v#{Docker::API::API_VERSION}/events?until=#{now}") }
-            it { expect{described_class.new.events(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect{described_class.new.events(invalid: true, skip_validation: false)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect(subject.events.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/events") }
+            it { expect(subject.events.request_params[:method]).to eq(:get) }
+            it { expect(subject.events(until: now).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/events?until=#{now}") }
+            it { expect{subject.events(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.events(invalid: true, skip_validation: false)}.to raise_error(Docker::API::InvalidParameter) }
         end
 
         describe ".df" do
