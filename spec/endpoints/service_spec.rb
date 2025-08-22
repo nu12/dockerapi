@@ -1,5 +1,5 @@
 RSpec.describe Docker::API::Service do
-    subject { described_class.new }
+    subject { described_class.new(stub_connection) }
 
     it { is_expected.to respond_to(:list) }
     it { is_expected.to respond_to(:details) }
