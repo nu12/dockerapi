@@ -6,10 +6,9 @@ RSpec.describe "End-to-end test", e2e: true do
     end
     after(:all) do
         Docker::API::Image.new.remove("localhost/dockerapi", force: true)
-        Docker::API::Image.new.remove(sha, force: true)
+        Docker::API::Image.new.remove("nginx:sha256@94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268", force: true)
         File.delete("./html.tar")
     end
-    sha = "nginx:sha256@94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268"
     container = Docker::API::Container.new
     image = Docker::API::Image.new
     volume = Docker::API::Volume.new
@@ -44,9 +43,9 @@ RSpec.describe "End-to-end test", e2e: true do
     
     describe "Basic workflow" do 
         it "downloads an image" do expect(image.create( fromImage: "nginx:sha256@94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268" ).status).to be(200)  end
-        it "inspects the image" do expect(image.details( sha ).json).to be_kind_of(Hash) end
-        it "tags the image" do  expect(image.tag(sha, repo: "localhost/dockerapi").status).to be(201) end
-        it "removes an image" do expect(image.remove(sha).status).to be(200) end
+        it "inspects the image" do expect(image.details( "nginx:sha256@94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268" ).json).to be_kind_of(Hash) end
+        it "tags the image" do  expect(image.tag("nginx:sha256@94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268", repo: "localhost/dockerapi").status).to be(201) end
+        it "removes an image" do expect(image.remove("nginx:sha256@94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268").status).to be(200) end
         it "creates a volume" do expect(volume.create( Name:"dockerapi" ).status).to be(201) end
         it "creates a container" do expect(container.create( {name: "dockerapi1"}, {Image: "localhost/dockerapi", HostConfig: {Binds: ["dockerapi:/usr/share/nginx/html"], PortBindings: {"80/tcp": [ {HostIp: "0.0.0.0", HostPort: "3080"} ]}}}).status).to be(201) end
         it "starts container" do expect(container.start("dockerapi1").status).to be(204) end
