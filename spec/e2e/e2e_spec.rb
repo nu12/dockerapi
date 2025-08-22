@@ -43,7 +43,7 @@ RSpec.describe "End-to-end test", e2e: true do
     end
     
     describe "Basic workflow" do 
-        it "downloads an image" do expect(image.create( fromImage: sha ).status).to be(200)  end
+        it "downloads an image" do expect(image.create( fromImage: "nginx:sha256@94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268" ).status).to be(200)  end
         it "inspects the image" do expect(image.details( sha ).json).to be_kind_of(Hash) end
         it "tags the image" do  expect(image.tag(sha, repo: "localhost/dockerapi").status).to be(201) end
         it "removes an image" do expect(image.remove(sha).status).to be(200) end
