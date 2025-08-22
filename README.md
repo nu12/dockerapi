@@ -586,7 +586,7 @@ The default blocks can be found in `Docker::API::Base`.
 
 ## Development
 
-Run `rake spec` to run the tests. 
+Run `rspec` to run the unit tests. Run `rspec --tag e2e` to run End-to-End tests (requires Docker locally). 
 
 Run `bin/console` for an interactive prompt that will allow you to experiment.
 
