@@ -1,12 +1,13 @@
 require "digest"
 
 RSpec.describe "End-to-end test", e2e: true do
+    let(:sha){ "nginx:sha256@94f1c83ea210e0568f87884517b4fe9a39c74b7677e0ad3de72700cfa3da7268" }
     before(:all) do
         
     end
     after(:all) do
         Docker::API::Image.new.remove("localhost/dockerapi", force: true)
-        Docker::API::Image.new.remove("nginx:alpine3.22-slim", force: true)
+        Docker::API::Image.new.remove(image, force: true)
         File.delete("./html.tar")
     end
     container = Docker::API::Container.new
@@ -42,13 +43,14 @@ RSpec.describe "End-to-end test", e2e: true do
     end
     
     describe "Basic workflow" do 
-        it "downloads an image" do expect(image.create( fromImage: "nginx:alpine" ).status).to be(200)  end
-        it "inspects the image" do expect(image.details( "nginx:alpine3.22-slim" ).json).to be_kind_of(Hash) end
-        it "tags the image" do  expect(image.tag("nginx:alpine", repo: "localhost/dockerapi").status).to be(201) end
-        it "removes an image" do expect(image.remove("nginx:alpine").status).to be(200) end
+        it "downloads an image" do expect(image.create( fromImage: sha ).status).to be(200)  end
+        it "inspects the image" do expect(image.details( sha ).json).to be_kind_of(Hash) end
+        it "tags the image" do  expect(image.tag(sha, repo: "localhost/dockerapi").status).to be(201) end
+        it "removes an image" do expect(image.remove(sha).status).to be(200) end
         it "creates a volume" do expect(volume.create( Name:"dockerapi" ).status).to be(201) end
         it "creates a container" do expect(container.create( {name: "dockerapi1"}, {Image: "localhost/dockerapi", HostConfig: {Binds: ["dockerapi:/usr/share/nginx/html"], PortBindings: {"80/tcp": [ {HostIp: "0.0.0.0", HostPort: "3080"} ]}}}).status).to be(201) end
         it "starts container" do expect(container.start("dockerapi1").status).to be(204) end
+        it "sleeps to wait container" do sleep 2 end
         it "requests the container on port 3080" do expect(Excon.get('http://127.0.0.1:3080').body).to match(/Welcome to nginx!/) end
         it "copies content from container" do expect(container.get_archive("dockerapi1", "./html.tar", path: "/usr/share/nginx/html/").status).to be(200) end
         it "verifies the content of the copied file" do expect(Digest::MD5.file("./html.tar").hexdigest).to match(/c3e1d9b10a9f397e745d312505242615/) end
