@@ -3,7 +3,7 @@ RSpec.describe Docker::API::Node do
 
     it { is_expected.to respond_to(:list) }
     it { is_expected.to respond_to(:details) }
-    it { is_expected.to respond_to(:delete) }
+    it { is_expected.to respond_to(:remove) }
     it { is_expected.to respond_to(:update) }
 
     context "with stubs" do 
@@ -37,11 +37,11 @@ RSpec.describe Docker::API::Node do
             it { expect{subject.update("id", {version: "version"}, {invalid: true})}.not_to raise_error }
         end    
     
-        describe ".delete" do
-            it { expect(subject.delete("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id") }
-            it { expect(subject.delete("id").request_params[:method]).to eq(:delete) }
-            it { expect(subject.delete("id", force: true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id?force=true") }
-            it { expect{subject.delete("id", invalid: true)}.not_to raise_error }
+        describe ".remove" do
+            it { expect(subject.remove("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id") }
+            it { expect(subject.remove("id").request_params[:method]).to eq(:delete) }
+            it { expect(subject.remove("id", force: true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id?force=true") }
+            it { expect{subject.remove("id", invalid: true)}.not_to raise_error }
         end
 
     end

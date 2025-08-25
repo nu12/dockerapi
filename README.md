@@ -359,7 +359,7 @@ node.update("node-id", {version: "version"}, {Role: "worker", Availability: "act
 node.update("node-id", {version: "version"}, {Role: "manager", Availability: "active" })
 
 # Delete node
-node.delete("node-id")
+node.remove("node-id")
 ```
 
 ### Service
@@ -389,7 +389,7 @@ service.logs("nginx-service", stdout: true)
 service.details("nginx-service")
 
 # Delete service 
-service.delete("nginx-service")
+service.remove("nginx-service")
 ```
 
 ### Task
@@ -427,7 +427,7 @@ spec = secret.details("secret-name").json["Spec"]
 secret.update("secret-name", {version: version}, spec.merge!({ Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg==" }))
 
 # Delete secret
-secret.delete("secret-name")
+secret.remove("secret-name")
 ```
 
 ### Config
@@ -450,7 +450,7 @@ spec = config.details("config-name").json["Spec"]
 config.update("config-name", {version: version}, spec.merge!({ Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg==" }))
 
 # Delete config
-config.delete("config-name")
+config.remove("config-name")
 ```
 
 ### Plugin

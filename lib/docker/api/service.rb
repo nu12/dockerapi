@@ -71,7 +71,7 @@ class Docker::API::Service < Docker::API::Base
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ServiceDelete
     #
     # @param name [String]: The ID or name of the service.
-    def delete name
+    def remove name
         @connection.delete(build_path("/services/#{name}"))
     end
 end

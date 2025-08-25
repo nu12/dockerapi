@@ -36,7 +36,7 @@ class Docker::API::Node < Docker::API::Base
     #
     # @param name [String]: The ID or name of the node.
     # @param params [Hash]: Parameters that are appended to the URL.
-    def delete name, params = {}
+    def remove name, params = {}
         @connection.delete(build_path("/nodes/#{name}", params))
     end
 

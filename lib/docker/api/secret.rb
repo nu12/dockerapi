@@ -52,7 +52,7 @@ class Docker::API::Secret < Docker::API::Base
     # @see https://docs.docker.com/engine/api/v1.40/#operation/SecretDelete
     #
     # @param name [String]: The ID or name of the secret.
-    def delete name
+    def remove name
         @connection.delete(build_path("/secrets/#{name}"))
     end
 end

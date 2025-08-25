@@ -4,7 +4,7 @@ RSpec.describe Docker::API::Service do
     it { is_expected.to respond_to(:list) }
     it { is_expected.to respond_to(:details) }
     it { is_expected.to respond_to(:create) }
-    it { is_expected.to respond_to(:delete) }
+    it { is_expected.to respond_to(:remove) }
     it { is_expected.to respond_to(:update) }
     it { is_expected.to respond_to(:logs) }
 
@@ -60,9 +60,9 @@ RSpec.describe Docker::API::Service do
             it { expect{subject.update("dockerapi", {version: "version"}, { invalid: true })}.not_to raise_error }
         end
 
-        describe ".delete" do
-            it { expect(subject.delete("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi") }
-            it { expect(subject.delete("dockerapi").request_params[:method]).to eq(:delete) }
+        describe ".remove" do
+            it { expect(subject.remove("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/services/dockerapi") }
+            it { expect(subject.remove("dockerapi").request_params[:method]).to eq(:delete) }
         end
         
     end
