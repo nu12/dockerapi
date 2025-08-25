@@ -60,7 +60,7 @@ class Docker::API::Config < Docker::API::Base
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ConfigDelete
     #
     # @param name [String]: The ID or name of the config.
-    def delete name
+    def remove name
         @connection.delete("/v#{Docker::API::API_VERSION}/configs/#{name}")
     end
 end

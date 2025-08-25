@@ -5,7 +5,7 @@ RSpec.describe Docker::API::Secret do
     it { is_expected.to respond_to(:create) }
     it { is_expected.to respond_to(:details) }
     it { is_expected.to respond_to(:update) }
-    it { is_expected.to respond_to(:delete) }
+    it { is_expected.to respond_to(:remove) }
 
     context "with stubs" do 
         before(:all) {Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :port => 2375 }, {  }) }
@@ -43,9 +43,9 @@ RSpec.describe Docker::API::Secret do
             it { expect{subject.update("secret", {version: "version"}, {invalid: true})}.not_to raise_error }
         end
 
-        describe ".delete" do
-            it { expect(subject.delete("secret").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets/secret") }
-            it { expect(subject.delete("secret").request_params[:method]).to eq(:delete) }
+        describe ".remove" do
+            it { expect(subject.remove("secret").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets/secret") }
+            it { expect(subject.remove("secret").request_params[:method]).to eq(:delete) }
         end
     end
 end

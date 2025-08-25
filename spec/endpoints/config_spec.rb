@@ -7,7 +7,7 @@ RSpec.describe Docker::API::Config do
     it { is_expected.to respond_to(:create) }
     it { is_expected.to respond_to(:details) }
     it { is_expected.to respond_to(:update) }
-    it { is_expected.to respond_to(:delete) }
+    it { is_expected.to respond_to(:remove) }
 
     context "with stubs" do
         before(:all) do     
@@ -50,9 +50,9 @@ RSpec.describe Docker::API::Config do
             it { expect{subject.update("rspec-config", {version: version}, {invalid: true})}.not_to raise_error }
         end
 
-        describe ".delete" do
-            it { expect(subject.delete("rspec-config").request_params[:path]).to eq('/v1.43/configs/rspec-config') }
-            it { expect(subject.delete("rspec-config").request_params[:method]).to eq(:delete) }
+        describe ".remove" do
+            it { expect(subject.remove("rspec-config").request_params[:path]).to eq('/v1.43/configs/rspec-config') }
+            it { expect(subject.remove("rspec-config").request_params[:method]).to eq(:delete) }
         end
     end
 end
