@@ -19,7 +19,6 @@ RSpec.describe Docker::API::Secret do
             it { expect(subject.list(filters: {name: { "secret-name": true }}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets?filters={\"name\":{\"secret-name\":true}}") }
             it { expect(subject.list(filters: {names: { "secret-name": true }}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets?filters={\"names\":{\"secret-name\":true}}") }
             it { expect{subject.list(invalid: true)}.not_to raise_error }
-            it { expect{subject.list(invalid: true, skip_validation: true)}.not_to raise_error }
         end
 
         describe ".create" do
@@ -28,7 +27,6 @@ RSpec.describe Docker::API::Secret do
             it { expect(subject.create({Name: "secret",Labels: {foo: "bar"}, Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}).request_params[:body]).to eq("{\"Name\":\"secret\",\"Labels\":{\"foo\":\"bar\"},\"Data\":\"VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg==\"}") }
             it { expect(subject.create({Name: "secret",Labels: {foo: "bar"}, Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}).request_params[:headers]["Content-Type"]).to eq("application/json") }
             it { expect{subject.create(invalid: true)}.not_to raise_error }
-            it { expect{subject.create(invalid: true, skip_validation: true)}.not_to raise_error }
         end
 
         describe ".details" do

@@ -19,7 +19,6 @@ RSpec.describe Docker::API::System do
             it { expect(subject.auth(username: "janedoe", password: "password", email: "janedow@email.com", serveraddress: "docker.io", identitytoken: "token").request_params[:headers]["Content-Type"]).to eq("application/json") }
             it { expect{subject.auth(username: "janedoe", password: "password", email: "janedow@email.com", serveraddress: "docker.io", identitytoken: "token")}.not_to raise_error }
             it { expect{subject.auth(invalid: true)}.not_to raise_error }
-            it { expect{subject.auth(invalid: true, skip_validation: true)}.not_to raise_error }
         end
 
         describe ".ping" do
@@ -43,7 +42,6 @@ RSpec.describe Docker::API::System do
             it { expect(subject.events.request_params[:method]).to eq(:get) }
             it { expect(subject.events(until: now).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/events?until=#{now}") }
             it { expect{subject.events(invalid: true)}.not_to raise_error }
-            it { expect{subject.events(invalid: true, skip_validation: false)}.not_to raise_error }
         end
 
         describe ".df" do
@@ -51,7 +49,6 @@ RSpec.describe Docker::API::System do
             it { expect(subject.df.request_params[:method]).to eq(:get) }
             it { expect(subject.df(type: "container").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/system/df?type=container" )}
             it { expect{subject.df(invalid: "true")}.not_to raise_error }
-            it { expect{subject.df(type: "container")}.not_to raise_error }
             
         end
     end

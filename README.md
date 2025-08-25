@@ -552,12 +552,6 @@ response.success?
 => true
 ```
 
-### Error handling
-
-`Docker::API::InvalidParameter` and `Docker::API::InvalidRequestBody` may be raised when an invalid option is passed as argument (ie: an option not described in Docker API documentation for request query parameters nor request body (json) parameters). Even if no errors were raised, consider validating the status code and/or message of the response to check if the Docker daemon has fulfilled the operation properly.
-
-To completely skip the validation process, add `:skip_validation => true` in the hash to be validated.
-
 ### Blocks
 
 Some methods can receive a block to alter the default execution:

@@ -18,7 +18,6 @@ RSpec.describe Docker::API::Task do
             it { expect(subject.list(filters: { "id": {"id-here": true} }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/tasks?filters={\"id\":{\"id-here\":true}}") }
             it { expect(subject.list(filters: { "name": {"task-name": true} }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/tasks?filters={\"name\":{\"task-name\":true}}") }
             it { expect{subject.list(invalid: true)}.not_to raise_error }
-            it { expect{subject.list(invalid: true, skip_validation: true)}.not_to raise_error }
         end
 
         describe ".details" do
@@ -34,7 +33,6 @@ RSpec.describe Docker::API::Task do
             it { expect(subject.logs( "id", tail: 10, stdout: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/tasks/id/logs?tail=10&stdout=true") }
             it { expect(subject.logs( "id", tail: "all", stdout: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/tasks/id/logs?tail=all&stdout=true") }
             it { expect{subject.logs( "id", invalid: true )}.not_to raise_error }
-            it { expect{subject.logs( "id", invalid: true, skip_validation: true )}.not_to raise_error }
         end
     end
 end

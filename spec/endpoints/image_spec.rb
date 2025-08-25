@@ -81,7 +81,6 @@ RSpec.describe Docker::API::Image do
             it { expect(subject.remove("dockerapi", force: true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/images/dockerapi?force=true") }
             it { expect(subject.remove("dockerapi", noprune: false).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/images/dockerapi?noprune=false") }
             it { expect{subject.remove("dockerapi", invalid: "invalid")}.not_to raise_error }
-            it { expect{subject.remove("dockerapi", invalid: "invalid")}.not_to raise_error }
         end
         describe ".export" do
             before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :get, :port => 2375 }, { headers: {'Content-Type': 'text'}, body: 'a', status: 200 }) }
@@ -166,7 +165,7 @@ RSpec.describe Docker::API::Image do
 
             it { expect{subject.build("build.tar.xz", invalid: "invalid")}.not_to raise_error }
             it { expect{subject.build(nil, remote: "https://address/to/image.tar.xz", invalid: "invalid")}.not_to raise_error }
-            it { expect{subject.build(nil, invalid: "invalid", skip_validation: true)}.to raise_error(StandardError) }
+            it { expect{subject.build(nil, invalid: "invalid")}.to raise_error(StandardError) }
         end
         describe ".delete_cache" do
             it { expect(subject.delete_cache.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/build/prune") }

@@ -37,7 +37,6 @@ RSpec.describe Docker::API::Swarm do
             it { expect(subject.update({version: "version"}, {EncryptionConfig: { AutoLockManagers: true } }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/update?version=version") }
             it { expect(subject.update({version: "version"}, {EncryptionConfig: { AutoLockManagers: true } }).request_params[:body]).to eq("{\"EncryptionConfig\":{\"AutoLockManagers\":true}}") }
             it { expect(subject.update({version: "version"}, {EncryptionConfig: { AutoLockManagers: true } }).request_params[:headers]["Content-Type"]).to eq("application/json") }
-            it { expect{subject.update({version: "version"},{invalid: true})}.not_to raise_error }
         end
     
         describe ".unlock_key" do
