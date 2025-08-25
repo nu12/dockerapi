@@ -57,13 +57,13 @@ RSpec.describe Docker::API::Image do
             it { expect(subject.search(term: "busybox", filters: {"is-automated": {"true": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/images/search?term=busybox&filters={\"is-automated\":{\"true\":true}}") }
             it { expect(subject.search(term: "busybox", filters: {"is-official": {"true": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/images/search?term=busybox&filters={\"is-official\":{\"true\":true}}") }
             it { expect(subject.search(term: "busybox", filters: {stars: {"20": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/images/search?term=busybox&filters={\"stars\":{\"20\":true}}") }
-            it { expect{subject.search(invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.search(invalid: "invalid")}.not_to raise_error }
         end
         describe ".tag" do
             it { expect(subject.tag("dockerapi").request_params[:path]).to eq ("/v#{Docker::API::API_VERSION}/images/dockerapi/tag") }
             it { expect(subject.tag("dockerapi", repo: "dockerapi/tag:1").request_params[:path]).to eq ("/v#{Docker::API::API_VERSION}/images/dockerapi/tag?repo=dockerapi/tag:1") }
             it { expect(subject.tag("dockerapi", repo: "dockerapi/tag", tag: "2").request_params[:path]).to eq ("/v#{Docker::API::API_VERSION}/images/dockerapi/tag?repo=dockerapi/tag&tag=2") }
-            it { expect{subject.tag("dockerapi", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.tag("dockerapi", invalid: "invalid")}.not_to raise_error }
         end
         describe ".prune" do
             it { expect(subject.prune.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/images/prune") }
@@ -80,8 +80,7 @@ RSpec.describe Docker::API::Image do
             it { expect(subject.remove("dockerapi").request_params[:method]).to eq(:delete) }
             it { expect(subject.remove("dockerapi", force: true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/images/dockerapi?force=true") }
             it { expect(subject.remove("dockerapi", noprune: false).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/images/dockerapi?noprune=false") }
-            it { expect{subject.remove("dockerapi", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect{subject.remove("dockerapi", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.remove("dockerapi", invalid: "invalid")}.not_to raise_error }
         end
         describe ".export" do
             before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :get, :port => 2375 }, { headers: {'Content-Type': 'text'}, body: 'a', status: 200 }) }
@@ -107,14 +106,13 @@ RSpec.describe Docker::API::Image do
             it { expect(subject.import("import.tar", quiet: true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/images/load?quiet=true") }
             it { expect(subject.import("import.tar", quiet: true).request_params[:method]).to eq(:post) }
             it { expect(subject.import("import.tar", quiet: true).request_params[:headers]["Content-Type"]).to eq("application/x-tar") }
-            it { expect{subject.import("import.tar", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.import("import.tar", invalid: "invalid")}.not_to raise_error }
         end
         describe ".push" do
             it { expect(subject.push("localhost:5000/dockerapi", {},{username: "janedoe", password: "password"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/images/localhost:5000/dockerapi/push") }
             it { expect(subject.push("localhost:5000/dockerapi", {},{username: "janedoe", password: "password"}).request_params[:method]).to eq(:post) }
             it { expect(subject.push("localhost:5000/dockerapi", {},{username: "janedoe", password: "password"}).request_params[:headers]["X-Registry-Auth"]).to eq("eyJ1c2VybmFtZSI6ImphbmVkb2UiLCJwYXNzd29yZCI6InBhc3N3b3JkIn0=") }
-            it { expect{subject.push("localhost:5000/push:1", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect{subject.push("localhost:5000/push:1")}.to raise_error(Docker::API::Error, "Provide authentication parameters to push an image") }
+            it { expect{subject.push("localhost:5000/push:1")}.to raise_error(StandardError, "Provide authentication parameters to push an image") }
         end
         describe ".commit" do
             before(:all) { Excon.stub({ :scheme => 'http', :host => '127.0.0.1', :method => :get, :port => 2375 }, { headers: {'Content-Type': 'application/json'}, body: '{"Config": {}}', status: 200 }) }
@@ -130,9 +128,9 @@ RSpec.describe Docker::API::Image do
             it { expect(subject.commit(container: "dockerapi", repo: "dockerapi/dockerapi", tag: "5", pause: false ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/commit?container=dockerapi&repo=dockerapi/dockerapi&tag=5&pause=false") }
             it { expect(subject.commit({container: "dockerapi", repo: "dockerapi/dockerapi:6"}, {OpenStdin: false, Cmd: "echo dockerapi", Entrypoint: [""]} ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/commit?container=dockerapi&repo=dockerapi/dockerapi:6") }
             it { expect(subject.commit({container: "dockerapi", repo: "dockerapi/dockerapi:6"}, {OpenStdin: false, Cmd: "echo dockerapi", Entrypoint: [""]} ).request_params[:body]).to eq("{\"OpenStdin\":false,\"Cmd\":\"echo dockerapi\",\"Entrypoint\":[\"\"]}") }
-            it { expect{subject.commit(invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect{subject.commit({invalid: "invalid"}, {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect{subject.commit({}, {invalid: "invalid"})}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect{subject.commit(invalid: "invalid")}.not_to raise_error }
+            it { expect{subject.commit({invalid: "invalid"}, {invalid: "invalid"})}.not_to raise_error }
+            it { expect{subject.commit({}, {invalid: "invalid"})}.not_to raise_error }
         end
         describe ".create" do
             context "from repository without authentication" do
@@ -165,15 +163,15 @@ RSpec.describe Docker::API::Image do
             it { expect(subject.build(nil, remote: "https://address/to/image.tar.xz").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/build?remote=https://address/to/image.tar.xz") }
             it { expect(subject.build(nil, remote: "https://address/to/Dockerfile").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/build?remote=https://address/to/Dockerfile") }
 
-            it { expect{subject.build("build.tar.xz", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect{subject.build(nil, remote: "https://address/to/image.tar.xz", invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect{subject.build(nil, invalid: "invalid", skip_validation: true)}.to raise_error(Docker::API::Error) }
+            it { expect{subject.build("build.tar.xz", invalid: "invalid")}.not_to raise_error }
+            it { expect{subject.build(nil, remote: "https://address/to/image.tar.xz", invalid: "invalid")}.not_to raise_error }
+            it { expect{subject.build(nil, invalid: "invalid")}.to raise_error(StandardError) }
         end
         describe ".delete_cache" do
             it { expect(subject.delete_cache.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/build/prune") }
             it { expect(subject.delete_cache.request_params[:method]).to eq(:post) }
             it { expect(subject.delete_cache(all:true, "keep-storage": 100000, filters: {until: {"24h": true}, inuse: {"true": true}, shared: {"true": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/build/prune?all=true&keep-storage=100000&filters={\"until\":{\"24h\":true},\"inuse\":{\"true\":true},\"shared\":{\"true\":true}}") }
-            it { expect{subject.delete_cache(invalid: "invalid")}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.delete_cache(invalid: "invalid")}.not_to raise_error }
         end
     end
 end

@@ -17,7 +17,7 @@ RSpec.describe Docker::API::Volume do
             it { expect(subject.list(filters: {dangling: {"true": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes?filters={\"dangling\":{\"true\":true}}") }
             it { expect(subject.list(filters: {driver: {"local": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes?filters={\"driver\":{\"local\":true}}") }
             it { expect(subject.list(filters: {name: {"bridge": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes?filters={\"name\":{\"bridge\":true}}") }
-            it { expect{subject.list( invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.list( invalid: true )}.not_to raise_error }
         end
 
         describe ".create" do
@@ -25,7 +25,7 @@ RSpec.describe Docker::API::Volume do
             it { expect(subject.create(Name: "dockerapi", Driver: "local").request_params[:method]).to eq(:post) }
             it { expect(subject.create(Name: "dockerapi", Driver: "local").request_params[:body]).to eq("{\"Name\":\"dockerapi\",\"Driver\":\"local\"}") }
             it { expect(subject.create(Name: "dockerapi", Driver: "local").request_params[:headers]["Content-Type"]).to eq("application/json") }
-            it { expect{subject.create( invalid: true )}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect{subject.create( invalid: true )}.not_to raise_error }
         end
 
         describe ".details" do
@@ -36,7 +36,7 @@ RSpec.describe Docker::API::Volume do
         describe ".remove" do
             it { expect(subject.remove("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes/dockerapi") }
             it { expect(subject.remove("dockerapi").request_params[:method]).to eq(:delete) }
-            it { expect{subject.remove( "dockerapi", invalid: true )}.to raise_error(Docker::API::InvalidParameter) } 
+            it { expect{subject.remove( "dockerapi", invalid: true )}.not_to raise_error } 
         end
 
         describe ".prune" do
@@ -44,7 +44,7 @@ RSpec.describe Docker::API::Volume do
             it { expect(subject.prune.request_params[:method]).to eq(:post) }
             it { expect(subject.prune( filters: {label: {"key": true}} ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes/prune?filters={\"label\":{\"key\":true}}") }
             it { expect(subject.prune( filters: {label: {"key=value": true}} ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/volumes/prune?filters={\"label\":{\"key=value\":true}}") }
-            it { expect{subject.prune( invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.prune( invalid: true )}.not_to raise_error }
         end
     end
 end
