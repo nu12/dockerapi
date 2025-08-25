@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dockerapi (0.20.1)
+    dockerapi (0.21.0)
       base64
       excon (>= 0.97, < 2)
 
