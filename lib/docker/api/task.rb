@@ -11,7 +11,7 @@ class Docker::API::Task < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        @connection.get(build_path("/tasks",params))
+        get(build_path("/tasks",params))
     end
 
     # Inspect a task
@@ -21,7 +21,7 @@ class Docker::API::Task < Docker::API::Base
     #
     # @param name [String]: The ID or name of the task.
     def details name
-        @connection.get(build_path("/tasks/#{name}"))
+        get(build_path("/tasks/#{name}"))
     end
 
     # Get stdout and stderr logs from a task.
@@ -36,9 +36,9 @@ class Docker::API::Task < Docker::API::Base
         path = build_path("/tasks/#{name}/logs", params)
 
         if [true, 1 ].include? params[:follow]
-            @connection.request(method: :get, path: path , response_block: block_given? ? block : default_streamer)
+            request(method: :get, path: path , response_block: block_given? ? block : default_streamer)
         else
-            @connection.get(path)
+            get(path)
         end
     end
 end

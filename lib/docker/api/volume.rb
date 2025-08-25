@@ -11,7 +11,7 @@ class Docker::API::Volume < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        @connection.get(build_path("/volumes", params))
+        get(build_path("/volumes", params))
     end
 
     ##
@@ -22,7 +22,7 @@ class Docker::API::Volume < Docker::API::Base
     #
     # @param name [String]: The ID or name of the volume.
     def details name
-        @connection.get(build_path("/volumes/#{name}"))
+        get(build_path("/volumes/#{name}"))
     end
 
     ##
@@ -33,7 +33,7 @@ class Docker::API::Volume < Docker::API::Base
     #
     # @param body [Hash]: Request body to be sent as json.
     def create body = {}
-        @connection.request(method: :post, path: build_path("/volumes/create"), headers: {"Content-Type" => "application/json"}, body: body.to_json)
+        request(method: :post, path: build_path("/volumes/create"), headers: {"Content-Type" => "application/json"}, body: body.to_json)
     end
 
     ##
@@ -45,7 +45,7 @@ class Docker::API::Volume < Docker::API::Base
     # @param name [String]: The ID or name of the volume.
     # @param params [Hash]: Parameters that are appended to the URL.
     def remove name, params = {}
-        @connection.delete(build_path("/volumes/#{name}",params))
+        delete(build_path("/volumes/#{name}",params))
     end
 
     ##
@@ -56,6 +56,6 @@ class Docker::API::Volume < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def prune params = {}
-        @connection.post(build_path("/volumes/prune", params))
+        post(build_path("/volumes/prune", params))
     end
 end

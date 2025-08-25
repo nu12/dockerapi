@@ -11,7 +11,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param name [String]: The ID or name of the image.
     def details name
-        @connection.get(build_path("/images/#{name}/json"))
+        get(build_path("/images/#{name}/json"))
     end
 
     ##
@@ -25,7 +25,7 @@ class Docker::API::Image < Docker::API::Base
     def distribution name, authentication = {}
         request = {method: :get, path: build_path("/distribution/#{name}/json")}
         request[:headers] = {"X-Registry-Auth" => auth_encoder(authentication)} if authentication.any?
-        @connection.request(request)
+        request(request)
     end
 
     ##
@@ -36,7 +36,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param name [String]: The ID or name of the image.
     def history name
-        @connection.get(build_path("/images/#{name}/history"))
+        get(build_path("/images/#{name}/history"))
     end
 
     ##
@@ -47,7 +47,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        @connection.get(build_path("/images/json", params)) 
+        get(build_path("/images/json", params)) 
     end
 
     ##
@@ -58,7 +58,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def search params = {}
-        @connection.get(build_path("/images/search", params)) 
+        get(build_path("/images/search", params)) 
     end
 
     ##
@@ -70,7 +70,7 @@ class Docker::API::Image < Docker::API::Base
     # @param name [String]: The ID or name of the image.
     # @param params [Hash]: Parameters that are appended to the URL.
     def tag name, params = {}
-        @connection.post(build_path("/images/#{name}/tag", params))
+        post(build_path("/images/#{name}/tag", params))
     end
 
     ##
@@ -81,7 +81,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def prune params = {}
-        @connection.post(build_path("/images/prune", params))
+        post(build_path("/images/prune", params))
     end
 
     ##
@@ -95,7 +95,7 @@ class Docker::API::Image < Docker::API::Base
     # @param name [String]: The ID or name of the image.
     # @param params [Hash]: Parameters that are appended to the URL.
     def remove name, params = {}
-        @connection.delete(build_path("/images/#{name}", params))
+        delete(build_path("/images/#{name}", params))
     end
 
     ##
@@ -108,7 +108,7 @@ class Docker::API::Image < Docker::API::Base
     # @param path [String]: Path to the exported file.
     # @param &block: Replace the default file writing behavior.
     def export name, path, &block
-        @connection.request(method: :get, path: build_path("/images/#{name}/get") , response_block: block_given? ? block : default_writer(path))
+        request(method: :get, path: build_path("/images/#{name}/get") , response_block: block_given? ? block : default_writer(path))
     end
 
     ##
@@ -134,7 +134,7 @@ class Docker::API::Image < Docker::API::Base
     # @param authentication [Hash]: Authentication parameters.
     def push name, params = {}, authentication = {}
         raise StandardError.new("Provide authentication parameters to push an image") unless authentication.any?
-        @connection.request(method: :post, path: build_path("/images/#{name}/push", params), headers: { "X-Registry-Auth" => auth_encoder(authentication) } )
+        request(method: :post, path: build_path("/images/#{name}/push", params), headers: { "X-Registry-Auth" => auth_encoder(authentication) } )
     end
 
     ##
@@ -148,7 +148,7 @@ class Docker::API::Image < Docker::API::Base
     def commit params = {}, body = {}
         container = Docker::API::Container.new(@connection).details(params[:container])
         return container if [404, 301].include? container.status
-        @connection.request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: container.json["Config"].merge(body).to_json)
+        request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: container.json["Config"].merge(body).to_json)
     end
 
     ##
@@ -168,7 +168,7 @@ class Docker::API::Image < Docker::API::Base
             default_reader(path, build_path("/images/create", params))
         else
             request[:headers] = { "X-Registry-Auth" => auth_encoder(authentication) } if authentication.any?
-            @connection.request(request)
+            request(request)
         end
     end
 
@@ -189,7 +189,7 @@ class Docker::API::Image < Docker::API::Base
         headers.merge!({"X-Registry-Config": auth_encoder(authentication) }) if authentication.any?
 
         if path == nil and params.has_key? :remote
-            response = @connection.request(method: :post, path: build_path("/build", params), headers: headers, response_block: block_given? ? block : default_streamer)
+            response = request(method: :post, path: build_path("/build", params), headers: headers, response_block: block_given? ? block : default_streamer)
         else
             default_reader(path, build_path("/build", params), headers)
         end
@@ -203,6 +203,6 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def delete_cache params = {}
-        @connection.post(build_path("/build/prune", params))
+        post(build_path("/build/prune", params))
     end
 end

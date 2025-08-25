@@ -11,7 +11,7 @@ class Docker::API::Service < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        @connection.get(build_path("/services", params))
+        get(build_path("/services", params))
     end
 
     # Create a service
@@ -24,7 +24,7 @@ class Docker::API::Service < Docker::API::Base
     def create body = {}, authentication = {}
         headers = {"Content-Type" => "application/json"}
         headers.merge!({"X-Registry-Auth" => auth_encoder(authentication) }) if authentication.keys.size > 0
-        @connection.request(method: :post, path: build_path("/services/create"), headers: headers, body: body.to_json)
+        request(method: :post, path: build_path("/services/create"), headers: headers, body: body.to_json)
     end
 
     # Update a service
@@ -40,7 +40,7 @@ class Docker::API::Service < Docker::API::Base
         # view https://github.com/docker/swarmkit/issues/1394#issuecomment-240850719
         headers = {"Content-Type" => "application/json"}
         headers.merge!({"X-Registry-Auth" => auth_encoder(authentication) }) if authentication.keys.size > 0
-        @connection.request(method: :post, path: build_path("/services/#{name}/update", params), headers: headers, body: body.to_json)
+        request(method: :post, path: build_path("/services/#{name}/update", params), headers: headers, body: body.to_json)
     end
 
     # Inspect a service
@@ -51,7 +51,7 @@ class Docker::API::Service < Docker::API::Base
     # @param name [String]: The ID or name of the service.
     # @param params [Hash]: Parameters that are appended to the URL. 
     def details name, params = {}
-        @connection.get(build_path("/services/#{name}", params))
+        get(build_path("/services/#{name}", params))
     end
 
     # Get stdout and stderr logs from a service. 
@@ -62,7 +62,7 @@ class Docker::API::Service < Docker::API::Base
     # @param name [String]: The ID or name of the service.
     # @param params [Hash]: Parameters that are appended to the URL. 
     def logs name, params = {}
-        @connection.get(build_path("/services/#{name}/logs", params))
+        get(build_path("/services/#{name}/logs", params))
     end
 
     # Delete a service
@@ -72,6 +72,6 @@ class Docker::API::Service < Docker::API::Base
     #
     # @param name [String]: The ID or name of the service.
     def remove name
-        @connection.delete(build_path("/services/#{name}"))
+        delete(build_path("/services/#{name}"))
     end
 end

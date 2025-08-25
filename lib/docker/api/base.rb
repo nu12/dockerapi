@@ -1,6 +1,20 @@
 ##
 # Base class to provide general methods, helpers and implementations accross classes.
 class Docker::API::Base
+    [:get, :post, :head, :delete, :put].each do | method |
+        define_method(method) { | path | self.request(method: method, path: path) }
+    end
+
+    ##
+    # Call an Excon request and returns a Docker::API::Response object.
+    #
+    # @param params [Hash]: Request parameters.
+    def request params
+        response = Docker::API::Response.new(@connection.excon.request(params).data)
+        response.request_params = params
+        p response if Docker::API.print_response_to_stdout 
+        response
+    end
     
     ##
     # Create new object and sets the validation to happen automatically when method parameters include "params" or "body".
@@ -45,7 +59,7 @@ class Docker::API::Base
     # @param &block: Replace the default output to stdout behavior.
     def default_reader path, url, header = {"Content-Type" => "application/x-tar"}, &block
         file = File.open(File.expand_path(path), "r")
-        response = @connection.request(method: :post, path: url , headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s}, response_block: block_given? ? block : default_streamer )
+        response = request(method: :post, path: url , headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s}, response_block: block_given? ? block : default_streamer )
         file.close
         response
     end
