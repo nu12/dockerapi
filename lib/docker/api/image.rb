@@ -133,7 +133,7 @@ class Docker::API::Image < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param authentication [Hash]: Authentication parameters.
     def push name, params = {}, authentication = {}
-        raise Docker::API::Error.new("Provide authentication parameters to push an image") unless authentication.any?
+        raise StandardError.new("Provide authentication parameters to push an image") unless authentication.any?
         @connection.request(method: :post, path: build_path("/images/#{name}/push", params), headers: { "X-Registry-Auth" => auth_encoder(authentication) } )
     end
 

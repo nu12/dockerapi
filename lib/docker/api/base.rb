@@ -7,9 +7,8 @@ class Docker::API::Base
     #
     # @param connection [Docker::API::Connection]: Connection to be used.
     def initialize connection = nil
-        raise Docker::API::Error.new("Expected connection to be a Docker::API::Connection class") if connection != nil && !connection.is_a?(Docker::API::Connection)
+        raise StandardError.new("Expected connection to be a Docker::API::Connection class") if connection != nil && !connection.is_a?(Docker::API::Connection)
         @connection = connection || Docker::API::Connection.new
-        set_automated_validation
     end
     
     private

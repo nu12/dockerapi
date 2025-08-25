@@ -22,7 +22,7 @@ RSpec.describe Docker::API::Network do
             it { expect(subject.list(filters: { scope: {"local": true} }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/networks?filters={\"scope\":{\"local\":true}}") }
             it { expect(subject.list(filters: { type: {"custom": true} }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/networks?filters={\"type\":{\"custom\":true}}") }
             it { expect(subject.list(filters: { type: {"builtin": true} }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/networks?filters={\"type\":{\"builtin\":true}}") }
-            it { expect{subject.list( invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.list( invalid: true )}.not_to raise_error }
         end
 
         describe ".details" do 
@@ -30,7 +30,7 @@ RSpec.describe Docker::API::Network do
             it { expect(subject.details( "bridge" ).request_params[:method]).to eq(:get) }
             it { expect(subject.details( "bridge", verbose: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/networks/bridge?verbose=true") }
             it { expect(subject.details( "bridge", scope: "local" ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/networks/bridge?scope=local") }
-            it { expect{subject.details( "bridge", invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.details( "bridge", invalid: true )}.not_to raise_error }
         end
 
         describe ".create" do 
@@ -38,7 +38,7 @@ RSpec.describe Docker::API::Network do
             it { expect(subject.create( Name: "rspec-network",CheckDuplicate: true,Driver: "bridge",Internal: true,Attachable: true,EnableIPv6: false).request_params[:method]).to eq(:post) }
             it { expect(subject.create( Name: "rspec-network",CheckDuplicate: true,Driver: "bridge",Internal: true,Attachable: true,EnableIPv6: false).request_params[:body]).to eq("{\"Name\":\"rspec-network\",\"CheckDuplicate\":true,\"Driver\":\"bridge\",\"Internal\":true,\"Attachable\":true,\"EnableIPv6\":false}") }
             it { expect(subject.create( Name: "rspec-network",CheckDuplicate: true,Driver: "bridge",Internal: true,Attachable: true,EnableIPv6: false).request_params[:headers]["Content-Type"]).to eq("application/json") }
-            it { expect{subject.create( invalid: true )}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect{subject.create( invalid: true )}.not_to raise_error }
         end
 
         describe ".connect" do 
@@ -46,7 +46,7 @@ RSpec.describe Docker::API::Network do
             it { expect(subject.connect("rspec-network", Container: "rspec-container").request_params[:method]).to eq(:post) }
             it { expect(subject.connect("rspec-network", Container: "rspec-container").request_params[:body]).to eq("{\"Container\":\"rspec-container\"}") }
             it { expect(subject.connect("rspec-network", Container: "rspec-container").request_params[:headers]["Content-Type"]).to eq("application/json") }
-            it { expect{subject.connect( "rspec-network",  invalid: true )}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect{subject.connect( "rspec-network",  invalid: true )}.not_to raise_error }
         end
 
         describe ".disconnect" do 
@@ -54,7 +54,7 @@ RSpec.describe Docker::API::Network do
             it { expect(subject.disconnect("rspec-network", Container: "rspec-container").request_params[:method]).to eq(:post) }
             it { expect(subject.disconnect("rspec-network", Container: "rspec-container").request_params[:body]).to eq("{\"Container\":\"rspec-container\"}") }
             it { expect(subject.disconnect("rspec-network", Container: "rspec-container").request_params[:headers]["Content-Type"]).to eq("application/json") }
-            it { expect{subject.disconnect( "rspec-network",  invalid: true )}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect{subject.disconnect( "rspec-network",  invalid: true )}.not_to raise_error }
         end
 
         describe ".remove" do 
@@ -68,7 +68,7 @@ RSpec.describe Docker::API::Network do
             it { expect(subject.prune(filters: { until: {"10m": true} }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/networks/prune?filters={\"until\":{\"10m\":true}}") }
             it { expect(subject.prune(filters: { until: {"1h30m": true} }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/networks/prune?filters={\"until\":{\"1h30m\":true}}") }
             it { expect(subject.prune(filters: { label: {"key=value": true} }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/networks/prune?filters={\"label\":{\"key=value\":true}}") }
-            it { expect{subject.prune( invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.prune( invalid: true )}.not_to raise_error }
         end
     end
 end

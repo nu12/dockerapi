@@ -4,7 +4,6 @@ require "base64"
 require "fileutils"
 
 require "docker/api/version"
-require "docker/api/error"
 require "docker/api/connection"
 require "docker/api/response"
 require "docker/api/base"

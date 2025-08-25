@@ -18,7 +18,7 @@ RSpec.describe Docker::API::Node do
             it { expect(subject.list(filters: {membership: {"accepted": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"membership\":{\"accepted\":true}}") }
             it { expect(subject.list(filters: {membership: {"pending": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"membership\":{\"pending\":true}}") }
             it { expect(subject.list(filters: {name: {"node_name": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"name\":{\"node_name\":true}}") }
-            it { expect{subject.list(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.list(invalid: true)}.not_to raise_error }
         end
     
         describe ".details" do
@@ -33,15 +33,15 @@ RSpec.describe Docker::API::Node do
             it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "drain" }).request_params[:headers]["Content-Type"]).to eq("application/json") }
             it { expect(subject.update("id", {version: "version"}, {Name: "node-name", Role: "manager", Availability: "active" }).request_params[:body]).to eq("{\"Name\":\"node-name\",\"Role\":\"manager\",\"Availability\":\"active\"}") }
             it { expect(subject.update("id", {version: "version"}, {Labels: {"KEY": "VALUE"}, Role: "manager", Availability: "active" }).request_params[:body]).to eq("{\"Labels\":{\"KEY\":\"VALUE\"},\"Role\":\"manager\",\"Availability\":\"active\"}") }
-            it { expect{subject.update("id", {invalid: true}, {})}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect{subject.update("id", {version: "version"}, {invalid: true})}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect{subject.update("id", {invalid: true}, {})}.not_to raise_error }
+            it { expect{subject.update("id", {version: "version"}, {invalid: true})}.not_to raise_error }
         end    
     
         describe ".delete" do
             it { expect(subject.delete("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id") }
             it { expect(subject.delete("id").request_params[:method]).to eq(:delete) }
             it { expect(subject.delete("id", force: true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id?force=true") }
-            it { expect{subject.delete("id", invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.delete("id", invalid: true)}.not_to raise_error }
         end
 
     end

@@ -35,15 +35,15 @@ RSpec.describe Docker::API::Container do
             it { expect(subject.list( { all: true, filters: {name: {"test": true}} } ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/json?all=true&filters={\"name\":{\"test\":true}}") }
             it { expect(subject.list( { all: true, filters: {exited: {"0": true} } } ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/json?all=true&filters={\"exited\":{\"0\":true}}") }
             it { expect(subject.list( { all: true, filters: {status: ["running"] } } ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/json?all=true&filters={\"status\":[\"running\"]}") }
-            it { expect { subject.list( { invalid: "invalid" } ) }.to raise_error(Docker::API::InvalidParameter) }
+            it { expect { subject.list( { invalid: "invalid" } ) }.not_to raise_error }
         end
 
         describe ".create" do
             it { expect(subject.create({name: "dockerapi", platform: "linux/amd64"}, {Image: "nginx"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/create?name=dockerapi&platform=linux/amd64") }
             it { expect(subject.create({name: "dockerapi", platform: "linux/amd64"}, {Image: "nginx"}).request_params[:method]).to eq(:post) }
             it { expect(subject.create({name: "dockerapi", platform: "linux/amd64"}, {Image: "nginx"}).request_params[:body]).to eq('{"Image":"nginx"}') }
-            it { expect{subject.remove({invalid: "invalid", platform: "linux/amd64"}, {Image: "nginx"})}.to raise_error(Docker::API::InvalidParameter)  }
-            it { expect{subject.create({name: "dockerapi", platform: "linux/amd64"}, {invalid: "invalid"})}.to raise_error(Docker::API::InvalidRequestBody)  }
+            it { expect{subject.remove({invalid: "invalid", platform: "linux/amd64"}, {Image: "nginx"})}.not_to raise_error  }
+            it { expect{subject.create({name: "dockerapi", platform: "linux/amd64"}, {invalid: "invalid"})}.not_to raise_error  }
         end
 
         describe ".remove" do
@@ -51,35 +51,35 @@ RSpec.describe Docker::API::Container do
             it { expect(subject.remove("dockerapi").request_params[:method]).to eq(:delete) }
             it { expect(subject.remove("dockerapi", {v: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi?v=true") }
             it { expect(subject.remove("dockerapi", {force: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi?force=true") }
-            it { expect{subject.remove("dockerapi",  {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
+            it { expect{subject.remove("dockerapi",  {invalid: "invalid"})}.not_to raise_error  }
         end
 
         describe ".start" do
             it { expect(subject.start("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/start") }
             it { expect(subject.start("dockerapi", {detachKeys: "ctrl-c"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/start?detachKeys=ctrl-c") }
             it { expect(subject.start("dockerapi").request_params[:method]).to eq(:post) }
-            it { expect{subject.start("dockerapi", {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
+            it { expect{subject.start("dockerapi", {invalid: "invalid"})}.not_to raise_error  }
         end
 
         describe ".stop" do
             it { expect(subject.stop("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/stop") }
             it { expect(subject.stop("dockerapi", {signal: "SIGINT"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/stop?signal=SIGINT") }
             it { expect(subject.stop("dockerapi").request_params[:method]).to eq(:post) }
-            it { expect{subject.stop("dockerapi", {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
+            it { expect{subject.stop("dockerapi", {invalid: "invalid"})}.not_to raise_error }
         end
 
         describe ".kill" do
             it { expect(subject.kill("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/kill") }
             it { expect(subject.kill("dockerapi", {signal: "SIGINT"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/kill?signal=SIGINT") }
             it { expect(subject.kill("dockerapi").request_params[:method]).to eq(:post) }
-            it { expect{subject.kill("dockerapi", {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
+            it { expect{subject.kill("dockerapi", {invalid: "invalid"})}.not_to raise_error  }
         end
 
         describe ".restart" do
             it { expect(subject.restart("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/restart") }
             it { expect(subject.restart("dockerapi", {signal: "SIGINT"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/restart?signal=SIGINT") }
             it { expect(subject.restart("dockerapi").request_params[:method]).to eq(:post) }
-            it { expect{subject.restart("dockerapi", {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
+            it { expect{subject.restart("dockerapi", {invalid: "invalid"})}.not_to raise_error  }
         end
 
         describe ".pause" do
@@ -97,7 +97,7 @@ RSpec.describe Docker::API::Container do
             it { expect(subject.top("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/top") }
             it { expect(subject.top("dockerapi").request_params[:method]).to eq(:get) }
             it { expect(subject.top("dockerapi").json).to be_kind_of(Hash) }            
-            it { expect{subject.top("dockerapi",  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.top("dockerapi",  {invalid_value: "invalid"})}.not_to raise_error }
         end
 
         describe ".wait" do
@@ -118,7 +118,7 @@ RSpec.describe Docker::API::Container do
         describe ".resize" do
             it { expect(subject.resize("dockerapi",  {h: 100, w: 100}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/resize?h=100&w=100") }
             it { expect(subject.resize("dockerapi",  {h: 100, w: 100}).request_params[:method]).to eq(:post) }
-            it { expect{subject.resize("dockerapi",  {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.resize("dockerapi",  {invalid: "invalid"})}.not_to raise_error }
         end
 
         describe ".details" do
@@ -128,7 +128,7 @@ RSpec.describe Docker::API::Container do
             it { expect(subject.details("dockerapi", {size: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/json?size=true") }
             it { expect(subject.details("dockerapi").request_params[:method]).to eq(:get) }
             it { expect(subject.details("dockerapi").body).to match(/\"Name\":\"\/dockerapi\"/) }
-            it { expect{subject.details("dockerapi",  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
+            it { expect{subject.details("dockerapi",  {invalid_value: "invalid"})}.not_to raise_error  }
         end
 
         describe ".logs" do
@@ -139,7 +139,7 @@ RSpec.describe Docker::API::Container do
             it { expect(subject.logs("dockerapi",  {stdout: true, until: 999999999}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/logs?stdout=true&until=999999999") }
             it { expect(subject.logs("dockerapi",  {stdout: true, timestamps: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/logs?stdout=true&timestamps=true") }
             it { expect(subject.logs("dockerapi",  {stdout: true, tail: "all"}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/logs?stdout=true&tail=all") }
-            it { expect{subject.logs("dockerapi",  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
+            it { expect{subject.logs("dockerapi",  {invalid_value: "invalid"})}.not_to raise_error  }
         end
 
         describe ".changes" do
@@ -153,7 +153,7 @@ RSpec.describe Docker::API::Container do
         describe ".stats" do
             it { expect(subject.stats("dockerapi", {stream: false}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/stats?stream=false") }
             it { expect(subject.stats("dockerapi", {stream: false}).request_params[:method]).to eq(:get) }
-            it { expect{subject.stats("dockerapi",  {invalid_value: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
+            it { expect{subject.stats("dockerapi",  {invalid_value: "invalid"})}.not_to raise_error  }
         end
 
         describe ".export" do
@@ -171,7 +171,7 @@ RSpec.describe Docker::API::Container do
             it { expect(subject.update("dockerapi", {RestartPolicy: {Name: "unless-stopped"}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/update") }
             it { expect(subject.update("dockerapi", {RestartPolicy: {Name: "unless-stopped"}}).request_params[:method]).to eq(:post) }
             it { expect(subject.update("dockerapi", {RestartPolicy: {Name: "unless-stopped"}}).request_params[:body]).to eq('{"RestartPolicy":{"Name":"unless-stopped"}}') }
-            it { expect{subject.update("dockerapi", {invalid: "invalid"})}.to raise_error(Docker::API::InvalidRequestBody) }    
+            it { expect{subject.update("dockerapi", {invalid: "invalid"})}.not_to raise_error }    
         end
 
         describe ".rename" do
@@ -182,7 +182,7 @@ RSpec.describe Docker::API::Container do
         describe ".attach" do
             it { expect(subject.attach("dockerapi").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/attach") }
             it { expect(subject.attach("dockerapi").request_params[:method]).to eq(:post) }
-            it { expect{subject.attach("dockerapi",  {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
+            it { expect{subject.attach("dockerapi",  {invalid: "invalid"})}.not_to raise_error }
         end
 
         describe ".prune" do
@@ -192,7 +192,7 @@ RSpec.describe Docker::API::Container do
             it { expect(subject.prune.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/prune") }
             it { expect(subject.prune.request_params[:method]).to eq(:post) }
             it { expect(subject.prune.json).to be_kind_of(Hash) }
-            it { expect{described_class.new.prune( {invalid: "invalid"})}.to raise_error(Docker::API::InvalidParameter)  }
+            it { expect{subject.prune( {invalid: "invalid"})}.not_to raise_error }
         end
     end
 end

@@ -22,7 +22,7 @@ RSpec.describe Docker::API::Config do
             it { expect(subject.list(filters: {id: { "config-id": true }}).request_params[:path]).to eq('/v1.43/configs?filters={"id":{"config-id":true}}') }
             it { expect(subject.list(filters: {label: { "label=key": true }}).request_params[:path]).to eq('/v1.43/configs?filters={"label":{"label=key":true}}') }
             it { expect(subject.list(filters: {name: { "config-name": true }}).request_params[:path]).to eq('/v1.43/configs?filters={"name":{"config-name":true}}') }
-            it { expect{subject.list(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.list(invalid: true)}.not_to raise_error }
         end
 
         describe ".create" do
@@ -30,7 +30,7 @@ RSpec.describe Docker::API::Config do
             it { expect(subject.create.request_params[:method]).to eq(:post) }
             it { expect(subject.create(Name: "rspec-config").request_params[:body]).to eq('{"Name":"rspec-config"}') }
             it { expect(subject.create({Name: "rspec-config",Labels: {foo: "bar"}, Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}).request_params[:body]).to eq('{"Name":"rspec-config","Labels":{"foo":"bar"},"Data":"VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}') }
-            it { expect{subject.create(invalid: true)}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect{subject.create(invalid: true)}.not_to raise_error }
         end
 
         describe ".details" do
@@ -46,8 +46,8 @@ RSpec.describe Docker::API::Config do
 
             it { expect(subject.update("rspec-config", {version: version}, spec).request_params[:path]).to eq('/v1.43/v1.43/configs/rspec-config/update?version=abc') }
             it { expect(subject.update("rspec-config", {version: version}, spec).request_params[:method]).to eq(:post) }
-            it { expect{subject.update("rspec-config", invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
-            it { expect{subject.update("rspec-config", {version: version}, {invalid: true})}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect{subject.update("rspec-config", invalid: true)}.not_to raise_error }
+            it { expect{subject.update("rspec-config", {version: version}, {invalid: true})}.not_to raise_error }
         end
 
         describe ".delete" do

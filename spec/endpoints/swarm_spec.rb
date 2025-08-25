@@ -19,7 +19,7 @@ RSpec.describe Docker::API::Swarm do
             it { expect(subject.init({AdvertiseAddr: "127.0.0.1:2375", ListenAddr: "0.0.0.0:4567", SubnetSize: 24, Spec: { Name: "default" }}).request_params[:method]).to eq(:post) }
             it { expect(subject.init({AdvertiseAddr: "127.0.0.1:2375", ListenAddr: "0.0.0.0:4567", SubnetSize: 24, Spec: { Name: "default" }}).request_params[:body]).to eq("{\"AdvertiseAddr\":\"127.0.0.1:2375\",\"ListenAddr\":\"0.0.0.0:4567\",\"SubnetSize\":24,\"Spec\":{\"Name\":\"default\"}}") }
             it { expect(subject.init({AdvertiseAddr: "127.0.0.1:2375", ListenAddr: "0.0.0.0:4567", SubnetSize: 24, Spec: { Name: "default" }}).request_params[:headers]["Content-Type"]).to eq("application/json") }
-            it { expect{subject.init(invalid: true)}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect{subject.init(invalid: true)}.not_to raise_error }
         end
 
         describe ".details" do
@@ -33,11 +33,11 @@ RSpec.describe Docker::API::Swarm do
             it { expect(subject.update({version: "version", rotateWorkerToken: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/update?version=version&rotateWorkerToken=true") }
             it { expect(subject.update({version: "version", rotateManagerToken: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/update?version=version&rotateManagerToken=true") }
             it { expect(subject.update({version: "version", rotateManagerUnlockKey: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/update?version=version&rotateManagerUnlockKey=true") }
-            it { expect{subject.update({version: "version", invalid: true})}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.update({version: "version", invalid: true})}.not_to raise_error }
             it { expect(subject.update({version: "version"}, {EncryptionConfig: { AutoLockManagers: true } }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/update?version=version") }
             it { expect(subject.update({version: "version"}, {EncryptionConfig: { AutoLockManagers: true } }).request_params[:body]).to eq("{\"EncryptionConfig\":{\"AutoLockManagers\":true}}") }
             it { expect(subject.update({version: "version"}, {EncryptionConfig: { AutoLockManagers: true } }).request_params[:headers]["Content-Type"]).to eq("application/json") }
-            it { expect{subject.update({version: "version"},{invalid: true})}.to raise_error(Docker::API::InvalidRequestBody) }
+            it { expect{subject.update({version: "version"},{invalid: true})}.not_to raise_error }
         end
     
         describe ".unlock_key" do
@@ -60,7 +60,7 @@ RSpec.describe Docker::API::Swarm do
         describe ".leave" do
             it { expect(subject.leave(force: true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/leave?force=true") }
             it { expect(subject.leave(force: true).request_params[:method]).to eq(:post) }
-            it { expect{subject.leave(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.leave(invalid: true)}.not_to raise_error }
         end
     end
 end

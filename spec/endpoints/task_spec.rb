@@ -17,7 +17,7 @@ RSpec.describe Docker::API::Task do
             it { expect(subject.list(filters: { "desired-state": {"accepted": true} }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/tasks?filters={\"desired-state\":{\"accepted\":true}}") }
             it { expect(subject.list(filters: { "id": {"id-here": true} }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/tasks?filters={\"id\":{\"id-here\":true}}") }
             it { expect(subject.list(filters: { "name": {"task-name": true} }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/tasks?filters={\"name\":{\"task-name\":true}}") }
-            it { expect{subject.list(invalid: true)}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.list(invalid: true)}.not_to raise_error }
             it { expect{subject.list(invalid: true, skip_validation: true)}.not_to raise_error }
         end
 
@@ -33,7 +33,7 @@ RSpec.describe Docker::API::Task do
             it { expect(subject.logs( "id", timestamps: 0, stdout: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/tasks/id/logs?timestamps=0&stdout=true") }
             it { expect(subject.logs( "id", tail: 10, stdout: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/tasks/id/logs?tail=10&stdout=true") }
             it { expect(subject.logs( "id", tail: "all", stdout: true ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/tasks/id/logs?tail=all&stdout=true") }
-            it { expect{subject.logs( "id", invalid: true )}.to raise_error(Docker::API::InvalidParameter) }
+            it { expect{subject.logs( "id", invalid: true )}.not_to raise_error }
             it { expect{subject.logs( "id", invalid: true, skip_validation: true )}.not_to raise_error }
         end
     end
