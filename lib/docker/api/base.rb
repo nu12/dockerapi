@@ -66,7 +66,7 @@ class Docker::API::Base
     # @param hash [Hash]: Hash object to be converted in a query parameter-like string.
     def hash_to_params hash
         p = []
-        hash.delete_if{ | k, v | k.to_s == "skip_validation" }.each { |k,v| p.push( v.is_a?(Hash) ? "#{k}=#{v.to_json}" : "#{k}=#{v}") }
+        hash.each { |k,v| p.push( v.is_a?(Hash) ? "#{k}=#{v.to_json}" : "#{k}=#{v}") }
         p.join("&").gsub(" ","")
     end
 
