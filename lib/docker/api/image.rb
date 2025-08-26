@@ -11,7 +11,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param name [String]: The ID or name of the image.
     def details name
-        get(build_path("/images/#{name}/json"))
+        get("/images/#{name}/json")
     end
 
     ##
@@ -23,7 +23,7 @@ class Docker::API::Image < Docker::API::Base
     # @param name [String]: The ID or name of the image.
     # @param authentication [Hash]: Authentication parameters.
     def distribution name, authentication = {}
-        request = {method: :get, path: build_path("/distribution/#{name}/json")}
+        request = {method: :get, path: "/distribution/#{name}/json"}
         request[:headers] = {"X-Registry-Auth" => auth_encoder(authentication)} if authentication.any?
         request(request)
     end
@@ -36,7 +36,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param name [String]: The ID or name of the image.
     def history name
-        get(build_path("/images/#{name}/history"))
+        get("/images/#{name}/history")
     end
 
     ##
@@ -47,7 +47,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        get(build_path("/images/json", params)) 
+        get("/images/json", params)
     end
 
     ##
@@ -58,7 +58,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def search params = {}
-        get(build_path("/images/search", params)) 
+        get("/images/search", params)
     end
 
     ##
@@ -70,7 +70,7 @@ class Docker::API::Image < Docker::API::Base
     # @param name [String]: The ID or name of the image.
     # @param params [Hash]: Parameters that are appended to the URL.
     def tag name, params = {}
-        post(build_path("/images/#{name}/tag", params))
+        post("/images/#{name}/tag", params)
     end
 
     ##
@@ -81,7 +81,7 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def prune params = {}
-        post(build_path("/images/prune", params))
+        post("/images/prune", params)
     end
 
     ##
@@ -95,7 +95,7 @@ class Docker::API::Image < Docker::API::Base
     # @param name [String]: The ID or name of the image.
     # @param params [Hash]: Parameters that are appended to the URL.
     def remove name, params = {}
-        delete(build_path("/images/#{name}", params))
+        delete("/images/#{name}", params)
     end
 
     ##
@@ -108,7 +108,7 @@ class Docker::API::Image < Docker::API::Base
     # @param path [String]: Path to the exported file.
     # @param &block: Replace the default file writing behavior.
     def export name, path, &block
-        request(method: :get, path: build_path("/images/#{name}/get") , response_block: block_given? ? block : default_writer(path))
+        request(method: :get, path: "/images/#{name}/get" , response_block: block_given? ? block : default_writer(path))
     end
 
     ##
@@ -117,10 +117,10 @@ class Docker::API::Image < Docker::API::Base
     # Docker API: POST /images/load
     # @see https://docs.docker.com/engine/api/v1.40/#operation/ImageLoad
     #
-    # @param name [String]: The ID or name of the image.
+    # @param path [String]: Path to the file to be read.
     # @param params [Hash]: Parameters that are appended to the URL.
     def import path, params = {}
-        default_reader(path, build_path("/images/load", params))
+        default_reader(path, "/images/load", params)
     end
 
     ##
@@ -134,7 +134,7 @@ class Docker::API::Image < Docker::API::Base
     # @param authentication [Hash]: Authentication parameters.
     def push name, params = {}, authentication = {}
         raise StandardError.new("Provide authentication parameters to push an image") unless authentication.any?
-        request(method: :post, path: build_path("/images/#{name}/push", params), headers: { "X-Registry-Auth" => auth_encoder(authentication) } )
+        request(method: :post, path: "/images/#{name}/push", params: params, headers: { "X-Registry-Auth" => auth_encoder(authentication) } )
     end
 
     ##
@@ -148,7 +148,7 @@ class Docker::API::Image < Docker::API::Base
     def commit params = {}, body = {}
         container = Docker::API::Container.new(@connection).details(params[:container])
         return container if [404, 301].include? container.status
-        request(method: :post, path: build_path("/commit", params), headers: {"Content-Type": "application/json"}, body: container.json["Config"].merge(body).to_json)
+        request(method: :post, path: "/commit", params: params, headers: {"Content-Type": "application/json"}, body: container.json["Config"].merge(body).to_json)
     end
 
     ##
@@ -161,11 +161,11 @@ class Docker::API::Image < Docker::API::Base
     # @param authentication [Hash]: Authentication parameters.
     # @param &block: Replace the default output to stdout behavior.
     def create params = {}, authentication = {}, &block
-        request = {method: :post, path: build_path("/images/create", params), response_block: block_given? ? block : default_streamer }
+        request = {method: :post, path: "/images/create", params: params, response_block: block_given? ? block : default_streamer }
         if params.has_key? :fromSrc and !params[:fromSrc].match(/^(http|https)/) # then it's using a tar file
             path = params[:fromSrc]
             params[:fromSrc] = "-"
-            default_reader(path, build_path("/images/create", params))
+            default_reader(path, "/images/create", params)
         else
             request[:headers] = { "X-Registry-Auth" => auth_encoder(authentication) } if authentication.any?
             request(request)
@@ -189,9 +189,9 @@ class Docker::API::Image < Docker::API::Base
         headers.merge!({"X-Registry-Config": auth_encoder(authentication) }) if authentication.any?
 
         if path == nil and params.has_key? :remote
-            response = request(method: :post, path: build_path("/build", params), headers: headers, response_block: block_given? ? block : default_streamer)
+            response = request(method: :post, path: "/build", params: params, headers: headers, response_block: block_given? ? block : default_streamer)
         else
-            default_reader(path, build_path("/build", params), headers)
+            default_reader(path, "/build", params, headers)
         end
     end
 
@@ -203,6 +203,6 @@ class Docker::API::Image < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def delete_cache params = {}
-        post(build_path("/build/prune", params))
+        post("/build/prune", params)
     end
 end

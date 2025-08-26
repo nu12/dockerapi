@@ -2,7 +2,7 @@
 # Base class to provide general methods, helpers and implementations accross classes.
 class Docker::API::Base
     [:get, :post, :head, :delete, :put].each do | method |
-        define_method(method) { | path | self.request(method: method, path: path) }
+        define_method(method) { | path, params = {} | self.request(method: method, path: path, params: params) }
     end
 
     ##
@@ -10,6 +10,7 @@ class Docker::API::Base
     #
     # @param params [Hash]: Request parameters.
     def request params
+        params[:path] = build_path(params[:path], params[:params] ||= {})
         response = Docker::API::Response.new(@connection.excon.request(params).data)
         response.request_params = params
         p response if Docker::API.print_response_to_stdout 
@@ -57,9 +58,9 @@ class Docker::API::Base
     # @param url [String]: Endpoint URL where the file is going to be sent.
     # @param header [Hash]: Header of the request.
     # @param &block: Replace the default output to stdout behavior.
-    def default_reader path, url, header = {"Content-Type" => "application/x-tar"}, &block
+    def default_reader path, base_url, params, header = {"Content-Type" => "application/x-tar"}, &block
         file = File.open(File.expand_path(path), "r")
-        response = request(method: :post, path: url , headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s}, response_block: block_given? ? block : default_streamer )
+        response = request(method: :post, path: base_url, params: params , headers: header, request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s}, response_block: block_given? ? block : default_streamer )
         file.close
         response
     end

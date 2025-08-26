@@ -11,7 +11,7 @@ class Docker::API::Network < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        get(build_path("/networks", params))
+        get("/networks", params)
     end
 
     ##
@@ -23,7 +23,7 @@ class Docker::API::Network < Docker::API::Base
     # @param name [String]: The ID or name of the network.
     # @param params [Hash]: Parameters that are appended to the URL.
     def details name, params = {}
-        get(build_path("/networks/#{name}", params))
+        get("/networks/#{name}", params)
     end
 
     ##
@@ -34,7 +34,7 @@ class Docker::API::Network < Docker::API::Base
     #
     # @param body [Hash]: Request body to be sent as json.
     def create body = {}
-        request(method: :post, path: build_path("/networks/create"), headers: {"Content-Type" => "application/json"}, body: body.to_json)
+        request(method: :post, path: "/networks/create", headers: {"Content-Type" => "application/json"}, body: body.to_json)
     end
 
     ##
@@ -45,7 +45,7 @@ class Docker::API::Network < Docker::API::Base
     #
     # @param name [String]: The ID or name of the network.
     def remove name
-        delete(build_path("/networks/#{name}"))
+        delete("/networks/#{name}")
     end
 
     ##
@@ -56,7 +56,7 @@ class Docker::API::Network < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def prune params = {}
-        post(build_path("/networks/prune", params))
+        post("/networks/prune", params)
     end
 
     ##
@@ -68,7 +68,7 @@ class Docker::API::Network < Docker::API::Base
     # @param name [String]: The ID or name of the network.
     # @param body [Hash]: Request body to be sent as json.
     def connect name, body = {}
-        request(method: :post, path: build_path("/networks/#{name}/connect"), headers: {"Content-Type" => "application/json"}, body: body.to_json)
+        request(method: :post, path: "/networks/#{name}/connect", headers: {"Content-Type" => "application/json"}, body: body.to_json)
     end
 
     ##
@@ -80,7 +80,7 @@ class Docker::API::Network < Docker::API::Base
     # @param name [String]: The ID or name of the network.
     # @param body [Hash]: Request body to be sent as json.
     def disconnect name, body = {}
-        request(method: :post, path: build_path("/networks/#{name}/disconnect"), headers: {"Content-Type" => "application/json"}, body: body.to_json)
+        request(method: :post, path: "/networks/#{name}/disconnect", headers: {"Content-Type" => "application/json"}, body: body.to_json)
     end
 
 end

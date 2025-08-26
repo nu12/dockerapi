@@ -592,7 +592,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 * Update version.
 * Run tests.
 * Commit changes.
-* Release / push version to Rubygems & Github.
+* Push a new Github tag with `git tag $(bundle exec rake version | tr -d '"') && git push --tags`.
 
 ## Contributing
 
