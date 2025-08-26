@@ -11,7 +11,7 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        @connection.get(build_path("/plugins", params))
+        get("/plugins", params)
     end
 
     # Get plugin privileges
@@ -22,7 +22,7 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def privileges params = {}
-        @connection.get(build_path("/plugins/privileges", params))
+        get("/plugins/privileges", params)
     end
 
     # Install a plugin
@@ -41,7 +41,7 @@ class Docker::API::Plugin < Docker::API::Base
     def install params = {}, privileges = [], authentication = {}
         headers = {"Content-Type" => "application/json"}
         headers.merge!({"X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s)}) if authentication.keys.size > 0
-        @connection.request(method: :post, path: build_path("/plugins/pull", params), headers: headers, body: privileges.to_json )
+        request(method: :post, path: "/plugins/pull", params: params, headers: headers, body: privileges.to_json )
     end
 
     # Inspect a plugin
@@ -52,7 +52,7 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param name [String]: The ID or name of the plugin.
     def details name 
-        @connection.get(build_path("/plugins/#{name}/json"))
+        get("/plugins/#{name}/json")
     end
 
     # Remove a plugin
@@ -65,7 +65,7 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def remove name, params = {}
-        @connection.delete(build_path("/plugins/#{name}",params))
+        delete("/plugins/#{name}",params)
     end
 
     # Enable a plugin
@@ -78,7 +78,7 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def enable name, params = {}
-        @connection.post(build_path("/plugins/#{name}/enable", params))
+        post("/plugins/#{name}/enable", params)
     end
 
     # Disable a plugin
@@ -89,7 +89,7 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param name [String]: The ID or name of the plugin.
     def disable name
-        @connection.post(build_path("/plugins/#{name}/disable"))
+        post("/plugins/#{name}/disable")
     end
 
     # Upgrade a plugin
@@ -108,7 +108,7 @@ class Docker::API::Plugin < Docker::API::Base
     def upgrade name, params = {}, privileges = [], authentication = {}
         headers = {"Content-Type" => "application/json"}
         headers.merge!({"X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s)}) if authentication.keys.size > 0
-        @connection.request(method: :post, path: build_path("/plugins/#{name}/upgrade", params), headers: headers, body: privileges.to_json )
+        request(method: :post, path: "/plugins/#{name}/upgrade", params: params, headers: headers, body: privileges.to_json )
     end
 
     # Create a plugin
@@ -122,7 +122,7 @@ class Docker::API::Plugin < Docker::API::Base
     # @param path [String]: Path to tar file that contains rootfs folder and config.json file.
     def create name, path
         file = File.open( File.expand_path( path ) , "r")
-        response = @connection.request(method: :post, path: build_path("/plugins/create?name=#{name}"), body: file.read.to_s )
+        response = request(method: :post, path: "/plugins/create?name=#{name}", body: file.read.to_s )
         file.close        
         response
     end
@@ -138,9 +138,9 @@ class Docker::API::Plugin < Docker::API::Base
     # @param authentication [Hash]: Authentication parameters.
     def push name, authentication = {}
         if authentication.keys.size > 0
-            @connection.request(method: :post, path: build_path("/plugins/#{name}/push"), headers: {"X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s)})
+            request(method: :post, path: "/plugins/#{name}/push", headers: {"X-Registry-Auth" => Base64.urlsafe_encode64(authentication.to_json.to_s)})
         else
-            @connection.post(build_path("/plugins/#{name}/push"))
+            post("/plugins/#{name}/push")
         end
     end
 
@@ -154,7 +154,7 @@ class Docker::API::Plugin < Docker::API::Base
     #
     # @param config [Array]: Plugin configuration to be sent as json in request body.
     def configure name, config
-        @connection.request(method: :post, path: build_path("/plugins/#{name}/set"), headers: {"Content-Type" => "application/json"}, body:config.to_json)
+        request(method: :post, path: "/plugins/#{name}/set", headers: {"Content-Type" => "application/json"}, body:config.to_json)
     end
 
 end

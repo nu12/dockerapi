@@ -11,7 +11,7 @@ class Docker::API::Container < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        @connection.get(build_path("/containers/json", params))
+        get("/containers/json", params)
     end
 
     ##
@@ -23,7 +23,7 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param params [Hash]: Parameters that are appended to the URL.
     def details name, params = {}
-        @connection.get(build_path("/containers/#{name}/json", params))
+        get("/containers/#{name}/json", params)
     end
 
     ##
@@ -35,7 +35,7 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param params [Hash]: Parameters that are appended to the URL.
     def top name, params = {}
-        @connection.get(build_path("/containers/#{name}/top", params))
+        get("/containers/#{name}/top", params)
     end
 
     ##
@@ -46,7 +46,7 @@ class Docker::API::Container < Docker::API::Base
     #
     # @param name [String]: The ID or name of the container.
     def changes name
-        @connection.get(build_path("/containers/#{name}/changes"))
+        get("/containers/#{name}/changes")
     end
 
     ##
@@ -58,7 +58,7 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param params [Hash]: Parameters that are appended to the URL.
     def start name, params = {}
-        @connection.post(build_path("/containers/#{name}/start", params))
+        post("/containers/#{name}/start", params)
     end
 
     ##
@@ -70,7 +70,7 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param params [Hash]: Parameters that are appended to the URL.
     def stop name, params = {}
-        @connection.post(build_path("/containers/#{name}/stop", params))
+        post("/containers/#{name}/stop", params)
     end
 
     ##
@@ -82,7 +82,7 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param params [Hash]: Parameters that are appended to the URL.
     def restart name, params = {}
-        @connection.post(build_path("/containers/#{name}/restart", params))
+        post("/containers/#{name}/restart", params)
     end
 
     ##
@@ -94,7 +94,7 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param params [Hash]: Parameters that are appended to the URL.
     def kill name, params = {}
-        @connection.post(build_path("/containers/#{name}/kill", params))
+        post("/containers/#{name}/kill", params)
     end
 
     ##
@@ -106,7 +106,7 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param params [Hash]: Parameters that are appended to the URL.
     def wait name, params = {}
-        @connection.post(build_path("/containers/#{name}/wait", params))
+        post("/containers/#{name}/wait", params)
     end
 
     ##
@@ -118,8 +118,7 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param body [Hash]: Request body to be sent as json.
     def update name, body = {}
-        
-        @connection.request(method: :post, path: build_path("/containers/#{name}/update"), headers: {"Content-Type": "application/json"}, body: body.to_json)
+        request(method: :post, path: "/containers/#{name}/update", headers: {"Content-Type": "application/json"}, body: body.to_json)
     end
 
     ##
@@ -131,7 +130,7 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param params [Hash]: Parameters that are appended to the URL.
     def rename name, params = {}
-        @connection.post(build_path("/containers/#{name}/rename", params))
+        post("/containers/#{name}/rename", params)
     end
 
     ##
@@ -143,7 +142,7 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param params [Hash]: Parameters that are appended to the URL.
     def resize name, params = {}
-        @connection.post(build_path("/containers/#{name}/resize", params))
+        post("/containers/#{name}/resize", params)
     end
 
     ##
@@ -154,7 +153,7 @@ class Docker::API::Container < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def prune params = {}
-        @connection.post(build_path("/containers/prune", params))
+        post("/containers/prune", params)
     end
 
     ##
@@ -165,7 +164,7 @@ class Docker::API::Container < Docker::API::Base
     #
     # @param name [String]: The ID or name of the container.
     def pause name
-        @connection.post(build_path("/containers/#{name}/pause"))
+        post("/containers/#{name}/pause")
     end
 
     ##
@@ -176,7 +175,7 @@ class Docker::API::Container < Docker::API::Base
     #
     # @param name [String]: The ID or name of the container.
     def unpause name
-        @connection.post(build_path("/containers/#{name}/unpause"))
+        post("/containers/#{name}/unpause")
     end
 
     ##
@@ -188,7 +187,7 @@ class Docker::API::Container < Docker::API::Base
     # @param name [String]: The ID or name of the container.
     # @param params [Hash]: Parameters that are appended to the URL.
     def remove name, params = {}
-        @connection.delete(build_path("/containers/#{name}", params))
+        delete("/containers/#{name}", params)
     end
 
     ##
@@ -201,13 +200,12 @@ class Docker::API::Container < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param &block: Replace the default output to stdout behavior.
     def logs name, params = {}, &block
-        
-        path = build_path("/containers/#{name}/logs", params)
+        path = "/containers/#{name}/logs"
 
         if [true, 1 ].include? params[:follow]
-            @connection.request(method: :get, path: path , response_block: block_given? ? block : default_streamer)
+            request(method: :get, path: path, params: params, response_block: block_given? ? block : default_streamer)
         else
-            @connection.get(path)
+            get(path, params)
         end
     end
 
@@ -221,7 +219,7 @@ class Docker::API::Container < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param &block: Replace the default output to stdout behavior.
     def attach name, params = {}, &block
-        @connection.request(method: :post, path: build_path("/containers/#{name}/attach", params) , response_block: block_given? ? block : default_streamer)
+        request(method: :post, path: "/containers/#{name}/attach", params: params , response_block: block_given? ? block : default_streamer)
     end
 
     ##
@@ -233,7 +231,7 @@ class Docker::API::Container < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param body [Hash]: Request body to be sent as json.
     def create params = {}, body = {}
-        @connection.request(method: :post, path: build_path("/containers/create", params), headers: {"Content-Type": "application/json"}, body: body.to_json)
+        request(method: :post, path: "/containers/create", params: params, headers: {"Content-Type": "application/json"}, body: body.to_json)
     end
 
     ##
@@ -246,11 +244,12 @@ class Docker::API::Container < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param &block: Replace the default output to stdout behavior.
     def stats name, params = {}, &block
-        path = build_path("/containers/#{name}/stats", params)
+        path = "/containers/#{name}/stats"
+
         if [true, 1 ].include? params[:stream]
-            @connection.request(method: :get, path: path , response_block: block_given? ? block : default_streamer)
+            request(method: :get, path: path, params: params, response_block: block_given? ? block : default_streamer)
         else
-            @connection.get(path)
+            get(path, params)
         end
     end
 
@@ -266,7 +265,7 @@ class Docker::API::Container < Docker::API::Base
     def export name, path, &block
         response = self.details(name)
         return response unless response.status == 200
-        @connection.request(method: :get, path: "/containers/#{name}/export" , response_block: block_given? ? block : default_writer(path))
+        request(method: :get, path: "/containers/#{name}/export", response_block: block_given? ? block : default_writer(path))
     end
 
     ##
@@ -282,11 +281,11 @@ class Docker::API::Container < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param &block: Replace the default file writing behavior.
     def get_archive name, path, params = {}, &block
-        response = @connection.head(build_path("/containers/#{name}/archive", params))
+        response = head("/containers/#{name}/archive", params)
         return response unless response.status == 200 
         
         file = File.open( File.expand_path( path ) , "wb")
-        response = @connection.request(method: :get, path: build_path("/containers/#{name}/archive", params) , response_block: block_given? ? block : lambda { |chunk, remaining_bytes, total_bytes| file.write(chunk) })
+        response = request(method: :get, path: "/containers/#{name}/archive", params: params , response_block: block_given? ? block : lambda { |chunk, remaining_bytes, total_bytes| file.write(chunk) })
         file.close
         response
     end
@@ -304,7 +303,7 @@ class Docker::API::Container < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     def put_archive name, path, params = {}
         file = File.open( File.expand_path( path ) , "r")
-        response = @connection.request(method: :put, path: build_path("/containers/#{name}/archive", params) , request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
+        response = request(method: :put, path: "/containers/#{name}/archive", params: params , request_block: lambda { file.read(Excon.defaults[:chunk_size]).to_s} )
         file.close
         response
     end

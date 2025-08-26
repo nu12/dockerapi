@@ -1,20 +1,7 @@
 ##
 # Connection class.
 class Docker::API::Connection
-    [:get, :post, :head, :delete, :put].each do | method |
-        define_method(method) { | path | self.request(method: method, path: path) }
-    end
-
-    ##
-    # Call an Excon request and returns a Docker::API::Response object.
-    #
-    # @param params [Hash]: Request parameters.
-    def request params
-        response = Docker::API::Response.new(@connection.request(params).data)
-        response.request_params = params
-        p response if Docker::API.print_response_to_stdout 
-        response
-    end
+    attr_reader(:excon)
     
     ##
     # Create an Excon connection.
@@ -22,8 +9,8 @@ class Docker::API::Connection
     # @param url [String]: URL for the connection.
     # @param params [String]: Additional parameters.
     def initialize url = nil, params = {}
-        return @connection = Excon.new('unix:///', params.merge({socket: '/var/run/docker.sock'})) unless url
-        @connection = Excon.new(url, params)
+        return @excon = Excon.new('unix:///', params.merge({socket: '/var/run/docker.sock'})) unless url
+        @excon = Excon.new(url, params)
     end
 
 end

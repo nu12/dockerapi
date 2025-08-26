@@ -44,7 +44,7 @@ RSpec.describe Docker::API::Config do
             let(:version) { subject.details("rspec-config").json["Version"]["Index"] }
             let(:spec) { subject.details("rspec-config").json["Spec"] }
 
-            it { expect(subject.update("rspec-config", {version: version}, spec).request_params[:path]).to eq('/v1.43/v1.43/configs/rspec-config/update?version=abc') }
+            it { expect(subject.update("rspec-config", {version: version}, spec).request_params[:path]).to eq('/v1.43/configs/rspec-config/update?version=abc') }
             it { expect(subject.update("rspec-config", {version: version}, spec).request_params[:method]).to eq(:post) }
             it { expect{subject.update("rspec-config", invalid: true)}.not_to raise_error }
             it { expect{subject.update("rspec-config", {version: version}, {invalid: true})}.not_to raise_error }

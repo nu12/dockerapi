@@ -11,7 +11,7 @@ class Docker::API::System < Docker::API::Base
     #
     # @param body [Hash]: Request body to be sent as json.
     def auth body = {}
-        @connection.request(method: :post, path: build_path("/auth"), headers: { "Content-Type" => "application/json" }, body: body.to_json)
+        request(method: :post, path: "/auth", headers: { "Content-Type" => "application/json" }, body: body.to_json)
     end
 
     ##
@@ -23,7 +23,7 @@ class Docker::API::System < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param &block: Replace the default output to stdout behavior.
     def events params = {}, &block
-        @connection.request(method: :get, path: build_path("/events", params), response_block: block_given? ? block : default_streamer )
+        request(method: :get, path: "/events", params: params, response_block: block_given? ? block : default_streamer )
     end
 
     ##
@@ -32,7 +32,7 @@ class Docker::API::System < Docker::API::Base
     # Docker API: GET /_ping
     # @see https://docs.docker.com/engine/api/v1.40/#operation/SystemPing
     def ping
-        @connection.get(build_path("/_ping"))
+        get("/_ping")
     end
 
     ##
@@ -41,7 +41,7 @@ class Docker::API::System < Docker::API::Base
     # Docker API: GET /info
     # @see https://docs.docker.com/engine/api/v1.40/#operation/SystemInfo
     def info
-        @connection.get(build_path("/info"))
+        get("/info")
     end
 
     ##
@@ -50,7 +50,7 @@ class Docker::API::System < Docker::API::Base
     # Docker API: GET /version
     # @see https://docs.docker.com/engine/api/v1.40/#operation/SystemVersion
     def version
-        @connection.get(build_path("/version"))
+        get("/version")
     end
 
     ##
@@ -59,7 +59,7 @@ class Docker::API::System < Docker::API::Base
     # Docker API: GET /system/df
     # @see https://docs.docker.com/engine/api/v1.40/#operation/SystemDataUsage
     def df params = {}
-        @connection.get(build_path("/system/df", params))
+        get("/system/df", params)
     end
                 
 end

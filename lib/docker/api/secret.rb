@@ -11,7 +11,7 @@ class Docker::API::Secret < Docker::API::Base
     #
     # @param params [Hash]: Parameters that are appended to the URL.
     def list params = {}
-        @connection.get(build_path("/secrets",params))
+        get("/secrets",params)
     end
 
     # Create a secret
@@ -21,7 +21,7 @@ class Docker::API::Secret < Docker::API::Base
     #
     # @param body [Hash]: Request body to be sent as json.
     def create body = {}
-        @connection.request(method: :post, path: build_path("/secrets/create"), headers: {"Content-Type" => "application/json"}, body: body.to_json)
+        request(method: :post, path: "/secrets/create", headers: {"Content-Type" => "application/json"}, body: body.to_json)
     end
 
     # Inspect a secret
@@ -31,7 +31,7 @@ class Docker::API::Secret < Docker::API::Base
     #
     # @param name [String]: The ID or name of the secret.
     def details name
-        @connection.get(build_path("/secrets/#{name}"))
+        get("/secrets/#{name}")
     end
 
     # Update a secret
@@ -43,7 +43,7 @@ class Docker::API::Secret < Docker::API::Base
     # @param params [Hash]: Parameters that are appended to the URL.
     # @param body [Hash]: Request body to be sent as json.
     def update name, params = {}, body = {}
-        @connection.request(method: :post, path: build_path("/secrets/#{name}/update",params), headers: {"Content-Type" => "application/json"}, body: body.to_json)
+        request(method: :post, path: "/secrets/#{name}/update",params: params, headers: {"Content-Type" => "application/json"}, body: body.to_json)
     end
 
     # Delete a secret
@@ -53,6 +53,6 @@ class Docker::API::Secret < Docker::API::Base
     #
     # @param name [String]: The ID or name of the secret.
     def remove name
-        @connection.delete(build_path("/secrets/#{name}"))
+        delete("/secrets/#{name}")
     end
 end
