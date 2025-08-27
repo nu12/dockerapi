@@ -43,6 +43,16 @@ module Docker
       @@print_response_to_stdout = bool
     end
     self.print_response_to_stdout = false
+
+    ##
+    # This variable controls the default Docker API version.
+    def self.default_api_version
+      @@default_api_version
+    end
+    def self.default_api_version=(s)
+      @@default_api_version = s
+    end
+    self.default_api_version = "1.43"
     
   end
 end

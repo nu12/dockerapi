@@ -6,5 +6,5 @@ RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
 task :version do
-    p "v#{Docker::API::GEM_VERSION}"
+    p "v#{Docker::API::VERSION}"
 end

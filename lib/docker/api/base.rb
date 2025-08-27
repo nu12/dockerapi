@@ -1,6 +1,8 @@
 ##
 # Base class to provide general methods, helpers and implementations accross classes.
 class Docker::API::Base
+    attr_accessor(:api_version)
+
     [:get, :post, :head, :delete, :put].each do | method |
         define_method(method) { | path, params = {} | self.request(method: method, path: path, params: params) }
     end
@@ -24,6 +26,7 @@ class Docker::API::Base
     def initialize connection = nil
         raise StandardError.new("Expected connection to be a Docker::API::Connection class") if connection != nil && !connection.is_a?(Docker::API::Connection)
         @connection = connection || Docker::API::Connection.new
+        @api_version = Docker::API.default_api_version
     end
     
     private
@@ -91,7 +94,7 @@ class Docker::API::Base
     # @param path [String]: Base URL string.
     # @param hash [Hash]: Hash object to be appended to the URL as query parameters.
     def build_path path, params = {}
-        path = "/v#{Docker::API::API_VERSION}#{path}"
+        path = "/v#{@api_version}#{path}"
         params.size > 0 ? [path, hash_to_params(params)].join("?") : path
     end
 

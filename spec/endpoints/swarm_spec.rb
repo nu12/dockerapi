@@ -15,7 +15,7 @@ RSpec.describe Docker::API::Swarm do
         after(:all) { Excon.stubs.clear }
 
         describe ".init" do
-            it { expect(subject.init({AdvertiseAddr: "127.0.0.1:2375", ListenAddr: "0.0.0.0:4567", SubnetSize: 24, Spec: { Name: "default" }}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/init") }
+            it { expect(subject.init({AdvertiseAddr: "127.0.0.1:2375", ListenAddr: "0.0.0.0:4567", SubnetSize: 24, Spec: { Name: "default" }}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/swarm/init") }
             it { expect(subject.init({AdvertiseAddr: "127.0.0.1:2375", ListenAddr: "0.0.0.0:4567", SubnetSize: 24, Spec: { Name: "default" }}).request_params[:method]).to eq(:post) }
             it { expect(subject.init({AdvertiseAddr: "127.0.0.1:2375", ListenAddr: "0.0.0.0:4567", SubnetSize: 24, Spec: { Name: "default" }}).request_params[:body]).to eq("{\"AdvertiseAddr\":\"127.0.0.1:2375\",\"ListenAddr\":\"0.0.0.0:4567\",\"SubnetSize\":24,\"Spec\":{\"Name\":\"default\"}}") }
             it { expect(subject.init({AdvertiseAddr: "127.0.0.1:2375", ListenAddr: "0.0.0.0:4567", SubnetSize: 24, Spec: { Name: "default" }}).request_params[:headers]["Content-Type"]).to eq("application/json") }
@@ -23,41 +23,41 @@ RSpec.describe Docker::API::Swarm do
         end
 
         describe ".details" do
-            it { expect(subject.details.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm") }
+            it { expect(subject.details.request_params[:path]).to eq("/v#{Docker::API.default_api_version}/swarm") }
             it { expect(subject.details.request_params[:method]).to eq(:get) }
         end
 
         describe ".update" do
-            it { expect(subject.update({version: "version"}, {}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/update?version=version") }
+            it { expect(subject.update({version: "version"}, {}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/swarm/update?version=version") }
             it { expect(subject.update({version: "version"}, {}).request_params[:method]).to eq(:post) }
-            it { expect(subject.update({version: "version", rotateWorkerToken: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/update?version=version&rotateWorkerToken=true") }
-            it { expect(subject.update({version: "version", rotateManagerToken: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/update?version=version&rotateManagerToken=true") }
-            it { expect(subject.update({version: "version", rotateManagerUnlockKey: true}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/update?version=version&rotateManagerUnlockKey=true") }
+            it { expect(subject.update({version: "version", rotateWorkerToken: true}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/swarm/update?version=version&rotateWorkerToken=true") }
+            it { expect(subject.update({version: "version", rotateManagerToken: true}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/swarm/update?version=version&rotateManagerToken=true") }
+            it { expect(subject.update({version: "version", rotateManagerUnlockKey: true}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/swarm/update?version=version&rotateManagerUnlockKey=true") }
             it { expect{subject.update({version: "version", invalid: true})}.not_to raise_error }
-            it { expect(subject.update({version: "version"}, {EncryptionConfig: { AutoLockManagers: true } }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/update?version=version") }
+            it { expect(subject.update({version: "version"}, {EncryptionConfig: { AutoLockManagers: true } }).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/swarm/update?version=version") }
             it { expect(subject.update({version: "version"}, {EncryptionConfig: { AutoLockManagers: true } }).request_params[:body]).to eq("{\"EncryptionConfig\":{\"AutoLockManagers\":true}}") }
             it { expect(subject.update({version: "version"}, {EncryptionConfig: { AutoLockManagers: true } }).request_params[:headers]["Content-Type"]).to eq("application/json") }
         end
     
         describe ".unlock_key" do
-            it { expect(subject.unlock_key.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/unlockkey") }
+            it { expect(subject.unlock_key.request_params[:path]).to eq("/v#{Docker::API.default_api_version}/swarm/unlockkey") }
             it { expect(subject.unlock_key.request_params[:method]).to eq(:get) }
         end
     
         describe ".unlock" do
-            it { expect(subject.unlock.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/unlock") }
+            it { expect(subject.unlock.request_params[:path]).to eq("/v#{Docker::API.default_api_version}/swarm/unlock") }
             it { expect(subject.unlock.request_params[:method]).to eq(:post) }
         end
     
         describe ".join" do
-            it { expect(subject.join(RemoteAddrs: ["127.0.0.1:2377"], JoinToken: "token" ).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/join") }
+            it { expect(subject.join(RemoteAddrs: ["127.0.0.1:2377"], JoinToken: "token" ).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/swarm/join") }
             it { expect(subject.join(RemoteAddrs: ["127.0.0.1:2377"], JoinToken: "token" ).request_params[:method]).to eq(:post) }
             it { expect(subject.join(RemoteAddrs: ["127.0.0.1:2377"], JoinToken: "token" ).request_params[:body]).to eq("{\"RemoteAddrs\":[\"127.0.0.1:2377\"],\"JoinToken\":\"token\"}") }
             it { expect(subject.join(RemoteAddrs: ["127.0.0.1:2377"], JoinToken: "token" ).request_params[:headers]["Content-Type"]).to eq("application/json") }
         end
     
         describe ".leave" do
-            it { expect(subject.leave(force: true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/swarm/leave?force=true") }
+            it { expect(subject.leave(force: true).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/swarm/leave?force=true") }
             it { expect(subject.leave(force: true).request_params[:method]).to eq(:post) }
             it { expect{subject.leave(invalid: true)}.not_to raise_error }
         end
