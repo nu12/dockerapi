@@ -4,6 +4,7 @@ Interact with Docker API directly from Ruby code. Comprehensive implementation (
 
 * [Installation](#installation)
 * [Usage](#usage)
+  * [API version](#api-version)
   * [Images](#images)
   * [Containers](#containers)
   * [Volumes](#volumes)
@@ -51,6 +52,31 @@ The following section will bring you up to speed in order to use most this gem r
 If you need more information about the different Docker API endpoints, please see the [Docker API documentation](https://docs.docker.com/engine/api/v1.40/). 
 
 For a more detailed and comprehensive documentation about this gem's API, please see the [documentation page](https://rubydoc.info/gems/dockerapi).
+
+### API version
+
+The Docker API is backward-compatible, which means we can specify which version of the API we want to use. Doing so is optional in order to take advantage of a specific feature.
+
+We can specify the version to be used in 2 ways:
+
+
+Use a specific version for all new instances
+
+```ruby
+Docker::API.default_api_version="1.43"
+image = Docker::API::Image.new
+image.list.path
+=> "/v1.43/images/json"
+```
+
+Change the version used after the instance is created
+
+```ruby
+image = Docker::API::Image.new
+image.api_version="1.43"
+image.list.path
+=> "/v1.43/images/json"
+```
 
 ### Images
 
