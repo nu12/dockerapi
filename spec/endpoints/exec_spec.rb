@@ -11,25 +11,25 @@ RSpec.describe Docker::API::Exec do
         after(:all) { Excon.stubs.clear }
 
         describe ".create" do
-            it { expect(subject.create("dockerapi", Cmd: ["ls", "-l"]).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/containers/dockerapi/exec") }
+            it { expect(subject.create("dockerapi", Cmd: ["ls", "-l"]).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/containers/dockerapi/exec") }
             it { expect(subject.create("dockerapi", Cmd: ["ls", "-l"]).request_params[:method]).to eq(:post) }
             it { expect(subject.create("dockerapi", Cmd: ["ls", "-l"]).request_params[:body]).to eq('{"Cmd":["ls","-l"]}') }
             it { expect(subject.create("dockerapi", AttachStdout:true, WorkingDir: "/etc", Cmd: ["ls", "-l"]).request_params[:body]).to eq('{"AttachStdout":true,"WorkingDir":"/etc","Cmd":["ls","-l"]}') }
         end
 
         describe ".start" do
-            it { expect(subject.start("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/exec/id/start") }
+            it { expect(subject.start("id").request_params[:path]).to eq("/v#{Docker::API.default_api_version}/exec/id/start") }
             it { expect(subject.start("id").request_params[:method]).to eq(:post) }
             it { expect(subject.start("id").request_params[:body]).to eq("{}") }
         end
 
         describe ".resize" do
-            it { expect(subject.resize("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/exec/id/resize") }
+            it { expect(subject.resize("id").request_params[:path]).to eq("/v#{Docker::API.default_api_version}/exec/id/resize") }
             it { expect(subject.resize("id").request_params[:method]).to eq(:post) }
         end
 
         describe ".details" do
-            it { expect(subject.details("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/exec/id/json") }
+            it { expect(subject.details("id").request_params[:path]).to eq("/v#{Docker::API.default_api_version}/exec/id/json") }
             it { expect(subject.details("id").request_params[:method]).to eq(:get) }
         end
     end

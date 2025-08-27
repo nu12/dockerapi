@@ -2,7 +2,7 @@ require_relative 'lib/docker/api/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "dockerapi"
-  spec.version       = Docker::API::GEM_VERSION
+  spec.version       = Docker::API::VERSION
   spec.authors       = ["Alysson A. Costa"]
   spec.email         = ["alysson.avila.costa@gmail.com"]
 

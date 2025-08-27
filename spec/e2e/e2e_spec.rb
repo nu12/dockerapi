@@ -17,15 +17,15 @@ RSpec.describe "End-to-end test", e2e: true do
         it { expect(system.info.status).to eq(200) }
         it { expect(system.info.success?).to eq(true) }
         it { expect(system.info.json).to be_kind_of(Hash) }
-        it { expect(system.info.path).to eq("/v#{Docker::API::API_VERSION}/info") }
+        it { expect(system.info.path).to eq("/v#{Docker::API.default_api_version}/info") }
         it { expect(system.version.status).to eq(200) }
         it { expect(system.version.success?).to eq(true) }
         it { expect(system.version.json).to be_kind_of(Hash) }
-        it { expect(system.version.path).to eq("/v#{Docker::API::API_VERSION}/version") }
+        it { expect(system.version.path).to eq("/v#{Docker::API.default_api_version}/version") }
         it { expect(system.df.status).to eq(200) }
         it { expect(system.df.success?).to eq(true) }
         it { expect(system.df.json).to be_kind_of(Hash) }
-        it { expect(system.df.path).to eq("/v#{Docker::API::API_VERSION}/system/df") }
+        it { expect(system.df.path).to eq("/v#{Docker::API.default_api_version}/system/df") }
     end
 
     describe "Misc of requests that are expected to fail" do

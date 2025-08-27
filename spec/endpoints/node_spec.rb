@@ -11,23 +11,23 @@ RSpec.describe Docker::API::Node do
         after(:all) { Excon.stubs.clear }
 
         describe ".list" do
-            it { expect(subject.list.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes") }
+            it { expect(subject.list.request_params[:path]).to eq("/v#{Docker::API.default_api_version}/nodes") }
             it { expect(subject.list.request_params[:method]).to eq(:get) }
-            it { expect(subject.list(filters: {label: ["key=value"]}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"label\":[\"key=value\"]}") }
-            it { expect(subject.list(filters: {"node.label": ["key=value"]}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"node.label\":[\"key=value\"]}") }
-            it { expect(subject.list(filters: {membership: {"accepted": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"membership\":{\"accepted\":true}}") }
-            it { expect(subject.list(filters: {membership: {"pending": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"membership\":{\"pending\":true}}") }
-            it { expect(subject.list(filters: {name: {"node_name": true}}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes?filters={\"name\":{\"node_name\":true}}") }
+            it { expect(subject.list(filters: {label: ["key=value"]}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/nodes?filters={\"label\":[\"key=value\"]}") }
+            it { expect(subject.list(filters: {"node.label": ["key=value"]}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/nodes?filters={\"node.label\":[\"key=value\"]}") }
+            it { expect(subject.list(filters: {membership: {"accepted": true}}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/nodes?filters={\"membership\":{\"accepted\":true}}") }
+            it { expect(subject.list(filters: {membership: {"pending": true}}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/nodes?filters={\"membership\":{\"pending\":true}}") }
+            it { expect(subject.list(filters: {name: {"node_name": true}}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/nodes?filters={\"name\":{\"node_name\":true}}") }
             it { expect{subject.list(invalid: true)}.not_to raise_error }
         end
     
         describe ".details" do
-            it { expect(subject.details("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id") }
+            it { expect(subject.details("id").request_params[:path]).to eq("/v#{Docker::API.default_api_version}/nodes/id") }
             it { expect(subject.details("id").request_params[:method]).to eq(:get) }
         end
 
         describe ".update" do
-            it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "drain" }).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id/update?version=version") }
+            it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "drain" }).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/nodes/id/update?version=version") }
             it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "pause" }).request_params[:method]).to eq(:post) }
             it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "active" }).request_params[:body]).to eq("{\"Role\":\"manager\",\"Availability\":\"active\"}") }
             it { expect(subject.update("id", {version: "version"}, {Role: "manager", Availability: "drain" }).request_params[:headers]["Content-Type"]).to eq("application/json") }
@@ -38,9 +38,9 @@ RSpec.describe Docker::API::Node do
         end    
     
         describe ".remove" do
-            it { expect(subject.remove("id").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id") }
+            it { expect(subject.remove("id").request_params[:path]).to eq("/v#{Docker::API.default_api_version}/nodes/id") }
             it { expect(subject.remove("id").request_params[:method]).to eq(:delete) }
-            it { expect(subject.remove("id", force: true).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/nodes/id?force=true") }
+            it { expect(subject.remove("id", force: true).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/nodes/id?force=true") }
             it { expect{subject.remove("id", invalid: true)}.not_to raise_error }
         end
 

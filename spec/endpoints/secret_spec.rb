@@ -12,17 +12,17 @@ RSpec.describe Docker::API::Secret do
         after(:all) { Excon.stubs.clear }
 
         describe ".list" do
-            it { expect(subject.list.request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets") }
+            it { expect(subject.list.request_params[:path]).to eq("/v#{Docker::API.default_api_version}/secrets") }
             it { expect(subject.list.request_params[:method]).to eq(:get) }
-            it { expect(subject.list(filters: {id: { "secret-id": true }}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets?filters={\"id\":{\"secret-id\":true}}") }
-            it { expect(subject.list(filters: {label: { "label=key": true }}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets?filters={\"label\":{\"label=key\":true}}") }
-            it { expect(subject.list(filters: {name: { "secret-name": true }}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets?filters={\"name\":{\"secret-name\":true}}") }
-            it { expect(subject.list(filters: {names: { "secret-name": true }}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets?filters={\"names\":{\"secret-name\":true}}") }
+            it { expect(subject.list(filters: {id: { "secret-id": true }}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/secrets?filters={\"id\":{\"secret-id\":true}}") }
+            it { expect(subject.list(filters: {label: { "label=key": true }}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/secrets?filters={\"label\":{\"label=key\":true}}") }
+            it { expect(subject.list(filters: {name: { "secret-name": true }}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/secrets?filters={\"name\":{\"secret-name\":true}}") }
+            it { expect(subject.list(filters: {names: { "secret-name": true }}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/secrets?filters={\"names\":{\"secret-name\":true}}") }
             it { expect{subject.list(invalid: true)}.not_to raise_error }
         end
 
         describe ".create" do
-            it { expect(subject.create({Name: "secret",Labels: {foo: "bar"}, Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets/create") }
+            it { expect(subject.create({Name: "secret",Labels: {foo: "bar"}, Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/secrets/create") }
             it { expect(subject.create({Name: "secret",Labels: {foo: "bar"}, Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}).request_params[:method]).to eq(:post) }
             it { expect(subject.create({Name: "secret",Labels: {foo: "bar"}, Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}).request_params[:body]).to eq("{\"Name\":\"secret\",\"Labels\":{\"foo\":\"bar\"},\"Data\":\"VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg==\"}") }
             it { expect(subject.create({Name: "secret",Labels: {foo: "bar"}, Data: "VEhJUyBJUyBOT1QgQSBSRUFMIENFUlRJRklDQVRFCg=="}).request_params[:headers]["Content-Type"]).to eq("application/json") }
@@ -30,12 +30,12 @@ RSpec.describe Docker::API::Secret do
         end
 
         describe ".details" do
-            it { expect(subject.details("secret").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets/secret") }
+            it { expect(subject.details("secret").request_params[:path]).to eq("/v#{Docker::API.default_api_version}/secrets/secret") }
             it { expect(subject.details("secret").request_params[:method]).to eq(:get) }
         end
 
         describe ".update" do
-            it { expect(subject.update("secret", {version: "version"}, {}).request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets/secret/update?version=version") }
+            it { expect(subject.update("secret", {version: "version"}, {}).request_params[:path]).to eq("/v#{Docker::API.default_api_version}/secrets/secret/update?version=version") }
             it { expect(subject.update("secret", {version: "version"}, {}).request_params[:method]).to eq(:post) }
             it { expect(subject.update("secret", {version: "version"}, {}).request_params[:body]).to eq("{}") }
             it { expect(subject.update("secret", {version: "version"}, {}).request_params[:headers]["Content-Type"]).to eq("application/json") }
@@ -44,7 +44,7 @@ RSpec.describe Docker::API::Secret do
         end
 
         describe ".remove" do
-            it { expect(subject.remove("secret").request_params[:path]).to eq("/v#{Docker::API::API_VERSION}/secrets/secret") }
+            it { expect(subject.remove("secret").request_params[:path]).to eq("/v#{Docker::API.default_api_version}/secrets/secret") }
             it { expect(subject.remove("secret").request_params[:method]).to eq(:delete) }
         end
     end
